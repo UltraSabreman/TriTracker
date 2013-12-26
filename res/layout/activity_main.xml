@@ -14,8 +14,9 @@
         android:layout_alignParentRight="true"
         android:ems="10"
         android:hint="@string/stopid"
-        android:inputType="number" 
-        android:singleLine="true">
+        android:inputType="number"
+        android:minLines="1"
+        android:selectAllOnFocus="true" >
 
         <requestFocus />
     </EditText>
@@ -30,9 +31,11 @@
         android:weightSum="0" >
 
         <ListView
-            android:id="@+id/listView1"
+            android:id="@+id/UIStopList"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content"
+            android:divider="?android:attr/listDivider" >
+
         </ListView>
 
     </LinearLayout>

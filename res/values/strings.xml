@@ -3,9 +3,12 @@
 
     <string name="app_name">TriTracker</string>
     <string name="action_settings">Settings</string>
-    <string name="edit">Edit Me</string>
-    <string name="send">Send</string>
-    <string name="title_activity_display_message">My Message</string>
     <string name="stopid">Enter Stop ID</string>
+    <string name="action_search">Find Stops</string>
+    <string name="title_activity_display_message">NUSDFSF</string>
+    <string name="action_history">Stop History</string>
+    <string name="fav_empty">No Favorites</string>
+    <string name="hist_emtpy">No History</string>
+    
 
 </resources>
