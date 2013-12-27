@@ -1,10 +1,17 @@
 package com.example.tritracker;
 
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Vector;
 
 import android.app.Activity;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -20,6 +27,7 @@ import android.widget.Toast;
 public class MainActivity extends Activity{
 	public final static String EXTRA_MESSAGE = "com.example.tritracker.MESSAGE";
 	
+
 	private ArrayList<Stop> favorites = new ArrayList<Stop>();
 	private ArrayList<Stop> history = new ArrayList<Stop>();
 	private Stop tempSavedStop;
@@ -53,7 +61,10 @@ public class MainActivity extends Activity{
         	public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
             if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
             	EditText edit = (EditText) findViewById(R.id.UIStopIDBox);
-            	System.out.println(edit.getText().toString());
+            	new Testing().execute(edit.getText().toString());
+            	
+            	edit.getText().clear();
+            	
             }    
             return false;
         }});
@@ -129,5 +140,63 @@ public class MainActivity extends Activity{
                 return super.onOptionsItemSelected(item);
         }
     }
-    
+
+    public void getStuff(String s){
+    	/*try {
+			//InputStream response = new URL("http://developer.trimet.org/ws/V1/arrivals?locIDs="+s+"&json=true&appID="+appID).openStream();
+			/*BufferedReader reader = new BufferedReader(new InputStreamReader(response));
+	        for (String line; (line = reader.readLine()) != null;) {
+	            System.out.println(line);
+	        }
+    		System.out.println("Dfhlkjdfghl;jkfdh");
+		        
+		}catch (MalformedURLException e1) {
+			// TODO Auto-generated catch block
+			 System.out.println("sdfsdf");
+			e1.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			 System.out.println("-----------");
+			e.printStackTrace();
+		}*/
+  
+    }
+}
+
+class Testing extends AsyncTask {
+	private String appID = "33F1CF006B33C60A8242EDA0E";
+	
+	protected InputStream doInBackground(String... s) {
+		try {
+			return new URL("http://developer.trimet.org/ws/V1/arrivals?locIDs="+s[0]+"&json=true&appID="+appID).openStream();
+		}catch (MalformedURLException e1) {
+			// TODO Auto-generated catch block
+			 System.out.println("sdfsdf");
+			e1.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			 System.out.println("-----------");
+			e.printStackTrace();
+		}
+		return null;
+    }
+
+    protected void onPostExecute(InputStream result) {
+		BufferedReader reader = new BufferedReader(new InputStreamReader(result));
+        try {
+			for (String line; (line = reader.readLine()) != null;) {
+			    System.out.println(line);
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
+
+	@Override
+	protected Object doInBackground(Object... params) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
