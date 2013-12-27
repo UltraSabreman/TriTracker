@@ -25,17 +25,27 @@ public final class R {
         public static final int ic_action_not_important=0x7f020001;
         public static final int ic_action_reply=0x7f020002;
         public static final int ic_action_search2=0x7f020003;
-        public static final int ic_launcher=0x7f020004;
-        public static final int test=0x7f020005;
+        public static final int ic_action_undo=0x7f020004;
+        public static final int ic_launcher=0x7f020005;
+        public static final int ic_undobar_undo=0x7f020006;
+        public static final int test=0x7f020007;
+        public static final int undobar=0x7f020008;
+        public static final int undobar_button=0x7f020009;
+        public static final int undobar_button_focused=0x7f02000a;
+        public static final int undobar_button_pressed=0x7f02000b;
+        public static final int undobar_divider=0x7f02000c;
     }
     public static final class id {
-        public static final int StopID=0x7f080003;
-        public static final int StopName=0x7f080002;
-        public static final int UIStopIDBox=0x7f080000;
-        public static final int UIStopList=0x7f080001;
-        public static final int action_history=0x7f080005;
-        public static final int action_search=0x7f080006;
-        public static final int action_settings=0x7f080004;
+        public static final int StopID=0x7f090003;
+        public static final int StopName=0x7f090002;
+        public static final int UIStopIDBox=0x7f090000;
+        public static final int UIStopList=0x7f090001;
+        public static final int action_history=0x7f090005;
+        public static final int action_search=0x7f090006;
+        public static final int action_settings=0x7f090004;
+    }
+    public static final class integer {
+        public static final int undobar_hide_delay=0x7f050000;
     }
     public static final class layout {
         public static final int activity_display_message=0x7f030000;
@@ -43,19 +53,20 @@ public final class R {
         public static final int stoplayout=0x7f030002;
     }
     public static final class menu {
-        public static final int display_message=0x7f070000;
-        public static final int main=0x7f070001;
-        public static final int main_action_bar=0x7f070002;
+        public static final int display_message=0x7f080000;
+        public static final int main=0x7f080001;
+        public static final int main_action_bar=0x7f080002;
     }
     public static final class string {
-        public static final int action_history=0x7f050005;
-        public static final int action_search=0x7f050003;
-        public static final int action_settings=0x7f050001;
-        public static final int app_name=0x7f050000;
-        public static final int fav_empty=0x7f050006;
-        public static final int hist_emtpy=0x7f050007;
-        public static final int stopid=0x7f050002;
-        public static final int title_activity_display_message=0x7f050004;
+        public static final int action_history=0x7f060005;
+        public static final int action_search=0x7f060003;
+        public static final int action_settings=0x7f060001;
+        public static final int app_name=0x7f060000;
+        public static final int fav_empty=0x7f060006;
+        public static final int hist_emtpy=0x7f060007;
+        public static final int stopid=0x7f060002;
+        public static final int title_activity_display_message=0x7f060004;
+        public static final int undo=0x7f060008;
     }
     public static final class style {
         /** 
@@ -79,10 +90,29 @@ public final class R {
     
  API 14 theme customizations can go here. 
          */
-        public static final int AppBaseTheme=0x7f060000;
+        public static final int AppBaseTheme=0x7f070003;
         /**  Application theme. 
  All customizations that are NOT specific to a particular API-level can go here. 
          */
-        public static final int AppTheme=0x7f060001;
+        public static final int AppTheme=0x7f070004;
+        /** 
+  Copyright 2012 Roman Nurik
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  
+         */
+        public static final int UndoBar=0x7f070000;
+        public static final int UndoBarButton=0x7f070002;
+        public static final int UndoBarMessage=0x7f070001;
     }
 }

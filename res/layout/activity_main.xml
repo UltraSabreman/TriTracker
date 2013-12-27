@@ -4,7 +4,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:showDividers="middle" >
-
     <EditText
         android:id="@+id/UIStopIDBox"
         android:layout_width="wrap_content"

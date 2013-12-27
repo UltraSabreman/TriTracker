@@ -9,6 +9,7 @@
     <string name="action_history">Stop History</string>
     <string name="fav_empty">No Favorites</string>
     <string name="hist_emtpy">No History</string>
+    <string name="undo">Undo</string>
     
 
 </resources>

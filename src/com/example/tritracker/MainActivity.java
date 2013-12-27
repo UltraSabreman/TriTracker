@@ -15,12 +15,15 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
+import android.widget.Toast;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity{
 	public final static String EXTRA_MESSAGE = "com.example.tritracker.MESSAGE";
 	
 	private ArrayList<Stop> favorites = new ArrayList<Stop>();
 	private ArrayList<Stop> history = new ArrayList<Stop>();
+	private Stop tempSavedStop;
+	private int index;
 	StopArrayAdaptor favAdaptor, histAdaptor;
 	//sdfds
 
@@ -55,30 +58,50 @@ public class MainActivity extends Activity {
             return false;
         }});
         
+        //view.setOnIt
+        
         favAdaptor=new StopArrayAdaptor(this, R.layout.stoplayout, favorites);
         histAdaptor=new StopArrayAdaptor(this, R.layout.stoplayout, history);
         
         view.setAdapter(favAdaptor);
-        favorites.add(new Stop(temp));
-        favorites.add(new Stop(temp2));
-        favorites.add(new Stop(new StopData()));
-        //view.setAdapter(adapter);
+        for (int i = 0; i < 20; i++)
+        	favorites.add(new Stop(temp));
+
         favAdaptor.notifyDataSetChanged();
         
-        
-        /*for (Stop s : test){
-        	//System.out.println("world");
-        	//TextView t = new TextView(this);
-        	//t.setText();
-        	strings.add(s.GetStopLocation() + "\t" + s.GetStopID());
-        	adapter.notifyDataSetChanged();
-        	//ArrayAdapter<String> myarrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, myList);
-        	//view.setAdapter(myarrayAdapter);
-        	//view.setTextFilterEnabled(true);
-        	//view.addView(t);
-        }*/
+        testList();
     }
 
+    public void testList() {
+        ListView listView = (ListView) findViewById(R.id.UIStopList);
+        
+        // Create a ListView-specific touch listener. ListViews are given special treatment because
+        // by default they handle touches for their list items... i.e. they're in charge of drawing
+        // the pressed state (the list selector), handling list item clicks, etc.
+        SwipeDismissListViewTouchListener touchListener =
+                new SwipeDismissListViewTouchListener(listView,
+                        new SwipeDismissListViewTouchListener.DismissCallbacks() {
+                            @Override
+                            public boolean canDismiss(int position) {
+                                return true;
+                            }
+
+                            @Override
+                            public void onDismiss(ListView listView, int[] reverseSortedPositions) {
+                                for (int position : reverseSortedPositions) {
+                                	tempSavedStop = favorites.get(position);
+                                	index = position;
+                                	favAdaptor.remove(favAdaptor.getItem(position));
+                                	Toast.makeText(getApplicationContext(), "lol", android.R.integer.config_shortAnimTime).show();
+                                }
+                                favAdaptor.notifyDataSetChanged();
+                            }
+                        });
+        listView.setOnTouchListener(touchListener);
+        // Setting this scroll listener is required to ensure that during ListView scrolling,
+        // we don't look for swipes.
+        listView.setOnScrollListener(touchListener.makeScrollListener());
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -94,9 +117,11 @@ public class MainActivity extends Activity {
         switch (item.getItemId()) {
             case R.id.action_search:
                 //openSearch();
+            	favorites.add(new Stop(new StopData()));
+            	favAdaptor.notifyDataSetChanged();
             	System.out.println("Search");
                 return true;
-            case R.id.action_settings:
+            case R.id.action_settings:            	 
                 //openSettings();
             	System.out.println("Settings");
                 return true;
@@ -104,4 +129,5 @@ public class MainActivity extends Activity {
                 return super.onOptionsItemSelected(item);
         }
     }
+    
 }
