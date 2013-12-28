@@ -2,15 +2,24 @@ package com.example.tritracker;
 
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
-import java.util.Vector;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.StatusLine;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -24,36 +33,35 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
-public class MainActivity extends Activity{
-	public final static String EXTRA_MESSAGE = "com.example.tritracker.MESSAGE";
-	
+import com.example.tritracker.json.Arrival;
+import com.example.tritracker.json.ResultSet;
+import com.example.tritracker.json.results;
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 
+class JsonWrapper {
+	public ArrayList<Stop> favorites = new ArrayList<Stop>();
+	public ArrayList<Stop> history = new ArrayList<Stop>();
+	
+	public JsonWrapper(ArrayList<Stop> fav, ArrayList<Stop> hist) {
+		favorites = fav;
+		history = hist;
+	}
+}
+
+public class MainActivity extends Activity{
 	private ArrayList<Stop> favorites = new ArrayList<Stop>();
 	private ArrayList<Stop> history = new ArrayList<Stop>();
-	private Stop tempSavedStop;
-	private int index;
 	StopArrayAdaptor favAdaptor, histAdaptor;
-	//sdfds
 
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main);   
         
-        StopData temp = new StopData();
-        temp.Location = "My Street Over Here";
-        temp.StopID = 1337;
-        temp.BussLines = new Vector<Buss>();
-        temp.BussLines.add(new Buss());
-        
-        StopData temp2 = new StopData();
-        temp2.Location = "Mclaughlin and PArk";
-        temp2.StopID = 3848;
-        temp2.BussLines = new Vector<Buss>();
-        temp2.BussLines.add(new Buss());
-        
-        //test.add();
+        readData();
+
         ListView view = (ListView) findViewById(R.id.UIStopList);
         EditText edit = (EditText) findViewById(R.id.UIStopIDBox);
         
@@ -61,7 +69,7 @@ public class MainActivity extends Activity{
         	public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
             if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
             	EditText edit = (EditText) findViewById(R.id.UIStopIDBox);
-            	new Testing().execute(edit.getText().toString());
+            	new RequestTask().execute("http://developer.trimet.org/ws/V1/arrivals?locIDs="+edit.getText().toString()+"&json=true&appID="+getString(R.string.appid));
             	
             	edit.getText().clear();
             	
@@ -69,18 +77,70 @@ public class MainActivity extends Activity{
             return false;
         }});
         
-        //view.setOnIt
-        
+
+        //TODO change the layouts
         favAdaptor=new StopArrayAdaptor(this, R.layout.stoplayout, favorites);
         histAdaptor=new StopArrayAdaptor(this, R.layout.stoplayout, history);
         
         view.setAdapter(favAdaptor);
-        for (int i = 0; i < 20; i++)
-        	favorites.add(new Stop(temp));
-
-        favAdaptor.notifyDataSetChanged();
         
+        favAdaptor.notifyDataSetChanged();
         testList();
+    }
+    
+    private void readData() {
+		try {
+			BufferedReader br = new BufferedReader(new InputStreamReader(openFileInput(getString(R.string.data_path))));
+			
+			String fileContents = "";
+			String line;
+			while ((line = br.readLine()) != null){
+				fileContents += line;
+			}
+			
+			Gson gson = new Gson();
+			JsonWrapper wrap = gson.fromJson(fileContents, JsonWrapper.class);
+			
+			favorites = new ArrayList<Stop>(wrap.favorites);
+			history = new ArrayList<Stop>(wrap.history);
+			
+			//TODO dtopthe busses from being written
+			br.close();
+		}catch (JsonSyntaxException e) { 
+			
+		}catch (FileNotFoundException e) {
+			
+		}catch (IOException e) {  
+		
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
+    private void dumpData(){
+		try {
+			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(openFileOutput(getString(R.string.data_path), Context.MODE_PRIVATE)));
+			
+			Gson gson = new Gson();
+			JsonWrapper wrap = new JsonWrapper(favorites, history);
+			String data = gson.toJson(wrap);
+			
+			bw.write(data);		
+			bw.close();
+		}catch (JsonSyntaxException e) {
+			
+		}catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}catch (IOException e2) {
+			// TODO Auto-generated catch block
+						e2.printStackTrace();
+		} 		
+    }
+    
+    @Override
+    public void onDestroy() {
+    	super.onDestroy();
+    	dumpData();
     }
 
     public void testList() {
@@ -100,8 +160,8 @@ public class MainActivity extends Activity{
                             @Override
                             public void onDismiss(ListView listView, int[] reverseSortedPositions) {
                                 for (int position : reverseSortedPositions) {
-                                	tempSavedStop = favorites.get(position);
-                                	index = position;
+                                	//tempSavedStop = favorites.get(position);
+                                	//index = position;
                                 	favAdaptor.remove(favAdaptor.getItem(position));
                                 	Toast.makeText(getApplicationContext(), "lol", android.R.integer.config_shortAnimTime).show();
                                 }
@@ -128,8 +188,6 @@ public class MainActivity extends Activity{
         switch (item.getItemId()) {
             case R.id.action_search:
                 //openSearch();
-            	favorites.add(new Stop(new StopData()));
-            	favAdaptor.notifyDataSetChanged();
             	System.out.println("Search");
                 return true;
             case R.id.action_settings:            	 
@@ -141,62 +199,64 @@ public class MainActivity extends Activity{
         }
     }
 
-    public void getStuff(String s){
-    	/*try {
-			//InputStream response = new URL("http://developer.trimet.org/ws/V1/arrivals?locIDs="+s+"&json=true&appID="+appID).openStream();
-			/*BufferedReader reader = new BufferedReader(new InputStreamReader(response));
-	        for (String line; (line = reader.readLine()) != null;) {
-	            System.out.println(line);
-	        }
-    		System.out.println("Dfhlkjdfghl;jkfdh");
-		        
-		}catch (MalformedURLException e1) {
-			// TODO Auto-generated catch block
-			 System.out.println("sdfsdf");
-			e1.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			 System.out.println("-----------");
-			e.printStackTrace();
-		}*/
-  
-    }
-}
-
-class Testing extends AsyncTask {
-	private String appID = "33F1CF006B33C60A8242EDA0E";
-	
-	protected InputStream doInBackground(String... s) {
-		try {
-			return new URL("http://developer.trimet.org/ws/V1/arrivals?locIDs="+s[0]+"&json=true&appID="+appID).openStream();
-		}catch (MalformedURLException e1) {
-			// TODO Auto-generated catch block
-			 System.out.println("sdfsdf");
-			e1.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			 System.out.println("-----------");
-			e.printStackTrace();
-		}
-		return null;
-    }
-
-    protected void onPostExecute(InputStream result) {
-		BufferedReader reader = new BufferedReader(new InputStreamReader(result));
-        try {
-			for (String line; (line = reader.readLine()) != null;) {
-			    System.out.println(line);
+    private void proccesJSON(String json) {
+    	Gson gson = new Gson();
+    	results test = gson.fromJson(json, results.class);
+    	
+    	ResultSet rs = test.resultSet;
+    	
+		Stop tempStop = new Stop(rs.location[0]);
+		for (Arrival a : rs.arrival)
+			tempStop.BussLines.add(new Buss(a));
+    		
+		boolean histHas = false;
+		for (Stop s : history)
+			if (s.StopID == tempStop.StopID) {
+				histHas = true;
+				break;
 			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		
+		if (!histHas) {
+			history.add(tempStop);
+			histAdaptor.notifyDataSetChanged();
 		}
+	
+		dumpData();
+		//TODO: start an activity with the new stop.
     }
+    
+    class RequestTask extends AsyncTask<String, String, String>{
+        @Override
+        protected String doInBackground(String... uri) {
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpResponse response;
+            String responseString = null;
+            try {
+                response = httpclient.execute(new HttpGet(uri[0]));
+                StatusLine statusLine = response.getStatusLine();
+                if(statusLine.getStatusCode() == HttpStatus.SC_OK){
+                    ByteArrayOutputStream out = new ByteArrayOutputStream();
+                    response.getEntity().writeTo(out);
+                    out.close();
+                    responseString = out.toString();
+                } else{
+                    //Closes the connection.
+                    response.getEntity().getContent().close();
+                    throw new IOException(statusLine.getReasonPhrase());
+                }
+            } catch (ClientProtocolException e) {
+                //TODO Handle problems..
+            } catch (IOException e) {
+                //TODO Handle problems..
+            }
+            return responseString;
+        }
 
-	@Override
-	protected Object doInBackground(Object... params) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            proccesJSON(result);
+        }
+    }
 }
+

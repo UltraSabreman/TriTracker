@@ -1,15 +1,29 @@
 package com.example.tritracker;
 
 import java.util.Date;
-import java.util.Vector;
+//import java.util.Vector;
+
+import com.example.tritracker.json.Arrival;
 
 public class Buss {
-	public int RouteID = -1;
-	public Vector<Date> Arrivals = null;
+	public int Route = -1;
+	public boolean Detouring;
+	public String Status;
+	public String SignShort;
+	public String SignLong;
+	public Date EstimatedTime;
+	public Date ScheduledTime;
 	
-	public Buss() {
-		Arrivals = new Vector<Date>();//{new Date(), new Date(123)};
-		Arrivals.add(new Date(99999));
-		Arrivals.add(new Date());
+	
+	public Buss(Arrival a) {
+		Route = a.route;
+		Detouring = a.detour;
+		Status = a.status;
+		SignShort = a.shortSign;
+		SignLong = a.fullSign;
+		
+		EstimatedTime = Util.dateFromString(a.estimated);
+		ScheduledTime = Util.dateFromString(a.scheduled);
+		
 	}
 }

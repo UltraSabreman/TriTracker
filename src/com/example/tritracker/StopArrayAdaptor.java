@@ -39,9 +39,9 @@ public class StopArrayAdaptor extends ArrayAdapter<Stop> {
 	    TextView stopName = (TextView)  v.findViewById(R.id.StopName);
 	    TextView stopID = (TextView)  v.findViewById(R.id.StopID);
 	    
-	    stopID.setText(String.valueOf(curStop.GetStopID()));
+	    stopID.setText(String.valueOf(curStop.StopID));
 	    stopID.setTextColor(Color.parseColor("#919191"));
-	    stopName.setText(curStop.GetStopLocation());
+	    stopName.setText(curStop.Name);
 	    
 	}
 

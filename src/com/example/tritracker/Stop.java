@@ -2,23 +2,25 @@ package com.example.tritracker;
 import java.util.*; //make me more specific
 //import android.content.
 
+import com.example.tritracker.json.Location;
+
 public class Stop  {
-	private StopData info = null;
+	public String Name = "Invalid Street";
+	public int StopID = -1;
+	public String Direction = "Up Up and Away!";
 	
-	public String GetStopLocation() { return this.info.Location; }
-	public int GetStopID() { return this.info.StopID; }
-	public Vector<Buss> GetBussLines() { return this.info.BussLines; }
+	public Vector<Buss> BussLines = new Vector<Buss>();
 	
-	public Stop(StopData s) {
-		info = s; //no need to deep copy.
+	public Stop(Location l) {
+		Name = l.desc;
+		StopID = l.locid;
+		Direction = l.dir;
 	}
 	
-	public void SetStopData(StopData s) {
-		if (s != null)
-			info = s;
-	}
+	/*public void SetStopData(StopData s) {
+	}*/
 	
 	public String toString() {
-		return info.Location + "     " + info.StopID;
+		return Name + " " + StopID;
 	}
 }
