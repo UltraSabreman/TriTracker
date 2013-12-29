@@ -14,8 +14,8 @@ public class StopArrayAdaptor extends ArrayAdapter<Stop> {
   //private final Context context;
   private final ArrayList<Stop> stops;
 
-  public StopArrayAdaptor(Context context, int textViewResourceId, ArrayList<Stop> stops) {
-    super(context, textViewResourceId, stops);
+  public StopArrayAdaptor(Context context, ArrayList<Stop> stops) {
+    super(context, R.layout.fav_stop_layout, stops);
     //this.context = context;
     this.stops = stops;
   }
@@ -30,14 +30,14 @@ public class StopArrayAdaptor extends ArrayAdapter<Stop> {
 	// to inflate it basically means to render, or show, the view.
 	if (v == null) {
 		LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		v = inflater.inflate(R.layout.stoplayout, null);
+		v = inflater.inflate(R.layout.fav_stop_layout, null);
 	}
 
 	Stop curStop = stops.get(position);
 
 	if (curStop != null) {
 	    TextView stopName = (TextView)  v.findViewById(R.id.StopName);
-	    TextView stopID = (TextView)  v.findViewById(R.id.StopID);
+	    TextView stopID = (TextView)  v.findViewById(R.id.LineNumber);
 	    
 	    stopID.setText(String.valueOf(curStop.StopID));
 	    stopID.setTextColor(Color.parseColor("#919191"));

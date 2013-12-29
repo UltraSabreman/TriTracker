@@ -16,8 +16,6 @@
         android:inputType="number"
         android:minLines="1"
         android:selectAllOnFocus="true" >
-
-        <requestFocus />
     </EditText>
 
     <LinearLayout
@@ -34,9 +32,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:divider="?android:attr/listDivider" >
-
         </ListView>
-
     </LinearLayout>
-
 </RelativeLayout>

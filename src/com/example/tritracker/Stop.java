@@ -9,16 +9,13 @@ public class Stop  {
 	public int StopID = -1;
 	public String Direction = "Up Up and Away!";
 	
-	public Vector<Buss> BussLines = new Vector<Buss>();
+	public ArrayList<Buss> BussLines = new ArrayList<Buss>();
 	
 	public Stop(Location l) {
 		Name = l.desc;
 		StopID = l.locid;
 		Direction = l.dir;
 	}
-	
-	/*public void SetStopData(StopData s) {
-	}*/
 	
 	public String toString() {
 		return Name + " " + StopID;

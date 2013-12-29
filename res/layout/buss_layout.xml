@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="?android:attr/listPreferredItemHeightSmall"
+    android:orientation="horizontal"
+    android:padding="6dip" >
+
+    <TextView
+        android:id="@+id/LineNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:layout_alignParentLeft="true"
+        android:ellipsize="marquee"
+        android:gravity="center"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:maxLines="1"
+        android:textSize="26sp" />
+
+    <TextView
+        android:id="@+id/Schedule"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/LineName"
+        android:layout_toRightOf="@+id/LineNumber"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/Time"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/LineName"
+        android:gravity="center"
+        android:textColor="@android:color/holo_green_dark"
+        android:maxLines="1"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/LineName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/Schedule"
+        android:layout_alignTop="@+id/LineNumber"
+        android:ellipsize="end"
+        android:maxEms="10"
+        android:maxLines="1"
+        android:textColor="@android:color/holo_blue_dark"
+        android:textSize="16sp" />
+
+</RelativeLayout>

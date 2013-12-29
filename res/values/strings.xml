@@ -12,6 +12,6 @@
     <string name="data_path">tri-tracker-data.json</string>
     <string name="appid">33F1CF006B33C60A8242EDA0E</string>
     <string name="undo">Undo</string>
-    
+    <string name="title_activity_stop_view">History</string>
 
 </resources>

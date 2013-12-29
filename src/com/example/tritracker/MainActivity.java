@@ -20,6 +20,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -79,8 +80,8 @@ public class MainActivity extends Activity{
         
 
         //TODO change the layouts
-        favAdaptor=new StopArrayAdaptor(this, R.layout.stoplayout, favorites);
-        histAdaptor=new StopArrayAdaptor(this, R.layout.stoplayout, history);
+        favAdaptor=new StopArrayAdaptor(this, favorites);
+        histAdaptor=new StopArrayAdaptor(this, history);
         
         view.setAdapter(favAdaptor);
         
@@ -222,6 +223,11 @@ public class MainActivity extends Activity{
 		}
 	
 		dumpData();
+		
+        Intent intent = new Intent(this, StopView.class);
+        intent.putExtra("JSON Stop", json);
+        startActivity(intent);
+		
 		//TODO: start an activity with the new stop.
     }
     
