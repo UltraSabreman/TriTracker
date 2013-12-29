@@ -33,7 +33,7 @@ public class BussArrayAdaptor extends ArrayAdapter<Buss> {
 	// to inflate it basically means to render, or show, the view.
 	if (v == null) {
 		LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		v = inflater.inflate(R.layout.fav_stop_layout, null);
+		v = inflater.inflate(R.layout.buss_layout, null);
 	}
 
 	Buss curBuss = busses.get(position);
@@ -54,23 +54,30 @@ public class BussArrayAdaptor extends ArrayAdapter<Buss> {
 	    
 	    Shedule.setText("Scheduled at: " + s);
 	    
-	    Date est = Util.subtractDates(new Date(), curBuss.EstimatedTime);
-	    if (est.getMinutes() < 30) {
-	    	formatter = new SimpleDateFormat("mm");
-	    	s = (formatter.format(est) + " Min");
-	    	Time.setTextColor(Color.parseColor("#5CC439"));
-	    } else if(est.getMinutes() > 30 && est.getMinutes() < 60){
-	    	formatter = new SimpleDateFormat("mm");
-	    	s = formatter.format(est) + " Min";
-	    	Time.setTextColor(Color.parseColor("#FACF11"));
-	    } else {
-	    	formatter = new SimpleDateFormat("mm");
-	    	s = formatter.format(est) + " Min";
-	    	Time.setTextColor(Color.parseColor("#ED4040"));
+	    if (curBuss.Status.compareTo("estimated") == 0) { 
+		    Date est = new Date(curBuss.EstimatedTime.getTime() - new Date().getTime());
+		    if (est.getMinutes() < 30) {
+		    	formatter = new SimpleDateFormat("mm");
+		    	s = (formatter.format(est) + " Min");
+		    	if (est.getMinutes() < 10)
+		    		s = s.replaceFirst("0", "");
+		    	
+		    	Time.setTextColor(Color.parseColor("#5CC439"));
+		    } else if(est.getMinutes() > 30 && est.getMinutes() < 60){
+		    	formatter = new SimpleDateFormat("mm");
+		    	s = formatter.format(est) + " Min";
+		    	Time.setTextColor(Color.parseColor("#FACF11"));
+		    } else {
+		    	formatter = new SimpleDateFormat("h");
+		    	s = formatter.format(est) + " Hour(s)";
+		    	Time.setTextColor(Color.parseColor("#ED4040"));
+		    }	  
+		    Time.setText(s);
+	    }else{
+	    	Time.setTextColor(Color.parseColor("#000000"));
+	    	Time.setText("No GPS");
 	    }
-	    	
 	    
-	    Time.setText(String.valueOf(curBuss.SignShort));	    
 	}
 
     

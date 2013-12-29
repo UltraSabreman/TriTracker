@@ -1,11 +1,12 @@
 package com.example.tritracker;
 
+import java.io.Serializable;
 import java.util.Date;
 //import java.util.Vector;
 
 import com.example.tritracker.json.Arrival;
 
-public class Buss {
+public class Buss implements Serializable {
 	public int Route = -1;
 	public boolean Detouring;
 	public String Status;

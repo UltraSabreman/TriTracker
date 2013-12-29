@@ -1,14 +1,7 @@
 package com.example.tritracker;
 
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
 import org.apache.http.HttpResponse;
@@ -20,58 +13,44 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.view.KeyEvent;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
-import com.example.tritracker.json.Arrival;
 import com.example.tritracker.json.ResultSet;
 import com.example.tritracker.json.results;
 import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
 
-class JsonWrapper {
-	
-	public ArrayList<Stop> favorites = new ArrayList<Stop>();
+public class HistoryView extends Activity {
 	public ArrayList<Stop> history = new ArrayList<Stop>();
-	
-	public JsonWrapper(ArrayList<Stop> fav, ArrayList<Stop> hist) {
-		favorites = fav;
-		history = hist;
+	HistStopArrayAdaptor histAdaptor;
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_history_view);
+		Util.parents.push(getClass());
+		
+		getActionBar().setDisplayHomeAsUpEnabled(true);
+		
+		subscribeToEdit();
+		initList();
 	}
-}
-
-public class MainActivity extends Activity{
-	private ArrayList<Stop> favorites = new ArrayList<Stop>();
-	private ArrayList<Stop> history = new ArrayList<Stop>();
-	FavStopArrayAdaptor favAdaptor;
-
 	
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);   
-        Util.parents.push(getClass());
-        
-       //File t = new File(getString(R.string.data_path));
-       //t.delete();
-        
-        readData();
-        subscribeToEdit();        
-        initList();
-    }
-    
+	
     private void subscribeToEdit(){
         EditText edit = (EditText) findViewById(R.id.UIStopIDBox);
         
@@ -89,11 +68,27 @@ public class MainActivity extends Activity{
     }
     
     private void initList(){
-        ListView view = (ListView) findViewById(R.id.UIStopList);
-
-        favAdaptor=new FavStopArrayAdaptor(this, favorites);       
-        view.setAdapter(favAdaptor);
+		ListView view = (ListView) findViewById(R.id.UIHistoryList);
+		histAdaptor=new HistStopArrayAdaptor(this, history);
+		view.setAdapter(histAdaptor);
+		
+		Intent intent = getIntent();
+		int count = intent.getIntExtra("count", 0);
+		for (int i = 0; i < count; i++) {
+			history.add((Stop)intent.getParcelableExtra("Stop"+i));
+		}
+		
+		histAdaptor.notifyDataSetChanged();
                
+		view.setOnItemClickListener(new OnItemClickListener() {
+			  public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
+				  Stop temp = history.get(position);
+				  if (temp != null) {
+					  	new JsonRequest().execute("http://developer.trimet.org/ws/V1/arrivals?locIDs="+temp.StopID+"&json=true&appID="+getString(R.string.appid));
+				  }
+			  }
+		});
+		
         // Create a ListView-specific touch listener. ListViews are given special treatment because
         // by default they handle touches for their list items... i.e. they're in charge of drawing
         // the pressed state (the list selector), handling list item clicks, etc.
@@ -108,10 +103,10 @@ public class MainActivity extends Activity{
                             @Override
                             public void onDismiss(ListView listView, int[] reverseSortedPositions) {
                                 for (int position : reverseSortedPositions) {
-                                	favAdaptor.remove(favAdaptor.getItem(position));
+                                	histAdaptor.remove(histAdaptor.getItem(position));
                                 	Toast.makeText(getApplicationContext(), "Removed Stop", android.R.integer.config_shortAnimTime).show();
                                 }
-                                favAdaptor.notifyDataSetChanged();
+                                histAdaptor.notifyDataSetChanged();
                             }
                         });
         view.setOnTouchListener(touchListener);
@@ -119,96 +114,26 @@ public class MainActivity extends Activity{
         // we don't look for swipes.
         view.setOnScrollListener(touchListener.makeScrollListener());
     }
-    
-    private void readData() {
-		try {
-			BufferedReader br = new BufferedReader(new InputStreamReader(openFileInput(getString(R.string.data_path))));
-			
-			String fileContents = "";
-			String line;
-			while ((line = br.readLine()) != null){
-				fileContents += line;
-			}
-			
-			Gson gson = new Gson();
-			JsonWrapper wrap = gson.fromJson(fileContents, JsonWrapper.class);
-			
-			favorites = new ArrayList<Stop>(wrap.favorites);
-			history = new ArrayList<Stop>(wrap.history);
-			
-			//TODO dtopthe busses from being written
-			br.close();
-		}catch (JsonSyntaxException e) { 
-			
-		}catch (FileNotFoundException e) {
-			
-		}catch (IOException e) {  
-		
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    }
-    private void dumpData(){
-		try {
-			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(openFileOutput(getString(R.string.data_path), Context.MODE_PRIVATE)));
-			
-			Gson gson = new Gson();
-			JsonWrapper wrap = new JsonWrapper(favorites, history);
-			String data = gson.toJson(wrap);
-			
-			bw.write(data);		
-			bw.close();
-		}catch (JsonSyntaxException e) {
-			
-		}catch (FileNotFoundException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}catch (IOException e2) {
-			// TODO Auto-generated catch block
-						e2.printStackTrace();
-		} 		
-    }
-    
-    @Override
-    public void onDestroy() {
-    	super.onDestroy();
-    	dumpData();
-    }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-	    MenuInflater inflater = getMenuInflater();
-	    inflater.inflate(R.menu.main_action_bar, menu);
-	    return super.onCreateOptionsMenu(menu);
-    }    
-    
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.history_view, menu);
+		return true;
+	}
+	
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle presses on the action bar items
         switch (item.getItemId()) {
-            case R.id.action_search:
-                
-            	Toast.makeText(getApplicationContext(), "Not implimented yet. Sorry!", Toast.LENGTH_LONG).show();
-                return true;
-            case R.id.action_settings:            	 
-        
-                Toast.makeText(getApplicationContext(), "Not implimented yet. Sorry!", Toast.LENGTH_LONG).show();
-                return true;
-            case R.id.action_history:
-            	Intent intent = new Intent(this, HistoryView.class);
-                intent.putExtra("count", history.size());
-                int i = 0;
-                
-                for (Stop s : history)
-                	intent.putExtra("Stop"+(i++), s);
-                
-                startActivity(intent);
-            default:
-                return super.onOptionsItemSelected(item);
+        case android.R.id.home:
+        	Intent parentActivityIntent = new Intent(this, Util.parents.pop());
+        	parentActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        	//startActivity(parentActivityIntent);
+            NavUtils.navigateUpTo(this, parentActivityIntent);
+            return true;
         }
+        return super.onOptionsItemSelected(item);
     }
-    
     
     public class JsonRequest extends AsyncTask<String, String, String> {
     	@Override
@@ -256,16 +181,13 @@ public class MainActivity extends Activity{
     		
     		if (!histHas)
     			history.add(tempStop);
-    	
-    		dumpData();
     		
+    		Util.parents.push(getClass());
             Intent intent = new Intent(getApplicationContext(), StopView.class);
             intent.putExtra("JSON Stop", result);
-            Util.parents.push(getClass());
             startActivity(intent);
-
         }
         
     }
-}
 
+}

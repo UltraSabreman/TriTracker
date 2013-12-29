@@ -4,10 +4,17 @@
     android:versionCode="1"
     android:versionName="1.0" >
 
+    <supports-screens
+        android:anyDensity="true"
+        android:largeScreens="true"
+        android:normalScreens="true"
+        android:resizeable="true"
+        android:smallScreens="true" />
+
     <uses-permission android:name="android.permission.INTERNET" />
 
     <uses-sdk
-        android:minSdkVersion="14"
+        android:minSdkVersion="16"
         android:targetSdkVersion="19" />
 
     <application
@@ -26,9 +33,15 @@
             </intent-filter>
         </activity>
         <activity
-            android:icon="@drawable/ic_launcher"
             android:name="com.example.tritracker.StopView"
-            android:label="@string/title_activity_stop_view" >
+            android:icon="@drawable/ic_launcher">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.tritracker.MainActivity" />
+        </activity>
+        <activity
+            android:name="com.example.tritracker.HistoryView"
+            android:label="@string/title_activity_history_view" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.tritracker.MainActivity" />

@@ -1,9 +1,15 @@
 package com.example.tritracker;
 
+import java.util.ArrayList;
+
+import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.TaskStackBuilder;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
+import android.text.AndroidCharacter;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
@@ -16,15 +22,16 @@ import com.google.gson.Gson;
 public class StopView extends Activity {
 	private Stop stop;
 	private BussArrayAdaptor ar;
+	private ArrayList<Buss> busses = new ArrayList<Buss>();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_stop_view);
+		Util.parents.push(getClass());
 		
 		getActionBar().setDisplayHomeAsUpEnabled(true);
-		
-		
+				
 		Intent intent = getIntent();
 		String json = intent.getStringExtra("JSON Stop");
 		
@@ -37,19 +44,21 @@ public class StopView extends Activity {
     	
     	setTitle(stop.Name);
 		
-    	initList(rs);
+    	initList(rs);    	
 	}
 	
 	void initList(ResultSet rs) {
-		//TODO is this running beofre activity is initialized propely?
 		ListView view = (ListView) findViewById(R.id.UIBussList);
-		ar = new BussArrayAdaptor(this, stop.BussLines);
+		ar = new BussArrayAdaptor(this, busses);
 		view.setAdapter(ar);
 		
-		for (Arrival a : rs.arrival)
-			stop.BussLines.add(new Buss(a));
+		if (rs.arrival != null)
+		{
+			for (Arrival a : rs.arrival)
+				busses.add(new Buss(a));
 	
-		ar.notifyDataSetChanged();
+			ar.notifyDataSetChanged();
+		}
 	}
 
 	@Override
@@ -63,7 +72,11 @@ public class StopView extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
         case android.R.id.home:
-            NavUtils.navigateUpFromSameTask(this);
+        	Intent parentActivityIntent = new Intent(this, Util.parents.pop());
+        	parentActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        	//startActivity(parentActivityIntent);
+            NavUtils.navigateUpTo(this, parentActivityIntent);
+            
             return true;
         }
         return super.onOptionsItemSelected(item);

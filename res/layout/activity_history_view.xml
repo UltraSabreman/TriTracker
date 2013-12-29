@@ -6,7 +6,7 @@
     android:showDividers="middle" >
 
     <ListView
-        android:id="@+id/UIStopList"
+        android:id="@+id/UIHistoryList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="61.93"
@@ -23,5 +23,4 @@
         android:selectAllOnFocus="true" 
         android:layout_weight="2">
 	</EditText>
-	
 </LinearLayout>

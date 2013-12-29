@@ -10,12 +10,12 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-public class StopArrayAdaptor extends ArrayAdapter<Stop> {
+public class HistStopArrayAdaptor extends ArrayAdapter<Stop> {
   //private final Context context;
   private final ArrayList<Stop> stops;
 
-  public StopArrayAdaptor(Context context, ArrayList<Stop> stops) {
-    super(context, R.layout.fav_stop_layout, stops);
+  public HistStopArrayAdaptor(Context context, ArrayList<Stop> stops) {
+    super(context, R.layout.hist_stop_layout, stops);
     //this.context = context;
     this.stops = stops;
   }
@@ -30,14 +30,14 @@ public class StopArrayAdaptor extends ArrayAdapter<Stop> {
 	// to inflate it basically means to render, or show, the view.
 	if (v == null) {
 		LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		v = inflater.inflate(R.layout.fav_stop_layout, null);
+		v = inflater.inflate(R.layout.hist_stop_layout, null);
 	}
 
 	Stop curStop = stops.get(position);
 
 	if (curStop != null) {
-	    TextView stopName = (TextView)  v.findViewById(R.id.StopName);
-	    TextView stopID = (TextView)  v.findViewById(R.id.LineNumber);
+	    TextView stopName = (TextView) v.findViewById(R.id.StopName);
+	    TextView stopID = (TextView) v.findViewById(R.id.StopID);
 	    
 	    stopID.setText(String.valueOf(curStop.StopID));
 	    stopID.setTextColor(Color.parseColor("#919191"));
