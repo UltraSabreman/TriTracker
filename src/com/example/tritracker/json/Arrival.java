@@ -11,6 +11,6 @@ public class Arrival {
 	public String estimated;
 	public int route;
 	public String fullSign;
-	
+
 	public Map<String, Object> otherProperties = new HashMap<String, Object>();
 }

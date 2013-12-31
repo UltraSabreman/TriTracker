@@ -7,6 +7,9 @@
     <string name="action_search">Find Stops</string>
     <string name="title_activity_display_message">NUSDFSF</string>
     <string name="action_history">Stop History</string>
+    <string name="action_favorite">Add/Remove From Favorites</string>
+    <string name="action_order_stop">Sort Stops</string>
+    <string name="action_order_buss">Sort Busses</string>
     <string name="fav_empty">No Favorites</string>
     <string name="hist_emtpy">No History</string>
     <string name="data_path">tri-tracker-data.json</string>

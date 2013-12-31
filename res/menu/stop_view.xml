@@ -1,9 +1,27 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
+
+    
+    <item 
+        android:id="@+id/action_favorite"
+        android:title="@string/action_favorite"
+        android:icon="@drawable/ic_action_not_important"
+        android:showAsAction="always"/>
+    
+    <item android:id="@+id/action_search"
+          android:icon="@drawable/ic_action_locate"
+          android:title="@string/action_search"
+          android:showAsAction="always" />
+    <item
+        android:id="@+id/action_order"
+        android:showAsAction="never"
+        android:title="@string/action_order_buss"/>
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
         android:showAsAction="never"
         android:title="@string/action_settings"/>
+    
+
 
 </menu>
