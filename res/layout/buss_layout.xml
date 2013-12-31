@@ -7,14 +7,13 @@
 
 	<TextView
 		android:id="@+id/LineNumber"
-		android:layout_width="wrap_content"
+		android:layout_width="60dp"
 		android:layout_height="fill_parent"
 		android:layout_alignParentLeft="true"
-		android:ellipsize="marquee"
 		android:gravity="center"
-		android:marqueeRepeatLimit="marquee_forever"
-		android:maxLines="1"
-		android:textSize="26sp" />
+		android:singleLine="true"
+		android:textSize="26sp" 
+		android:text="999"/>
 
 	<TextView
 		android:id="@+id/Schedule"
@@ -26,7 +25,8 @@
 		android:maxLines="1"
 		android:paddingLeft="@dimen/activity_horizontal_margin"
 		android:textColor="@android:color/darker_gray"
-		android:textSize="12sp" />
+		android:textSize="12sp" 
+		android:text="Scheduled at: 12:28 PM" />
 
 	<TextView
 		android:id="@+id/Time"
@@ -37,7 +37,8 @@
 		android:gravity="center"
 		android:maxLines="1"
 		android:textColor="@android:color/holo_green_dark"
-		android:textSize="16sp" />
+		android:textSize="16sp" 
+		android:text="5 Min" />
 
 	<TextView
 		android:id="@+id/LineName"
@@ -45,10 +46,12 @@
 		android:layout_height="wrap_content"
 		android:layout_alignLeft="@+id/Schedule"
 		android:layout_alignTop="@+id/LineNumber"
-		android:ellipsize="end"
-		android:maxEms="10"
-		android:maxLines="1"
+		android:ellipsize="marquee"
+		android:scrollHorizontally="true"
+       	android:marqueeRepeatLimit ="marquee_forever" 
+       	android:singleLine="true"
 		android:textColor="@android:color/holo_blue_dark"
-		android:textSize="16sp" />
+		android:textSize="16sp" 
+		android:text="Green to City Ctr" />
 
 </RelativeLayout>

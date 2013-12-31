@@ -8,6 +8,7 @@ import java.util.Date;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable.Orientation;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,27 +49,46 @@ public class BussArrayAdaptor extends ArrayAdapter<Buss> {
 			TextView Shedule = (TextView) v.findViewById(R.id.Schedule);
 			TextView Time = (TextView) v.findViewById(R.id.Time);
 
-			LineNumber.setText(String.valueOf(curBuss.Route));
-			String tempSing = curBuss.SignShort.replace(
-					String.valueOf(curBuss.Route), "");
-			LineName.setText(tempSing);
+			String route = "";
+			if (curBuss.SignShort.contains(String.valueOf(curBuss.Route))) 
+				route = String.valueOf(curBuss.Route);
+			else
+				route = "MAX";
+			LineNumber.setText(route);
+			
+			String sign = "";
+			if (GlobalData.Orientation == 2 ) { //ORIENTATION_LANDSCAPE
+				if (route.compareTo("MAX") == 0)
+					sign = curBuss.SignLong.replace("MAX ", "");
+				else
+					sign = curBuss.SignLong;
+			} else {
+				sign = curBuss.SignShort.replace(String.valueOf(curBuss.Route + " "), "");
+			}
+			LineName.setText(sign);			
+			LineName.setSelected(true);
+			
 
 			Format formatter = new SimpleDateFormat("hh:mm a");
 			String s = formatter.format(curBuss.ScheduledTime);
 
 			Shedule.setText("Scheduled at: " + s);
-
+			
 			if (curBuss.Status.compareTo("estimated") == 0) {
-				Date est = new Date(curBuss.EstimatedTime.getTime()
-						- new Date().getTime());
-				if (est.getMinutes() < 30) {
-					formatter = new SimpleDateFormat("mm");
-					s = (formatter.format(est) + " Min");
-					if (est.getMinutes() < 10)
-						s = s.replaceFirst("0", "");
-
+				Date est = new Date(curBuss.EstimatedTime.getTime()	- new Date().getTime());
+				int min = est.getMinutes();
+				
+				if (min < 30) {
+					if (min == 0)
+						s = "Due";
+					else {
+						formatter = new SimpleDateFormat("mm");
+						s = (formatter.format(est) + " Min");
+						if (min < 10)
+							s = s.replaceFirst("0", "");
+					}
 					Time.setTextColor(Color.parseColor("#5CC439"));
-				} else if (est.getMinutes() > 30 && est.getMinutes() < 60) {
+				} else if (min > 30 && min < 60) {
 					formatter = new SimpleDateFormat("mm");
 					s = formatter.format(est) + " Min";
 					Time.setTextColor(Color.parseColor("#FACF11"));

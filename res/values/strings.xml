@@ -18,5 +18,7 @@
 	<string name="undo">Undo</string>
 	<string name="title_activity_history_view">History</string>
 	<string name="title_activity_favorites_view">Favorites</string>
+	<string name="no_stop">Invalid Stop ID</string>
+	<string name="no_stop_m">There is no stop with the id: </string>
 
 </resources>

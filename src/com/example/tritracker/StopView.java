@@ -1,11 +1,15 @@
 package com.example.tritracker;
 
+import android.R.color;
 import android.app.Activity;
 import android.content.Intent;
+import android.opengl.Visibility;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,17 +31,41 @@ public class StopView extends Activity {
 		TextView StopDir = (TextView) findViewById(R.id.UIStopInfoDirection);
 		
 		StopName.setText(GlobalData.CurrentStop.Name);
+		StopName.setSelected(true);
 		StopDir.setText(GlobalData.CurrentStop.Direction);
-		
+				
 		initList();		
 		invalidateOptionsMenu();
 	}
-
-	void initList() {
-		ListView view = (ListView) findViewById(R.id.UIBussList);
-		ar = new BussArrayAdaptor(this, GlobalData.CurrentStop.Busses);
-		view.setAdapter(ar);
+	
+	@Override
+	public void onRestart() {
+		GlobalData.Orientation = getResources().getConfiguration().orientation;
 		ar.notifyDataSetChanged();
+		super.onRestart();
+	}
+	
+	/*@Override
+	public void onDestroy() {
+		GlobalData.Orientation = getResources().getConfiguration().orientation;
+		ar.notifyDataSetChanged();
+		super.onDestroy();
+	}*/
+	
+	void initList() {
+		if (GlobalData.CurrentStop.Busses == null || GlobalData.CurrentStop.Busses.size() == 0) {
+			TextView arrival = (TextView) findViewById(R.id.NoArrivals);
+			arrival.setVisibility(View.VISIBLE);
+			if (ar != null) {
+				ar.notifyDataSetInvalidated();
+				ar.clear();
+			}			
+		}else {
+			ListView view = (ListView) findViewById(R.id.UIBussList);		
+			ar = new BussArrayAdaptor(this, GlobalData.CurrentStop.Busses);
+			view.setAdapter(ar);
+			ar.notifyDataSetChanged();
+		}
 	}
 
 	@Override

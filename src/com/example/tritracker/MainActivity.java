@@ -15,7 +15,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
-	FavStopArrayAdaptor favAdaptor;
+	StopArrayAdaptor favAdaptor;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -34,12 +34,28 @@ public class MainActivity extends Activity {
 		favAdaptor.notifyDataSetChanged();
 		super.onResume();
 	}
+	
+	@Override
+	public void onRestart() {
+		GlobalData.Orientation = getResources().getConfiguration().orientation;
+		favAdaptor.notifyDataSetChanged();
+		super.onRestart();
+	}
+	
+	@Override
+	public void onDestroy() {
+		Util.dumpData(getApplicationContext());
+		GlobalData.Orientation = getResources().getConfiguration().orientation;
+		favAdaptor.notifyDataSetChanged();
+		super.onDestroy();
+	}
 
 	private void initList() {
 		ListView view = (ListView) findViewById(R.id.UIStopList);
 
-		favAdaptor = new FavStopArrayAdaptor(this, GlobalData.Favorites);
+		favAdaptor = new StopArrayAdaptor(this, GlobalData.Favorites, true);
 		view.setAdapter(favAdaptor);
+		final Activity testAct = (Activity)this;
 
 		view.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> arg0, View arg1,
@@ -47,7 +63,7 @@ public class MainActivity extends Activity {
 				Stop temp = GlobalData.Favorites.get(position);
 				if (temp != null) {
 					GlobalData.CurrentStop = temp;
-					new JsonRequest(getApplicationContext())
+					new JsonRequest(getApplicationContext(), testAct)
 							.execute("http://developer.trimet.org/ws/V1/arrivals?locIDs="
 									+ temp.StopID
 									+ "&json=true&appID="
@@ -87,12 +103,6 @@ public class MainActivity extends Activity {
 		// ListView scrolling,
 		// we don't look for swipes.
 		view.setOnScrollListener(touchListener.makeScrollListener());
-	}
-
-	@Override
-	public void onDestroy() {
-		Util.dumpData(getApplicationContext());
-		super.onDestroy();
 	}
 
 	@Override

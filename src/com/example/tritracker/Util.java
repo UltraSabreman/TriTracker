@@ -65,7 +65,7 @@ public class Util {
 						|| (actionId == EditorInfo.IME_ACTION_DONE)) {
 					EditText edit = (EditText) a.findViewById(R.id.UIStopIDBox);
 					// GlobalData.CurrentStop =
-					new JsonRequest(c)
+					new JsonRequest(c, a)
 							.execute("http://developer.trimet.org/ws/V1/arrivals?locIDs="
 									+ edit.getText().toString()
 									+ "&json=true&appID="

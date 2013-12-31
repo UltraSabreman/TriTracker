@@ -19,6 +19,17 @@
 		android:layout_width="match_parent"
 		android:layout_height="1dp"
 		android:layout_above="@+id/UIStopInfo"/>
+	
+	<TextView 
+		android:id="@+id/NoArrivals"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:layout_above="@+id/UIStopInfo"
+		android:text="No arrival information available."
+		android:textSize="26sp"
+		android:textColor="@color/Red"
+		android:visibility="invisible"
+		android:gravity="center" />
 
 	
 	<RelativeLayout
@@ -32,7 +43,11 @@
 			android:id="@+id/UIStopInfoName"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:text="SE McLoughlin a Park Ave" 
+			android:text="SE McLoughlin a Park Ave"
+			android:ellipsize="marquee"
+			android:scrollHorizontally="true"
+        	android:marqueeRepeatLimit ="marquee_forever" 
+        	android:singleLine="true" 
 			android:textSize="20sp"
 			android:layout_centerHorizontal="true"/>
 

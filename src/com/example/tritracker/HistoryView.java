@@ -15,7 +15,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 public class HistoryView extends Activity {
-	HistStopArrayAdaptor histAdaptor;
+	StopArrayAdaptor histAdaptor;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +37,7 @@ public class HistoryView extends Activity {
 
 	private void initList() {
 		ListView view = (ListView) findViewById(R.id.UIHistoryList);
-		histAdaptor = new HistStopArrayAdaptor(this, GlobalData.History);
+		histAdaptor = new StopArrayAdaptor(this, GlobalData.History, false);
 		view.setAdapter(histAdaptor);
 
 		Intent intent = getIntent();
@@ -49,13 +49,14 @@ public class HistoryView extends Activity {
 
 		histAdaptor.notifyDataSetChanged();
 
+		final Activity testAct = (Activity)this;
 		view.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> arg0, View arg1,
 					int position, long arg3) {
 				Stop temp = GlobalData.History.get(position);
 				if (temp != null) {
 					GlobalData.CurrentStop = temp;
-					new JsonRequest(getApplicationContext())
+					new JsonRequest(getApplicationContext(), testAct)
 							.execute("http://developer.trimet.org/ws/V1/arrivals?locIDs="
 									+ temp.StopID
 									+ "&json=true&appID="
@@ -103,7 +104,19 @@ public class HistoryView extends Activity {
 		getMenuInflater().inflate(R.menu.history_view, menu);
 		return true;
 	}
-
+	@Override
+	public void onRestart() {
+		GlobalData.Orientation = getResources().getConfiguration().orientation;
+		histAdaptor.notifyDataSetChanged();
+		super.onRestart();
+	}
+	
+	@Override
+	public void onDestroy() {
+		GlobalData.Orientation = getResources().getConfiguration().orientation;
+		histAdaptor.notifyDataSetChanged();
+		super.onDestroy();
+	}
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {

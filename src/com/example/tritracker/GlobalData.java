@@ -15,6 +15,7 @@ public class GlobalData {
 	public static int HistOrder = 0;
 	public static ArrayList<Stop> Undos = new ArrayList<Stop>(); // TODO
 	public static Stop CurrentStop = null;
+	public static int Orientation;
 
 	public static JsonWrapper getJsonWrap() {
 		return new JsonWrapper(Favorites, History, FavOrder, HistOrder);

@@ -7,12 +7,14 @@
 
 	<TextView
 		android:id="@+id/StopName"
-		android:layout_width="242dp"
+		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_alignParentLeft="true"
 		android:layout_toLeftOf="@+id/StopID"
-		android:ellipsize="end"
-		android:maxLines="1"
+		android:ellipsize="marquee"
+		android:scrollHorizontally="true"
+       	android:marqueeRepeatLimit ="marquee_forever" 
+       	android:singleLine="true" 
 		android:textSize="16sp"
 		android:textColor="@android:color/holo_blue_dark"/>
 
