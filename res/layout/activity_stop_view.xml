@@ -1,18 +1,50 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical"
-    android:showDividers="middle" 
-    tools:context=".StopView" >
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:orientation="vertical"
+	android:showDividers="middle"
+	tools:context=".StopView" >
 
-    <ListView
-        android:id="@+id/UIBussList"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_centerVertical="true"
-        android:divider="?android:attr/listDivider" >
+	<ListView
+		android:id="@+id/UIBussList"
+		android:layout_width="match_parent"
+		android:layout_height="fill_parent"
+		android:layout_above="@+id/UIseperator"
+		android:divider="?android:attr/listDivider" />
 
-    </ListView>
-    
+	<RelativeLayout
+		android:id="@+id/UIseperator"
+		android:background="@color/TestColor"
+		android:layout_width="match_parent"
+		android:layout_height="1dp"
+		android:layout_above="@+id/UIStopInfo"/>
+
+	
+	<RelativeLayout
+		android:id="@+id/UIStopInfo"
+		android:layout_width="match_parent"
+		android:layout_height="50dp"
+		android:layout_alignParentBottom="true"
+		android:layout_centerHorizontal="true" >
+
+		<TextView
+			android:id="@+id/UIStopInfoName"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="SE McLoughlin a Park Ave" 
+			android:textSize="20sp"
+			android:layout_centerHorizontal="true"/>
+
+		<TextView
+			android:id="@+id/UIStopInfoDirection"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_below="@+id/UIStopInfoName"
+			android:text="Southbound" 
+			android:textSize="16sp"
+			android:layout_centerHorizontal="true"
+			android:textColor="@android:color/darker_gray"/>
+	</RelativeLayout>
+
 </RelativeLayout>

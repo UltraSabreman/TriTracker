@@ -27,8 +27,8 @@ public class Stop implements Parcelable {
 		StopID = s.StopID;
 		Direction = new String(s.Direction);
 		Busses.clear();
-		for (Buss b: s.Busses)
-			Busses.add(new Buss(b));			
+		for (Buss b : s.Busses)
+			Busses.add(new Buss(b));
 	}
 
 	public String toString() {

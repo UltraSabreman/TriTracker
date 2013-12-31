@@ -7,6 +7,7 @@ import android.support.v4.app.NavUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class StopView extends Activity {
@@ -20,9 +21,15 @@ public class StopView extends Activity {
 
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 
-		setTitle(GlobalData.CurrentStop.Name);
+		setTitle("ID: " + GlobalData.CurrentStop.StopID);
 
-		initList();
+		TextView StopName = (TextView) findViewById(R.id.UIStopInfoName);
+		TextView StopDir = (TextView) findViewById(R.id.UIStopInfoDirection);
+		
+		StopName.setText(GlobalData.CurrentStop.Name);
+		StopDir.setText(GlobalData.CurrentStop.Direction);
+		
+		initList();		
 		invalidateOptionsMenu();
 	}
 
@@ -71,15 +78,15 @@ public class StopView extends Activity {
 			return true;
 		case R.id.action_settings:
 			Util.showToast("Not in yet", Toast.LENGTH_SHORT);
-			return true;			
-		case R.id.action_order:
+			return true;
+		case R.id.action_sort:
 			Util.showToast("Not in yet", Toast.LENGTH_SHORT);
-			
-			return true;		
+			return true;
 		case R.id.action_favorite:
 			if (Util.favHasStop(GlobalData.CurrentStop)) {
 				GlobalData.Favorites.remove(GlobalData.CurrentStop);
-				Util.showToast("Removed stop from favorites.", Toast.LENGTH_SHORT);
+				Util.showToast("Removed stop from favorites.",
+						Toast.LENGTH_SHORT);
 			} else {
 				GlobalData.Favorites.add(GlobalData.CurrentStop);
 				Util.showToast("Added stop to favorites.", Toast.LENGTH_SHORT);

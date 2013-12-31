@@ -61,9 +61,10 @@ public class JsonRequest extends AsyncTask<String, String, String> {
 		ResultSet rs = gson.fromJson(result, results.class).resultSet;
 
 		Stop temp = new Stop(rs.location[0]);
+
 		for (Arrival a : rs.arrival)
 			temp.Busses.add(new Buss(a));
-		
+
 		GlobalData.CurrentStop = temp;
 
 		if (!Util.histHasStop(GlobalData.CurrentStop))

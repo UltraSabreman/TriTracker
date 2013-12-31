@@ -1,18 +1,24 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    <item android:id="@+id/action_search"
-          android:icon="@drawable/ic_action_locate"
-          android:title="@string/action_search"
-          android:showAsAction="always" />
-    
-    <item
-        android:id="@+id/action_order"
-        android:showAsAction="never"
-        android:title="@string/action_order_stop"/>
-    <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:showAsAction="never"
-        android:title="@string/action_settings"/>
+	<item
+		android:id="@+id/action_clear"
+		android:icon="@drawable/ic_notify_clear_normal"
+		android:showAsAction="always"
+		android:title="@string/action_clear"/>
+	
+	<item
+		android:id="@+id/action_search"
+		android:icon="@drawable/ic_action_locate"
+		android:showAsAction="always"
+		android:title="@string/action_search"/>
+	<item
+		android:id="@+id/acion_sort"
+		android:showAsAction="never"
+		android:title="@string/action_order_stop"/>
+	<item
+		android:id="@+id/action_sort"
+		android:orderInCategory="100"
+		android:showAsAction="never"
+		android:title="@string/action_settings"/>
 
 </menu>

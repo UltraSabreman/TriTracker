@@ -1,24 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
-    <!-- Search, should appear as action button -->
-    <item android:id="@+id/action_history"
-          android:icon="@drawable/ic_action_reply"
-          android:title="@string/action_history"
-          android:showAsAction="ifRoom" />
-        
-    <item android:id="@+id/action_search"
-          android:icon="@drawable/ic_action_locate"
-          android:title="@string/action_search"
-          android:showAsAction="ifRoom" />
 
-    
-    <item
-        android:id="@+id/action_order"
-        android:showAsAction="never"
-        android:title="@string/action_order_stop"/>
-    
-    <!-- Settings, should always be in the overflow -->
-    <item android:id="@+id/action_settings"
-          android:title="@string/action_settings"
-          android:showAsAction="never" />
+	<!-- Search, should appear as action button -->
+	<item
+		android:id="@+id/action_history"
+		android:icon="@drawable/ic_action_reply"
+		android:showAsAction="ifRoom"
+		android:title="@string/action_history"/>
+	<item
+		android:id="@+id/action_search"
+		android:icon="@drawable/ic_action_locate"
+		android:showAsAction="ifRoom"
+		android:title="@string/action_search"/>
+	<item
+		android:id="@+id/action_sort"
+		android:showAsAction="never"
+		android:title="@string/action_order_stop"/>
+
+	<!-- Settings, should always be in the overflow -->
+	<item
+		android:id="@+id/action_settings"
+		android:showAsAction="never"
+		android:title="@string/action_settings"/>
+
 </menu>

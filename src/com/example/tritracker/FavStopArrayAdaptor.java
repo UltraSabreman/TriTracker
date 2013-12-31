@@ -3,7 +3,6 @@ package com.example.tritracker;
 import java.util.ArrayList;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,10 +38,16 @@ public class FavStopArrayAdaptor extends ArrayAdapter<Stop> {
 		if (curStop != null) {
 			TextView stopName = (TextView) v.findViewById(R.id.StopName);
 			TextView stopID = (TextView) v.findViewById(R.id.StopID);
+			TextView lines = (TextView) v.findViewById(R.id.LineNames);
 
 			stopID.setText(String.valueOf(curStop.StopID));
-			stopID.setTextColor(Color.parseColor("#919191"));
 			stopName.setText(curStop.Name);
+			
+			String s = "Lines: ";
+			int i = 0;
+			for (Buss b :  curStop.Busses)
+				s += b.Route + (i++ < curStop.Busses.size() ? ", " : "");
+			lines.setText(s);
 
 		}
 

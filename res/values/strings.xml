@@ -1,20 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">TriTracker</string>
-    <string name="action_settings">Settings</string>
-    <string name="stopid">Enter Stop ID</string>
-    <string name="action_search">Find Stops</string>
-    <string name="title_activity_display_message">NUSDFSF</string>
-    <string name="action_history">Stop History</string>
-    <string name="action_favorite">Add/Remove From Favorites</string>
-    <string name="action_order_stop">Sort Stops</string>
-    <string name="action_order_buss">Sort Busses</string>
-    <string name="fav_empty">No Favorites</string>
-    <string name="hist_emtpy">No History</string>
-    <string name="data_path">tri-tracker-data.json</string>
-    <string name="appid">33F1CF006B33C60A8242EDA0E</string>
-    <string name="undo">Undo</string>
-    <string name="title_activity_history_view">Stop History</string>
+	<string name="app_name">TriTracker</string>
+	<string name="action_settings">Settings</string>
+	<string name="stopid">Enter Stop ID</string>
+	<string name="action_search">Find Stops</string>
+	<string name="title_activity_display_message">NUSDFSF</string>
+	<string name="action_history">Stop History</string>
+	<string name="action_favorite">Add/Remove From Favorites</string>
+	<string name="action_order_stop">Sort Stops</string>
+	<string name="action_clear">Clear History</string>
+	<string name="action_order_buss">Sort Busses</string>
+	<string name="fav_empty">No Favorites</string>
+	<string name="hist_emtpy">No History</string>
+	<string name="data_path">tri-tracker-data.json</string>
+	<string name="appid">33F1CF006B33C60A8242EDA0E</string>
+	<string name="undo">Undo</string>
+	<string name="title_activity_history_view">History</string>
+	<string name="title_activity_favorites_view">Favorites</string>
 
 </resources>

@@ -1,28 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="?android:attr/listPreferredItemHeightSmall"
-    android:orientation="horizontal"
-    android:padding="6dip" >
+	android:layout_width="fill_parent"
+	android:layout_height="?android:attr/listPreferredItemHeightSmall"
+	android:orientation="horizontal"
+	android:padding="6dip" >
 
-    <TextView
-        android:id="@+id/StopName"
-        android:layout_width="242dp"
-        android:layout_height="26dip"
-        android:layout_alignParentLeft="true"
-        android:layout_centerVertical="true"
-        android:layout_toLeftOf="@+id/StopID"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:textSize="16sp" />
+	<TextView
+		android:id="@+id/StopName"
+		android:layout_width="242dp"
+		android:layout_height="wrap_content"
+		android:layout_alignParentLeft="true"
+		android:layout_toLeftOf="@+id/StopID"
+		android:ellipsize="end"
+		android:maxLines="1"
+		android:textSize="16sp"
+		android:textColor="@android:color/holo_blue_dark"/>
 
-    <TextView
-        android:id="@+id/StopID"
-        android:layout_width="wrap_content"
-        android:layout_height="26dip"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:maxLines="1"
-        android:textSize="16sp" />
+	<TextView
+		android:id="@+id/StopID"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentRight="true"
+		android:maxLines="1"
+		android:textSize="16sp" 
+		android:textColor="@android:color/background_dark" />
+	
+	<TextView
+		android:id="@+id/LineNames"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_below="@+id/StopName"
+		android:maxLines="1"
+		android:textSize="12sp" 
+		android:paddingLeft="@dimen/activity_horizontal_margin"
+		android:textColor="@android:color/darker_gray" />
 
 </RelativeLayout>

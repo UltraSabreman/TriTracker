@@ -1,7 +1,5 @@
 package com.example.tritracker;
 
-import java.io.File;
-
 import com.example.tritracker.json.JsonRequest;
 
 import android.app.Activity;
@@ -16,7 +14,6 @@ import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Toast;
 
-
 public class MainActivity extends Activity {
 	FavStopArrayAdaptor favAdaptor;
 
@@ -25,9 +22,6 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		Util.parents.push(getClass());
-
-		File t = new File(getString(R.string.data_path));
-		t.delete();
 
 		Util.initToast(getApplicationContext());
 		Util.readData(getApplicationContext());
@@ -113,8 +107,9 @@ public class MainActivity extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle presses on the action bar items
 		switch (item.getItemId()) {
-		case R.id.action_order:
-			Util.showToast("Not in yet", Toast.LENGTH_SHORT);		
+		case R.id.action_sort:
+			Util.showToast("Not in yet", Toast.LENGTH_SHORT);
+			return true;
 		case R.id.action_search:
 			Util.showToast("Not in yet", Toast.LENGTH_SHORT);
 			return true;

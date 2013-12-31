@@ -107,23 +107,28 @@ public class HistoryView extends Activity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-			case android.R.id.home:
-				Intent parentActivityIntent = new Intent(this, Util.parents.pop());
-				parentActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
-						| Intent.FLAG_ACTIVITY_NEW_TASK);
-				// startActivity(parentActivityIntent);
-				NavUtils.navigateUpTo(this, parentActivityIntent);
-				return true;
-			case R.id.action_search:
-				Util.showToast("Not in yet", Toast.LENGTH_SHORT);
-				return true;
-			case R.id.action_order:
-				Util.showToast("Not in yet", Toast.LENGTH_SHORT);
-				return true;
-			case R.id.action_settings:
-				Util.showToast("Not in yet", Toast.LENGTH_SHORT);
-				return true;
-			
+		case android.R.id.home:
+			Intent parentActivityIntent = new Intent(this, Util.parents.pop());
+			parentActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+					| Intent.FLAG_ACTIVITY_NEW_TASK);
+			// startActivity(parentActivityIntent);
+			NavUtils.navigateUpTo(this, parentActivityIntent);
+			return true;
+		case R.id.action_clear:
+			GlobalData.History.clear();
+			Util.showToast("History Cleared", Toast.LENGTH_SHORT);
+			histAdaptor.notifyDataSetChanged();
+			return true;
+		case R.id.action_search:
+			Util.showToast("Not in yet", Toast.LENGTH_SHORT);
+			return true;
+		case R.id.action_sort:
+			Util.showToast("Not in yet", Toast.LENGTH_SHORT);
+			return true;
+		case R.id.action_settings:
+			Util.showToast("Not in yet", Toast.LENGTH_SHORT);
+			return true;
+
 		}
 		return super.onOptionsItemSelected(item);
 	}

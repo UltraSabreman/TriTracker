@@ -29,6 +29,7 @@ import com.google.gson.JsonSyntaxException;
 public class Util {
 	public static Stack<Class<?>> parents = new Stack<Class<?>>();
 	private static Toast msg;
+	private static Context c;
 
 	public static Date dateFromString(String s) {
 		if (s == null)
@@ -42,17 +43,17 @@ public class Util {
 		}
 	}
 
-	public static void initToast(Context c) {
-		msg = new Toast(c);
+	public static void initToast(Context ic) {
+		c = ic;
 	}
-	
-	public static void showToast(String s, int d){
-		msg.cancel();
-		msg.setText(s);
-		msg.setDuration(d);
+
+	public static void showToast(String s, int d) {
+		if (msg != null)
+			msg.cancel();
+		msg = Toast.makeText(c, s, d);
 		msg.show();
 	}
-	
+
 	public static void subscribeToEdit(final Context c, final Activity a,
 			int name) {
 		EditText edit = (EditText) a.findViewById(R.id.UIStopIDBox);
@@ -81,21 +82,22 @@ public class Util {
 	public static boolean favHasStop(Stop s) {
 		return (listHasStop(s, GlobalData.Favorites) != null ? true : false);
 	}
-	
+
 	public static boolean histHasStop(Stop s) {
 		return (listHasStop(s, GlobalData.History) != null ? true : false);
 	}
-	
+
 	public static Stop listHasStop(Stop s, ArrayList<Stop> l) {
-		if (s == null) return null;
-		
+		if (s == null)
+			return null;
+
 		for (Stop stop : l)
 			if (s.StopID == stop.StopID)
 				return stop;
-		
+
 		return null;
 	}
-	
+
 	public static void dumpData(Context c) {
 		try {
 			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(
@@ -130,7 +132,8 @@ public class Util {
 			}
 
 			Gson gson = new Gson();
-			GlobalData.JsonWrapper wrap = gson.fromJson(fileContents, GlobalData.JsonWrapper.class);
+			GlobalData.JsonWrapper wrap = gson.fromJson(fileContents,
+					GlobalData.JsonWrapper.class);
 			if (wrap != null) {
 				if (wrap.Favorites != null) {
 					GlobalData.Favorites = new ArrayList<Stop>(wrap.Favorites);
@@ -140,7 +143,7 @@ public class Util {
 					GlobalData.History = new ArrayList<Stop>(wrap.History);
 					GlobalData.HistOrder = wrap.HistOrder;
 				}
-				
+
 			}
 			br.close();
 		} catch (JsonSyntaxException e) {
