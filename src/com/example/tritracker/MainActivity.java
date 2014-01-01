@@ -1,7 +1,5 @@
 package com.example.tritracker;
 
-import com.example.tritracker.json.JsonRequest;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,9 +8,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.tritracker.json.JsonRequest;
 
 public class MainActivity extends Activity {
 	StopArrayAdaptor favAdaptor;
@@ -26,30 +27,40 @@ public class MainActivity extends Activity {
 		Util.initToast(getApplicationContext());
 		Util.readData(getApplicationContext());
 		Util.subscribeToEdit(getApplicationContext(), this, R.id.UIStopIDBox);
+
 		initList();
+		onActivityChange();
 	}
 
 	@Override
 	public void onResume() {
-		favAdaptor.notifyDataSetChanged();
+		onActivityChange();
 		super.onResume();
 	}
 	
 	@Override
 	public void onRestart() {
-		GlobalData.Orientation = getResources().getConfiguration().orientation;
-		favAdaptor.notifyDataSetChanged();
+		onActivityChange();
 		super.onRestart();
 	}
 	
 	@Override
 	public void onDestroy() {
-		Util.dumpData(getApplicationContext());
-		GlobalData.Orientation = getResources().getConfiguration().orientation;
-		favAdaptor.notifyDataSetChanged();
+		onActivityChange();
 		super.onDestroy();
 	}
 
+	private void onActivityChange() {
+		if (GlobalData.Favorites == null || GlobalData.Favorites.size() == 0)
+			((TextView) findViewById(R.id.NoMembers)).setVisibility(View.VISIBLE);
+		else
+			((TextView) findViewById(R.id.NoMembers)).setVisibility(View.INVISIBLE);
+		
+		GlobalData.Orientation = getResources().getConfiguration().orientation;
+		favAdaptor.notifyDataSetChanged();
+		Util.dumpData(getApplicationContext());
+	}
+	
 	private void initList() {
 		ListView view = (ListView) findViewById(R.id.UIStopList);
 
@@ -95,7 +106,7 @@ public class MainActivity extends Activity {
 									android.R.integer.config_shortAnimTime)
 									.show();
 						}
-						favAdaptor.notifyDataSetChanged();
+						onActivityChange();
 					}
 				});
 		view.setOnTouchListener(touchListener);

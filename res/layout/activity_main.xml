@@ -1,4 +1,4 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent"
@@ -8,25 +8,44 @@
 	<ListView
 		android:id="@+id/UIStopList"
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:layout_weight="61.93"
-		android:divider="?android:attr/listDivider" >
-	</ListView>
+		android:layout_height="fill_parent"
+		android:layout_above="@+id/UIseperator"
+		android:divider="?android:attr/listDivider" />
+	
 	<RelativeLayout
 		android:id="@+id/UIseperator"
 		android:background="@color/TestColor"
 		android:layout_width="match_parent"
-		android:layout_height="1dp"/>
+		android:layout_height="1dp"
+		android:layout_above="@+id/UIStopIDBox"/>
+	
 	<EditText
 		android:id="@+id/UIStopIDBox"
 		android:layout_width="match_parent"
-		android:layout_height="36dp"
-		android:layout_weight="2"
-		android:ems="10"
+		android:layout_height="wrap_content"
 		android:hint="@string/stopid"
 		android:inputType="number"
-		android:maxLines="1"
-		android:selectAllOnFocus="true" >
-	</EditText>
-
-</LinearLayout>
+		android:singleLine="true"
+		android:layout_alignParentBottom="true"
+		android:selectAllOnFocus="true"/>
+	
+	<ProgressBar
+    	android:id="@+id/Spinner"
+    	style="?android:attr/progressBarStyleLarge"
+    	android:layout_width="wrap_content"
+    	android:layout_height="wrap_content"
+    	android:layout_centerInParent="true"
+    	android:visibility="invisible"/>
+	
+	<TextView
+		android:id="@+id/NoMembers"
+		android:layout_width="wrap_content"
+    	android:layout_height="wrap_content"
+    	android:gravity="center"
+    	android:layout_centerInParent="true"
+    	android:text="You have nothing in your favorites"
+    	android:layout_above="@+id/UIStopIDBox"
+    	android:textSize="16sp"
+    	android:textColor="@android:color/darker_gray"
+    	android:visibility="invisible"/>
+</RelativeLayout>

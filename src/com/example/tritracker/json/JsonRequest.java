@@ -19,6 +19,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.ProgressBar;
 
 import com.example.tritracker.Buss;
 import com.example.tritracker.GlobalData;
@@ -37,7 +40,7 @@ public class JsonRequest extends AsyncTask<String, String, String> {
 		HttpClient httpclient = new DefaultHttpClient();
 		HttpResponse response;
 		String responseString = null;
-		try {
+		try {			
 			response = httpclient.execute(new HttpGet(uri[0]));
 			StatusLine statusLine = response.getStatusLine();
 			if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
@@ -55,6 +58,7 @@ public class JsonRequest extends AsyncTask<String, String, String> {
 		} catch (IOException e) {
 			// TODO Handle problems..
 		}
+		
 		return responseString;
 	}
 
@@ -64,8 +68,18 @@ public class JsonRequest extends AsyncTask<String, String, String> {
 	}
 
 	@Override
+	protected void onPreExecute() {
+		((ProgressBar) activity.findViewById(R.id.Spinner)).setVisibility(View.VISIBLE);
+		activity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+				WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);		
+	}
+	
+	@Override
 	protected void onPostExecute(String result) {
 		super.onPostExecute(result);
+		((ProgressBar) activity.findViewById(R.id.Spinner)).setVisibility(View.INVISIBLE);
+		activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+		
 		Gson gson = new Gson();
 		results res = gson.fromJson(result, results.class);
 

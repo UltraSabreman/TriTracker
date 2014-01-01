@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class HistoryView extends Activity {
@@ -27,12 +28,24 @@ public class HistoryView extends Activity {
 
 		Util.subscribeToEdit(getApplicationContext(), this, R.id.UIStopIDBox);
 		initList();
+		onActivityChange();
 	}
 
 	@Override
 	public void onResume() {
-		histAdaptor.notifyDataSetChanged();
+		onActivityChange();
 		super.onResume();
+	}
+	
+	private void onActivityChange() {
+		if (GlobalData.History == null || GlobalData.History.size() == 0)
+			((TextView) findViewById(R.id.NoMembers)).setVisibility(View.VISIBLE);
+		else
+			((TextView) findViewById(R.id.NoMembers)).setVisibility(View.INVISIBLE);
+		
+		GlobalData.Orientation = getResources().getConfiguration().orientation;
+		histAdaptor.notifyDataSetChanged();
+		Util.dumpData(getApplicationContext());
 	}
 
 	private void initList() {
@@ -88,7 +101,7 @@ public class HistoryView extends Activity {
 									android.R.integer.config_shortAnimTime)
 									.show();
 						}
-						histAdaptor.notifyDataSetChanged();
+						onActivityChange();
 					}
 				});
 		view.setOnTouchListener(touchListener);
@@ -106,15 +119,13 @@ public class HistoryView extends Activity {
 	}
 	@Override
 	public void onRestart() {
-		GlobalData.Orientation = getResources().getConfiguration().orientation;
-		histAdaptor.notifyDataSetChanged();
+		onActivityChange();
 		super.onRestart();
 	}
 	
 	@Override
 	public void onDestroy() {
-		GlobalData.Orientation = getResources().getConfiguration().orientation;
-		histAdaptor.notifyDataSetChanged();
+		onActivityChange();
 		super.onDestroy();
 	}
 	@Override

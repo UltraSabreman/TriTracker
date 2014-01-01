@@ -183,29 +183,31 @@ public final class R {
         public static final int undobar_divider=0x7f02000e;
     }
     public static final class id {
-        public static final int LineName=0x7f0a000b;
-        public static final int LineNames=0x7f0a000f;
-        public static final int LineNumber=0x7f0a0009;
-        public static final int NoArrivals=0x7f0a0006;
-        public static final int Schedule=0x7f0a000a;
-        public static final int StopID=0x7f0a000e;
-        public static final int StopName=0x7f0a000d;
-        public static final int Time=0x7f0a000c;
-        public static final int UIBussList=0x7f0a0004;
+        public static final int LineName=0x7f0a000d;
+        public static final int LineNames=0x7f0a0011;
+        public static final int LineNumber=0x7f0a000b;
+        public static final int NoArrivals=0x7f0a0008;
+        public static final int NoMembers=0x7f0a0004;
+        public static final int Schedule=0x7f0a000c;
+        public static final int Spinner=0x7f0a0003;
+        public static final int StopID=0x7f0a0010;
+        public static final int StopName=0x7f0a000f;
+        public static final int Time=0x7f0a000e;
+        public static final int UIBussList=0x7f0a0006;
         public static final int UIHistoryList=0x7f0a0000;
         public static final int UIStopIDBox=0x7f0a0002;
-        public static final int UIStopInfo=0x7f0a0005;
-        public static final int UIStopInfoDirection=0x7f0a0008;
-        public static final int UIStopInfoName=0x7f0a0007;
-        public static final int UIStopList=0x7f0a0003;
+        public static final int UIStopInfo=0x7f0a0007;
+        public static final int UIStopInfoDirection=0x7f0a000a;
+        public static final int UIStopInfoName=0x7f0a0009;
+        public static final int UIStopList=0x7f0a0005;
         public static final int UIseperator=0x7f0a0001;
-        public static final int acion_sort=0x7f0a0012;
-        public static final int action_clear=0x7f0a0010;
-        public static final int action_favorite=0x7f0a0016;
-        public static final int action_history=0x7f0a0014;
-        public static final int action_search=0x7f0a0011;
-        public static final int action_settings=0x7f0a0015;
-        public static final int action_sort=0x7f0a0013;
+        public static final int acion_sort=0x7f0a0014;
+        public static final int action_clear=0x7f0a0012;
+        public static final int action_favorite=0x7f0a0018;
+        public static final int action_history=0x7f0a0016;
+        public static final int action_search=0x7f0a0013;
+        public static final int action_settings=0x7f0a0017;
+        public static final int action_sort=0x7f0a0015;
     }
     public static final class integer {
         public static final int undobar_hide_delay=0x7f060000;
@@ -242,6 +244,7 @@ public final class R {
         public static final int title_activity_display_message=0x7f070004;
         public static final int title_activity_favorites_view=0x7f070010;
         public static final int title_activity_history_view=0x7f07000f;
+        public static final int title_activity_loading_overlay=0x7f070013;
         public static final int undo=0x7f07000e;
     }
     public static final class style {
@@ -274,11 +277,12 @@ public final class R {
 	
  API 14 theme customizations can go here. 
          */
-        public static final int AppBaseTheme=0x7f080003;
+        public static final int AppBaseTheme=0x7f080004;
         /**  Application theme. 
  All customizations that are NOT specific to a particular API-level can go here. 
          */
-        public static final int AppTheme=0x7f080004;
+        public static final int AppTheme=0x7f080005;
+        public static final int MyFloatingWindow=0x7f080001;
         /** 
   Copyright 2012 Roman Nurik
 
@@ -298,7 +302,7 @@ public final class R {
 	
          */
         public static final int UndoBar=0x7f080000;
-        public static final int UndoBarButton=0x7f080002;
-        public static final int UndoBarMessage=0x7f080001;
+        public static final int UndoBarButton=0x7f080003;
+        public static final int UndoBarMessage=0x7f080002;
     }
 }

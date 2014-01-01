@@ -20,5 +20,6 @@
 	<string name="title_activity_favorites_view">Favorites</string>
 	<string name="no_stop">Invalid Stop ID</string>
 	<string name="no_stop_m">There is no stop with the id: </string>
+	<string name="title_activity_loading_overlay">LoadingOverlay</string>
 
 </resources>
