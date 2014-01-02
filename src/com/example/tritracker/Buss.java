@@ -33,7 +33,9 @@ public class Buss {
 		SignShort = new String(b.SignShort);
 		SignLong = new String(b.SignLong);
 
-		EstimatedTime = new Date(b.EstimatedTime.getTime());
-		ScheduledTime = new Date(b.ScheduledTime.getTime());
+		if (b.EstimatedTime != null)
+			EstimatedTime = new Date(b.EstimatedTime.getTime());
+		if (b.ScheduledTime != null)
+			ScheduledTime = new Date(b.ScheduledTime.getTime());
 	}
 }

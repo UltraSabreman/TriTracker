@@ -1,6 +1,7 @@
 package com.example.tritracker;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -13,6 +14,7 @@ public class Stop implements Parcelable {
 	public String Name = "Invalid Street";
 	public int StopID = -1;
 	public String Direction = "Up Up and Away!";
+	public Date LastAccesed = null;
 
 	public ArrayList<Buss> Busses = new ArrayList<Buss>();
 
@@ -22,16 +24,20 @@ public class Stop implements Parcelable {
 		Direction = l.dir;
 	}
 
-	public void Update(Stop s) {
+	public void Update(Stop s, boolean shouldUpdateDate) {
 		Name = new String(s.Name);
 		StopID = s.StopID;
 		Direction = new String(s.Direction);
-		Busses.clear();
+		if (shouldUpdateDate && s.LastAccesed != null)
+			LastAccesed = s.LastAccesed;
+		
 		if (s.Busses == null)
 			Busses = null;
-		else
+		else if(Busses != null) {
+			Busses.clear();
 			for (Buss b : s.Busses)
 				Busses.add(new Buss(b));
+		}
 	}
 
 	public String toString() {
@@ -48,6 +54,7 @@ public class Stop implements Parcelable {
 		out.writeString(Name);
 		out.writeInt(StopID);
 		out.writeString(Direction);
+		out.writeLong(LastAccesed.getTime());
 	}
 
 	// this is used to regenerate your object. All Parcelables must have a
@@ -68,5 +75,6 @@ public class Stop implements Parcelable {
 		Name = in.readString();
 		StopID = in.readInt();
 		Direction = in.readString();
+		LastAccesed = new Date(in.readLong());
 	}
 }

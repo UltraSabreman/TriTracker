@@ -12,8 +12,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class StopView extends Activity {
-	private BussArrayAdaptor ar;
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -38,31 +36,30 @@ public class StopView extends Activity {
 	@Override
 	public void onRestart() {
 		GlobalData.Orientation = getResources().getConfiguration().orientation;
-		ar.notifyDataSetChanged();
+		GlobalData.bussAdaptor.notifyDataSetChanged();
 		super.onRestart();
 	}
 	
 	@Override
 	public void onDestroy() {
 		GlobalData.Orientation = getResources().getConfiguration().orientation;
-		//ar.notifyDataSetChanged();
+		//GlobalData.bussAdaptor.notifyDataSetChanged();
 		super.onDestroy();
 	}
 	
 	void initList() {
 		if (GlobalData.CurrentStop.Busses == null || GlobalData.CurrentStop.Busses.size() == 0) {
-			Util.sortBusses();
 			TextView arrival = (TextView) findViewById(R.id.NoArrivals);
 			arrival.setVisibility(View.VISIBLE);
-			if (ar != null) {
-				ar.notifyDataSetInvalidated();
-				ar.clear();
+			if (GlobalData.bussAdaptor != null) {
+				GlobalData.bussAdaptor.notifyDataSetInvalidated();
+				GlobalData.bussAdaptor.clear();
 			}			
 		}else {
 			ListView view = (ListView) findViewById(R.id.UIBussList);		
-			ar = new BussArrayAdaptor(this, GlobalData.CurrentStop.Busses);
-			view.setAdapter(ar);
-			ar.notifyDataSetChanged();
+			GlobalData.bussAdaptor = new BussArrayAdaptor(this, GlobalData.CurrentStop.Busses);
+			view.setAdapter(GlobalData.bussAdaptor);
+			GlobalData.bussAdaptor.notifyDataSetChanged();
 		}
 	}
 
@@ -106,12 +103,15 @@ public class StopView extends Activity {
 			Util.showToast("Not in yet", Toast.LENGTH_SHORT);
 			return true;
 		case R.id.action_sort:
-			if (Util.sortBusses()) {
+			GlobalData.StopOrder = (GlobalData.StopOrder + 1) % 3;
+			if (Util.sortList(2)) {
 				Util.showToast("Busses Sorted By: " + (GlobalData.StopOrder == 0 ? "Name" : (GlobalData.StopOrder == 1 ? "Route" : "Time")), Toast.LENGTH_SHORT);
-				Util.incBussSort();
-				ar.notifyDataSetChanged();
-			} else
+				GlobalData.bussAdaptor.notifyDataSetChanged();
+				
+			} else {
 				Util.showToast("Nothing to sort", Toast.LENGTH_SHORT);
+				GlobalData.StopOrder = (GlobalData.StopOrder - 1) % 3;
+			}
 			return true;
 		case R.id.action_favorite:
 			if (Util.favHasStop(GlobalData.CurrentStop)) {

@@ -13,11 +13,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.tritracker.json.JsonRequest;
+import com.example.tritracker.json.ActiveJSONRequest;
 
 public class MainActivity extends Activity {
-	StopArrayAdaptor favAdaptor;
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -31,6 +29,8 @@ public class MainActivity extends Activity {
 		((TextView) findViewById(R.id.NoMembers)).setText("You have nothing in your favorites");
 		
 		initList();
+		Util.updateAllStops(getApplicationContext());
+		Util.restartTimer(getApplicationContext());
 		onActivityChange();
 	}
 
@@ -59,16 +59,14 @@ public class MainActivity extends Activity {
 			((TextView) findViewById(R.id.NoMembers)).setVisibility(View.INVISIBLE);
 				
 		GlobalData.Orientation = getResources().getConfiguration().orientation;
-		favAdaptor.notifyDataSetChanged();
+		GlobalData.favAdaptor.notifyDataSetChanged();
 		Util.dumpData(getApplicationContext());
 	}
 	
 	private void initList() {
-		Util.sortFavorites();
-		
 		ListView view = (ListView) findViewById(R.id.UIStopList);
-		favAdaptor = new StopArrayAdaptor(this, GlobalData.Favorites, true);
-		view.setAdapter(favAdaptor);
+		GlobalData.favAdaptor = new StopArrayAdaptor(this, GlobalData.Favorites, true);
+		view.setAdapter(GlobalData.favAdaptor);
 		final Activity testAct = (Activity)this;
 
 		view.setOnItemClickListener(new OnItemClickListener() {
@@ -77,7 +75,7 @@ public class MainActivity extends Activity {
 				Stop temp = GlobalData.Favorites.get(position);
 				if (temp != null) {
 					GlobalData.CurrentStop = temp;
-					new JsonRequest(getApplicationContext(), testAct)
+					new ActiveJSONRequest(getApplicationContext(), testAct)
 							.execute("http://developer.trimet.org/ws/V1/arrivals?locIDs="
 									+ temp.StopID
 									+ "&json=true&appID="
@@ -103,7 +101,7 @@ public class MainActivity extends Activity {
 					public void onDismiss(ListView listView,
 							int[] reverseSortedPositions) {
 						for (int position : reverseSortedPositions) {
-							favAdaptor.remove(favAdaptor.getItem(position));
+							GlobalData.favAdaptor.remove(GlobalData.favAdaptor.getItem(position));
 							Toast.makeText(getApplicationContext(),
 									"Removed Stop",
 									android.R.integer.config_shortAnimTime)
@@ -132,12 +130,14 @@ public class MainActivity extends Activity {
 		// Handle presses on the action bar items
 		switch (item.getItemId()) {
 		case R.id.action_sort:
-			if (Util.sortFavorites()) {
-				Util.showToast("Favorites Sorted By: " + (GlobalData.FavOrder == 0 ? "Name" : (GlobalData.FavOrder == 1 ? "Stop ID" : "Acces Time")), Toast.LENGTH_SHORT);
-				Util.incFavoriteSort();
-				onActivityChange();
-			} else
-				Util.showToast("Nothing to sort", Toast.LENGTH_SHORT);
+			GlobalData.FavOrder = (GlobalData.FavOrder + 1) % 3;
+			if (Util.sortList(0)) {
+				Util.showToast("Favorites Sorted By: " + (GlobalData.FavOrder == 0 ? "Name" : (GlobalData.FavOrder == 1 ? "Stop ID" : "Last Used")), Toast.LENGTH_SHORT);
+				onActivityChange();				
+			} else {
+				Util.showToast("Favorites to sort", Toast.LENGTH_SHORT);
+				GlobalData.FavOrder = (GlobalData.FavOrder - 1) % 3;
+			}
 			return true;
 		case R.id.action_search:
 			Util.showToast("Not in yet", Toast.LENGTH_SHORT);

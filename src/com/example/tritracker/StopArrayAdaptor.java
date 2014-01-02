@@ -25,6 +25,12 @@ public class StopArrayAdaptor extends ArrayAdapter<Stop> {
 	}
 
 	@Override
+	public void notifyDataSetChanged() {
+		Util.sortList(fav ? 0 : 1);
+		super.notifyDataSetChanged();		
+	}
+	
+	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		// assign the view we are converting to a local variable
 		View v = convertView;

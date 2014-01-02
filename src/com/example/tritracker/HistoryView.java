@@ -1,6 +1,6 @@
 package com.example.tritracker;
 
-import com.example.tritracker.json.JsonRequest;
+import com.example.tritracker.json.ActiveJSONRequest;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -16,8 +16,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class HistoryView extends Activity {
-	StopArrayAdaptor histAdaptor;
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -46,24 +44,15 @@ public class HistoryView extends Activity {
 			((TextView) findViewById(R.id.NoMembers)).setVisibility(View.INVISIBLE);
 		
 		GlobalData.Orientation = getResources().getConfiguration().orientation;
-		histAdaptor.notifyDataSetChanged();
+		GlobalData.histAdaptor.notifyDataSetChanged();
 		Util.dumpData(getApplicationContext());
 	}
 
 	private void initList() {
-		Util.sortHistory();
 		ListView view = (ListView) findViewById(R.id.UIStopList);
-		histAdaptor = new StopArrayAdaptor(this, GlobalData.History, false);
-		view.setAdapter(histAdaptor);
-
-		Intent intent = getIntent();
-		int count = intent.getIntExtra("count", 0);
-		for (int i = 0; i < count; i++) {
-			GlobalData.History
-					.add((Stop) intent.getParcelableExtra("Stop" + i));
-		}
-
-		histAdaptor.notifyDataSetChanged();
+		GlobalData.histAdaptor = new StopArrayAdaptor(this, GlobalData.History, false);
+		view.setAdapter(GlobalData.histAdaptor);
+		GlobalData.histAdaptor.notifyDataSetChanged();
 
 		final Activity testAct = (Activity)this;
 		view.setOnItemClickListener(new OnItemClickListener() {
@@ -72,7 +61,7 @@ public class HistoryView extends Activity {
 				Stop temp = GlobalData.History.get(position);
 				if (temp != null) {
 					GlobalData.CurrentStop = temp;
-					new JsonRequest(getApplicationContext(), testAct)
+					new ActiveJSONRequest(getApplicationContext(), testAct)
 							.execute("http://developer.trimet.org/ws/V1/arrivals?locIDs="
 									+ temp.StopID
 									+ "&json=true&appID="
@@ -98,7 +87,7 @@ public class HistoryView extends Activity {
 					public void onDismiss(ListView listView,
 							int[] reverseSortedPositions) {
 						for (int position : reverseSortedPositions) {
-							histAdaptor.remove(histAdaptor.getItem(position));
+							GlobalData.histAdaptor.remove(GlobalData.histAdaptor.getItem(position));
 							Toast.makeText(getApplicationContext(),
 									"Removed Stop",
 									android.R.integer.config_shortAnimTime)
@@ -131,6 +120,8 @@ public class HistoryView extends Activity {
 		onActivityChange();
 		super.onDestroy();
 	}
+	
+	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
@@ -149,12 +140,14 @@ public class HistoryView extends Activity {
 			Util.showToast("Not in yet", Toast.LENGTH_SHORT);
 			return true;
 		case R.id.action_sort:
-			if (Util.sortHistory()) {
-				Util.showToast("History Sorted By: " + (GlobalData.HistOrder == 0 ? "Name" : (GlobalData.HistOrder == 1 ? "Stop ID" : "Acces Time")), Toast.LENGTH_SHORT);
-				Util.incHistorySort();
-				onActivityChange();
-			} else
-				Util.showToast("Nothing to sort", Toast.LENGTH_SHORT);
+			GlobalData.HistOrder = (GlobalData.HistOrder + 1) % 3;
+			if (Util.sortList(1)) {
+				Util.showToast("History Sorted By: " + (GlobalData.HistOrder == 0 ? "Name" : (GlobalData.HistOrder == 1 ? "Stop ID" : "Last Used")), Toast.LENGTH_SHORT);
+				onActivityChange();				
+			} else {
+				Util.showToast("History to sort", Toast.LENGTH_SHORT);
+				GlobalData.HistOrder = (GlobalData.HistOrder - 1) % 3;
+			}
 			return true;
 		case R.id.action_settings:
 			Util.showToast("Not in yet", Toast.LENGTH_SHORT);

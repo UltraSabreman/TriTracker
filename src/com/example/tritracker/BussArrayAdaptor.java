@@ -24,6 +24,12 @@ public class BussArrayAdaptor extends ArrayAdapter<Buss> {
 		this.busses = busses;
 	}
 
+	@Override
+	public void notifyDataSetChanged() {
+		Util.sortList(2);
+		super.notifyDataSetChanged();
+		
+	}
 	@SuppressWarnings("deprecation")
 	@SuppressLint("SimpleDateFormat")
 	@Override
@@ -65,8 +71,11 @@ public class BussArrayAdaptor extends ArrayAdapter<Buss> {
 			else
 				sign = curBuss.SignShort.replace(route + " ", "");
 			
+			if (Character.isUpperCase(sign.charAt(0)))
+				LineName.setText(sign);
+			else
+				sign = sign.substring(0, 1).toUpperCase() + sign.substring(1);
 			
-			LineName.setText(sign);			
 			LineName.setSelected(true);
 			
 

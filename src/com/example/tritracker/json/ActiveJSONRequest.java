@@ -2,6 +2,7 @@ package com.example.tritracker.json;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,7 +32,7 @@ import com.example.tritracker.StopView;
 import com.example.tritracker.Util;
 import com.google.gson.Gson;
 
-public class JsonRequest extends AsyncTask<String, String, String> {
+public class ActiveJSONRequest extends AsyncTask<String, String, String> {
 	private Context context = null;
 	private Activity activity = null;
 
@@ -62,7 +63,7 @@ public class JsonRequest extends AsyncTask<String, String, String> {
 		return responseString;
 	}
 
-	public JsonRequest(Context context, Activity activity) {
+	public ActiveJSONRequest(Context context, Activity activity) {
 		this.context = context;
 		this.activity = activity;
 	}
@@ -81,12 +82,12 @@ public class JsonRequest extends AsyncTask<String, String, String> {
 		activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 		
 		Gson gson = new Gson();
-		results res = gson.fromJson(result, results.class);
+		ResultSet rs = gson.fromJson(result, results.class).resultSet;
 
-		if (res.resultSet.errorMessage != null) {
+		if (rs.errorMessage != null) {
 			AlertDialog.Builder builder = new AlertDialog.Builder(activity);
 
-			String error = res.resultSet.errorMessage.content;
+			String error = rs.errorMessage.content;
 			String id = "";
 			Matcher m = Pattern.compile("([0-9]+)").matcher(error);
 		    if (m.find()) {
@@ -108,8 +109,8 @@ public class JsonRequest extends AsyncTask<String, String, String> {
 			return;
 		}
 		
-		ResultSet rs = res.resultSet;		
 		Stop temp = new Stop(rs.location[0]);
+		temp.LastAccesed = new Date();
 
 		if (rs.arrival != null)
 			for (Arrival a : rs.arrival)
@@ -119,8 +120,12 @@ public class JsonRequest extends AsyncTask<String, String, String> {
 
 		GlobalData.CurrentStop = temp;
 
-		if (!Util.histHasStop(GlobalData.CurrentStop))
+		Stop t = Util.listGetStop(temp, GlobalData.History);
+		if (t == null)
 			GlobalData.History.add(temp);
+		else
+			t.Update(temp, true);
+			
 
 		Util.dumpData(context);
 		context.startActivity(new Intent(context, StopView.class)

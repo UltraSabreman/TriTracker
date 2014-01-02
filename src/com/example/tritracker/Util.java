@@ -17,6 +17,7 @@ import java.util.Stack;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.Handler;
 import android.view.KeyEvent;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
@@ -24,7 +25,8 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
-import com.example.tritracker.json.JsonRequest;
+import com.example.tritracker.json.ActiveJSONRequest;
+import com.example.tritracker.json.BackgroundJSONRequest;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
@@ -32,6 +34,8 @@ public class Util {
 	public static Stack<Class<?>> parents = new Stack<Class<?>>();
 	private static Toast msg;
 	private static Context c;
+    private static Handler timerHandler = new Handler();
+    private static Runnable timerRunnable = null;
 
 	public static Date dateFromString(String s) {
 		if (s == null)
@@ -44,7 +48,41 @@ public class Util {
 			return null;
 		}
 	}
+	
+	public static void updateAllStops(Context c) {
+		for(Stop s : GlobalData.History) {
+			new BackgroundJSONRequest(c)
+			.execute("http://developer.trimet.org/ws/V1/arrivals?locIDs="
+					+ s.StopID
+					+ "&json=true&appID="
+					+ c.getString(R.string.appid));
+		}
+		for(Stop s : GlobalData.Favorites) {
+			if (!histHasStop(s)) {
+				new BackgroundJSONRequest(c)
+				.execute("http://developer.trimet.org/ws/V1/arrivals?locIDs="
+						+ s.StopID
+						+ "&json=true&appID="
+						+ c.getString(R.string.appid));
+			}
+		}
 
+		if (GlobalData.favAdaptor != null)
+			GlobalData.favAdaptor.notifyDataSetChanged();
+		if (GlobalData.histAdaptor != null)
+			GlobalData.histAdaptor.notifyDataSetChanged();
+		if (GlobalData.bussAdaptor != null)
+			GlobalData.bussAdaptor.notifyDataSetChanged();
+	}
+	
+	public static void initListsAndAdaptors(Context c) {
+		
+	}
+	
+	public static void getAlerts() {
+		//TODO do me
+	}
+	
 	public static void initToast(Context ic) {
 		c = ic;
 	}
@@ -56,35 +94,39 @@ public class Util {
 		msg.show();
 	}
 	
-	public static boolean sortFavorites() {
-		if (GlobalData.Favorites == null) return false;
-		Collections.sort(GlobalData.Favorites, new StopSorter(GlobalData.FavOrder));
-		return true;
+	
+	public static boolean sortList(int Type) {
+		if (Type == 0) { //Favorites
+			if (GlobalData.Favorites == null) return false;
+			Collections.sort(GlobalData.Favorites, new StopSorter(GlobalData.FavOrder));
+			if (GlobalData.FavOrder == 2) //By time
+				Collections.reverse(GlobalData.Favorites);
+			return true;
+		} else if (Type == 1) { //History
+			if (GlobalData.History == null) return false;
+			Collections.sort(GlobalData.History, new StopSorter(GlobalData.HistOrder));
+			if (GlobalData.HistOrder == 2) //By time
+				Collections.reverse(GlobalData.History);
+			return true;
+		} else if (Type == 2) { //Buss
+			if (GlobalData.CurrentStop == null || GlobalData.CurrentStop.Busses == null) return false;
+			Collections.sort(GlobalData.CurrentStop.Busses, new BussSorter(GlobalData.StopOrder));
+			if (GlobalData.StopOrder == 2) //By time
+				Collections.reverse(GlobalData.CurrentStop.Busses);
+			return true;
+		}
+		return false;
 	}
 	
-	public static boolean sortHistory() {
-		if (GlobalData.History == null) return false;
-		Collections.sort(GlobalData.History, new StopSorter(GlobalData.HistOrder));
-		return true;
+	public static void incSortType(int Type) {
+		if (Type == 0)
+			GlobalData.FavOrder = (GlobalData.FavOrder + 1) % 3;
+		else if(Type == 1)
+			GlobalData.HistOrder = (GlobalData.HistOrder + 1) % 3;
+		else if(Type == 2)
+			GlobalData.StopOrder = (GlobalData.StopOrder + 1) % 3;
 	}
 	
-	public static boolean sortBusses() {
-		if (GlobalData.CurrentStop == null || GlobalData.CurrentStop.Busses == null) return false;
-		Collections.sort(GlobalData.CurrentStop.Busses, new BussSorter(GlobalData.StopOrder));
-		return true;
-	}
-	
-	public static void incFavoriteSort() {
-		GlobalData.FavOrder = (GlobalData.FavOrder + 1) % 3;
-	}
-	
-	public static void incHistorySort() {
-		GlobalData.HistOrder = (GlobalData.HistOrder + 1) % 3;
-	}
-	
-	public static void incBussSort() {
-		GlobalData.StopOrder = (GlobalData.StopOrder + 1) % 3;
-	}
 	
 	public static void subscribeToEdit(final Context c, final Activity a,
 			int name) {
@@ -97,7 +139,7 @@ public class Util {
 						|| (actionId == EditorInfo.IME_ACTION_DONE)) {
 					EditText edit = (EditText) a.findViewById(R.id.UIStopIDBox);
 					// GlobalData.CurrentStop =
-					new JsonRequest(c, a)
+					new ActiveJSONRequest(c, a)
 							.execute("http://developer.trimet.org/ws/V1/arrivals?locIDs="
 									+ edit.getText().toString()
 									+ "&json=true&appID="
@@ -112,14 +154,14 @@ public class Util {
 	}
 
 	public static boolean favHasStop(Stop s) {
-		return (listHasStop(s, GlobalData.Favorites) != null ? true : false);
+		return (listGetStop(s, GlobalData.Favorites) != null ? true : false);
 	}
 
 	public static boolean histHasStop(Stop s) {
-		return (listHasStop(s, GlobalData.History) != null ? true : false);
+		return (listGetStop(s, GlobalData.History) != null ? true : false);
 	}
 
-	public static Stop listHasStop(Stop s, ArrayList<Stop> l) {
+	public static Stop listGetStop(Stop s, ArrayList<Stop> l) {
 		if (s == null)
 			return null;
 
@@ -185,6 +227,7 @@ public class Util {
 					GlobalData.HistOrder = wrap.HistOrder;
 				}
 				GlobalData.StopOrder = wrap.StopOrder;
+				GlobalData.RefreshDelay = wrap.RefreshDelay;
 
 			}
 			br.close();
@@ -209,13 +252,18 @@ public class Util {
 		}
 		
 	    @Override
-	    public int compare(Stop o1, Stop o2) {
+	    public int compare(Stop s, Stop s2) {
+	    	if (s == null || s2 == null) return 0;
 	    	if (compareType == 0) 
-	    		return o1.Name.compareTo(o2.Name);
+	    		return s.Name.compareTo(s2.Name);
 	    	if (compareType == 1)
-	    		return (o1.StopID < o2.StopID ? -1 : (o1.StopID > o2.StopID ? 1 : 0));
-	    	else
-	    		return o1.Name.compareTo(o2.Name); //fix me 
+	    		return (s.StopID < s2.StopID ? -1 : (s.StopID > s2.StopID ? 1 : 0));
+	    	else {
+	    		if (s.LastAccesed != null && s2.LastAccesed != null)
+	    			return s.LastAccesed.compareTo(s2.LastAccesed);
+	    		else
+	    			return 0;
+	    	}
 	    }
 	}
 	
@@ -243,5 +291,28 @@ public class Util {
 	    		else
 	    			return o1.ScheduledTime.compareTo(o2.ScheduledTime); //fix me
 	    }
+	}
+	
+	public static void restartTimer(final Context c) {
+		if (timerRunnable != null)
+			timerHandler.removeCallbacks(timerRunnable);
+		
+		timerRunnable = new Runnable() {
+	        @Override
+	        public void run() {
+	        	Util.updateAllStops(c);
+	        	
+	        	if (GlobalData.RefreshDelay > 0)
+	        		timerHandler.postDelayed(this, (int)(GlobalData.RefreshDelay * 1000));
+	        }
+	    };
+	    
+		if (GlobalData.RefreshDelay > 0)
+			timerHandler.postDelayed(timerRunnable, (int)(GlobalData.RefreshDelay * 1000));
+	}
+	
+	public static void stopTimer() {
+		if (timerRunnable != null)
+			timerHandler.removeCallbacks(timerRunnable);
 	}
 }

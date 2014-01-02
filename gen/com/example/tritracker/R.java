@@ -209,9 +209,9 @@ public final class R {
         public static final int UIseperator3=0x7f0a000b;
         public static final int action_clear=0x7f0a0014;
         public static final int action_favorite=0x7f0a0019;
-        public static final int action_history=0x7f0a0017;
+        public static final int action_history=0x7f0a0018;
         public static final int action_search=0x7f0a0016;
-        public static final int action_settings=0x7f0a0018;
+        public static final int action_settings=0x7f0a0017;
         public static final int action_sort=0x7f0a0015;
     }
     public static final class integer {
