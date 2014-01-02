@@ -21,11 +21,13 @@ public class HistoryView extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_history_view);
+		setContentView(R.layout.activity_stop_list);
 		Util.parents.push(getClass());
 
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 
+		((TextView) findViewById(R.id.NoMembers)).setText("You have nothing in your history");
+		
 		Util.subscribeToEdit(getApplicationContext(), this, R.id.UIStopIDBox);
 		initList();
 		onActivityChange();
@@ -49,7 +51,8 @@ public class HistoryView extends Activity {
 	}
 
 	private void initList() {
-		ListView view = (ListView) findViewById(R.id.UIHistoryList);
+		Util.sortHistory();
+		ListView view = (ListView) findViewById(R.id.UIStopList);
 		histAdaptor = new StopArrayAdaptor(this, GlobalData.History, false);
 		view.setAdapter(histAdaptor);
 
@@ -135,19 +138,23 @@ public class HistoryView extends Activity {
 			Intent parentActivityIntent = new Intent(this, Util.parents.pop());
 			parentActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
 					| Intent.FLAG_ACTIVITY_NEW_TASK);
-			// startActivity(parentActivityIntent);
 			NavUtils.navigateUpTo(this, parentActivityIntent);
 			return true;
 		case R.id.action_clear:
 			GlobalData.History.clear();
 			Util.showToast("History Cleared", Toast.LENGTH_SHORT);
-			histAdaptor.notifyDataSetChanged();
+			onActivityChange();
 			return true;
 		case R.id.action_search:
 			Util.showToast("Not in yet", Toast.LENGTH_SHORT);
 			return true;
 		case R.id.action_sort:
-			Util.showToast("Not in yet", Toast.LENGTH_SHORT);
+			if (Util.sortHistory()) {
+				Util.showToast("History Sorted By: " + (GlobalData.HistOrder == 0 ? "Name" : (GlobalData.HistOrder == 1 ? "Stop ID" : "Acces Time")), Toast.LENGTH_SHORT);
+				Util.incHistorySort();
+				onActivityChange();
+			} else
+				Util.showToast("Nothing to sort", Toast.LENGTH_SHORT);
 			return true;
 		case R.id.action_settings:
 			Util.showToast("Not in yet", Toast.LENGTH_SHORT);

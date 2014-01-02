@@ -13,12 +13,13 @@ public class GlobalData {
 	public static ArrayList<Stop> History = new ArrayList<Stop>();
 	public static int FavOrder = 0;
 	public static int HistOrder = 0;
+	public static int StopOrder = 0;
 	public static ArrayList<Stop> Undos = new ArrayList<Stop>(); // TODO
 	public static Stop CurrentStop = null;
 	public static int Orientation;
 
 	public static JsonWrapper getJsonWrap() {
-		return new JsonWrapper(Favorites, History, FavOrder, HistOrder);
+		return new JsonWrapper(Favorites, History, FavOrder, HistOrder, StopOrder);
 	}
 
 	public static class JsonWrapper {
@@ -26,13 +27,14 @@ public class GlobalData {
 		public ArrayList<Stop> History = new ArrayList<Stop>();
 		public int FavOrder = 0;
 		public int HistOrder = 0;
+		public int StopOrder = 0;
 
-		public JsonWrapper(ArrayList<Stop> fav, ArrayList<Stop> hist, int f,
-				int h) {
+		public JsonWrapper(ArrayList<Stop> fav, ArrayList<Stop> hist, int f, int h, int s) {
 			Favorites = fav;
 			History = hist;
 			FavOrder = f;
 			HistOrder = h;
+			StopOrder = s;
 		}
 	}
 

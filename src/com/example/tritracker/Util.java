@@ -9,6 +9,8 @@ import java.io.OutputStreamWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Stack;
@@ -53,7 +55,37 @@ public class Util {
 		msg = Toast.makeText(c, s, d);
 		msg.show();
 	}
-
+	
+	public static boolean sortFavorites() {
+		if (GlobalData.Favorites == null) return false;
+		Collections.sort(GlobalData.Favorites, new StopSorter(GlobalData.FavOrder));
+		return true;
+	}
+	
+	public static boolean sortHistory() {
+		if (GlobalData.History == null) return false;
+		Collections.sort(GlobalData.History, new StopSorter(GlobalData.HistOrder));
+		return true;
+	}
+	
+	public static boolean sortBusses() {
+		if (GlobalData.CurrentStop == null || GlobalData.CurrentStop.Busses == null) return false;
+		Collections.sort(GlobalData.CurrentStop.Busses, new BussSorter(GlobalData.StopOrder));
+		return true;
+	}
+	
+	public static void incFavoriteSort() {
+		GlobalData.FavOrder = (GlobalData.FavOrder + 1) % 3;
+	}
+	
+	public static void incHistorySort() {
+		GlobalData.HistOrder = (GlobalData.HistOrder + 1) % 3;
+	}
+	
+	public static void incBussSort() {
+		GlobalData.StopOrder = (GlobalData.StopOrder + 1) % 3;
+	}
+	
 	public static void subscribeToEdit(final Context c, final Activity a,
 			int name) {
 		EditText edit = (EditText) a.findViewById(R.id.UIStopIDBox);
@@ -96,6 +128,15 @@ public class Util {
 				return stop;
 
 		return null;
+	}
+	
+	public static void removeStop(Stop s, ArrayList<Stop> l) {
+		for (Stop stop : l){
+			if (s.StopID == stop.StopID){
+				l.remove(stop);
+				return;
+			}
+		}
 	}
 
 	public static void dumpData(Context c) {
@@ -143,6 +184,7 @@ public class Util {
 					GlobalData.History = new ArrayList<Stop>(wrap.History);
 					GlobalData.HistOrder = wrap.HistOrder;
 				}
+				GlobalData.StopOrder = wrap.StopOrder;
 
 			}
 			br.close();
@@ -155,5 +197,51 @@ public class Util {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	private static class StopSorter implements Comparator<Stop> {
+		private int compareType = 0;
+		public StopSorter(int t) {
+			compareType = t;
+			//0 == By Name
+			//1 == By ID
+			//2 == By Acces Date
+		}
+		
+	    @Override
+	    public int compare(Stop o1, Stop o2) {
+	    	if (compareType == 0) 
+	    		return o1.Name.compareTo(o2.Name);
+	    	if (compareType == 1)
+	    		return (o1.StopID < o2.StopID ? -1 : (o1.StopID > o2.StopID ? 1 : 0));
+	    	else
+	    		return o1.Name.compareTo(o2.Name); //fix me 
+	    }
+	}
+	
+	private static class BussSorter implements Comparator<Buss> {
+		private int compareType = 0;
+		public BussSorter(int t) {
+			compareType = t;
+			//0 == By Name
+			//1 == By Line
+			//2 == By Arrival Time
+		}
+		
+	    @Override
+	    public int compare(Buss o1, Buss o2) {
+	    	if (compareType == 0) 
+	    		if (GlobalData.Orientation == 2)
+	    			return o1.SignLong.compareTo(o2.SignLong);
+	    		else
+	    			return o1.SignShort.compareTo(o2.SignShort);
+	    	if (compareType == 1)
+	    		return (o1.Route < o2.Route ? -1 : (o1.Route > o2.Route ? 1 : 0));
+	    	else
+	    		if (o1.EstimatedTime != null && o2.EstimatedTime != null)
+	    			return o1.EstimatedTime.compareTo(o2.EstimatedTime); //fix me
+	    		else
+	    			return o1.ScheduledTime.compareTo(o2.ScheduledTime); //fix me
+	    }
 	}
 }

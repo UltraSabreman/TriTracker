@@ -168,57 +168,61 @@ public final class R {
     public static final class drawable {
         public static final int background=0x7f020000;
         public static final int ic_action_important=0x7f020001;
-        public static final int ic_action_locate=0x7f020002;
-        public static final int ic_action_not_important=0x7f020003;
-        public static final int ic_action_reply=0x7f020004;
-        public static final int ic_action_search2=0x7f020005;
-        public static final int ic_action_undo=0x7f020006;
-        public static final int ic_launcher=0x7f020007;
-        public static final int ic_notify_clear_normal=0x7f020008;
-        public static final int ic_undobar_undo=0x7f020009;
-        public static final int undobar=0x7f02000a;
-        public static final int undobar_button=0x7f02000b;
-        public static final int undobar_button_focused=0x7f02000c;
-        public static final int undobar_button_pressed=0x7f02000d;
-        public static final int undobar_divider=0x7f02000e;
+        public static final int ic_action_important_yellow=0x7f020002;
+        public static final int ic_action_locate=0x7f020003;
+        public static final int ic_action_not_important=0x7f020004;
+        public static final int ic_action_not_important_yellow=0x7f020005;
+        public static final int ic_action_reply=0x7f020006;
+        public static final int ic_action_search2=0x7f020007;
+        public static final int ic_action_sort_by_size=0x7f020008;
+        public static final int ic_action_undo=0x7f020009;
+        public static final int ic_launcher=0x7f02000a;
+        public static final int ic_notify_clear_normal=0x7f02000b;
+        public static final int ic_undobar_undo=0x7f02000c;
+        public static final int line=0x7f02000d;
+        public static final int undobar=0x7f02000e;
+        public static final int undobar_button=0x7f02000f;
+        public static final int undobar_button_focused=0x7f020010;
+        public static final int undobar_button_pressed=0x7f020011;
+        public static final int undobar_divider=0x7f020012;
     }
     public static final class id {
+        public static final int FavIcon=0x7f0a0013;
         public static final int LineName=0x7f0a000d;
         public static final int LineNames=0x7f0a0011;
-        public static final int LineNumber=0x7f0a000b;
-        public static final int NoArrivals=0x7f0a0008;
-        public static final int NoMembers=0x7f0a0004;
+        public static final int LineNumber=0x7f0a000a;
+        public static final int NoArrivals=0x7f0a0003;
+        public static final int NoMembers=0x7f0a0009;
         public static final int Schedule=0x7f0a000c;
-        public static final int Spinner=0x7f0a0003;
+        public static final int Spinner=0x7f0a0008;
         public static final int StopID=0x7f0a0010;
         public static final int StopName=0x7f0a000f;
         public static final int Time=0x7f0a000e;
-        public static final int UIBussList=0x7f0a0006;
-        public static final int UIHistoryList=0x7f0a0000;
-        public static final int UIStopIDBox=0x7f0a0002;
-        public static final int UIStopInfo=0x7f0a0007;
-        public static final int UIStopInfoDirection=0x7f0a000a;
-        public static final int UIStopInfoName=0x7f0a0009;
-        public static final int UIStopList=0x7f0a0005;
+        public static final int UIBussList=0x7f0a0000;
+        public static final int UIStopIDBox=0x7f0a0007;
+        public static final int UIStopInfo=0x7f0a0002;
+        public static final int UIStopInfoDirection=0x7f0a0005;
+        public static final int UIStopInfoName=0x7f0a0004;
+        public static final int UIStopList=0x7f0a0006;
         public static final int UIseperator=0x7f0a0001;
-        public static final int acion_sort=0x7f0a0014;
-        public static final int action_clear=0x7f0a0012;
-        public static final int action_favorite=0x7f0a0018;
-        public static final int action_history=0x7f0a0016;
-        public static final int action_search=0x7f0a0013;
-        public static final int action_settings=0x7f0a0017;
+        public static final int UIseperator2=0x7f0a0012;
+        public static final int UIseperator3=0x7f0a000b;
+        public static final int action_clear=0x7f0a0014;
+        public static final int action_favorite=0x7f0a0019;
+        public static final int action_history=0x7f0a0017;
+        public static final int action_search=0x7f0a0016;
+        public static final int action_settings=0x7f0a0018;
         public static final int action_sort=0x7f0a0015;
     }
     public static final class integer {
         public static final int undobar_hide_delay=0x7f060000;
     }
     public static final class layout {
-        public static final int activity_history_view=0x7f030000;
-        public static final int activity_main=0x7f030001;
-        public static final int activity_stop_view=0x7f030002;
-        public static final int buss_layout=0x7f030003;
-        public static final int fav_stop_layout=0x7f030004;
-        public static final int hist_stop_layout=0x7f030005;
+        public static final int activity_stop_detail=0x7f030000;
+        public static final int activity_stop_list=0x7f030001;
+        public static final int buss_layout=0x7f030002;
+        public static final int fav_stop_layout=0x7f030003;
+        public static final int hist_stop_layout=0x7f030004;
     }
     public static final class menu {
         public static final int history_view=0x7f090000;
@@ -236,6 +240,7 @@ public final class R {
         public static final int app_name=0x7f070000;
         public static final int appid=0x7f07000d;
         public static final int data_path=0x7f07000c;
+        public static final int fav_desc=0x7f070014;
         public static final int fav_empty=0x7f07000a;
         public static final int hist_emtpy=0x7f07000b;
         public static final int no_stop=0x7f070011;

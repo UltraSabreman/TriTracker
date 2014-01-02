@@ -1,57 +1,65 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="fill_parent"
 	android:layout_height="?android:attr/listPreferredItemHeightSmall"
 	android:orientation="horizontal"
 	android:padding="6dip" >
-
-	<TextView
-		android:id="@+id/LineNumber"
-		android:layout_width="60dp"
-		android:layout_height="fill_parent"
-		android:layout_alignParentLeft="true"
-		android:gravity="center"
-		android:singleLine="true"
-		android:textSize="26sp" 
-		android:text="999"/>
-
-	<TextView
-		android:id="@+id/Schedule"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_below="@+id/LineName"
-		android:layout_toRightOf="@+id/LineNumber"
-		android:ellipsize="end"
-		android:maxLines="1"
-		android:paddingLeft="@dimen/activity_horizontal_margin"
-		android:textColor="@android:color/darker_gray"
-		android:textSize="12sp" 
-		android:text="Scheduled at: 12:28 PM" />
-
-	<TextView
-		android:id="@+id/Time"
-		android:layout_width="wrap_content"
-		android:layout_height="match_parent"
-		android:layout_alignParentRight="true"
-		android:layout_centerVertical="true"
-		android:gravity="center"
-		android:maxLines="1"
-		android:textColor="@android:color/holo_green_dark"
-		android:textSize="16sp" 
-		android:text="5 Min" />
-
-	<TextView
-		android:id="@+id/LineName"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_alignLeft="@+id/Schedule"
-		android:layout_alignTop="@+id/LineNumber"
-		android:ellipsize="marquee"
-		android:scrollHorizontally="true"
-       	android:marqueeRepeatLimit ="marquee_forever" 
-       	android:singleLine="true"
-		android:textColor="@android:color/holo_blue_dark"
-		android:textSize="16sp" 
-		android:text="Green to City Ctr" />
-
-</RelativeLayout>
+	
+	<RelativeLayout
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent" >
+		<TextView
+			android:id="@+id/LineNumber"
+			android:layout_width="60dp"
+			android:layout_height="fill_parent"
+			android:layout_alignParentLeft="true"
+			android:gravity="center"
+			android:singleLine="true"
+			android:textSize="26sp" />
+	
+		<View
+			android:id="@+id/UIseperator3"
+			android:background="@color/TestColor"
+			android:layout_width="1dp"
+			android:layout_height="fill_parent"
+			android:layout_marginLeft="3dp"
+			android:layout_marginRight="3dp"
+			android:layout_toRightOf="@+id/LineNumber"/>
+		
+		<TextView
+			android:id="@+id/Schedule"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_toRightOf="@+id/UIseperator3"
+			android:layout_below="@+id/LineName"
+			android:ellipsize="end"
+			android:maxLines="1"
+			android:paddingLeft="@dimen/activity_horizontal_margin"
+			android:textColor="@android:color/darker_gray"
+			android:textSize="12sp" />
+	
+		<TextView
+			android:id="@+id/Time"
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
+			android:layout_alignParentRight="true"
+			android:layout_centerVertical="true"
+			android:gravity="center"
+			android:maxLines="1"
+			android:textColor="@android:color/holo_green_dark"
+			android:textSize="16sp" />
+	
+		<TextView
+			android:id="@+id/LineName"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_toRightOf="@+id/UIseperator3"
+			android:layout_alignLeft="@+id/Schedule"
+			android:layout_alignTop="@+id/LineNumber"
+			android:ellipsize="marquee"
+			android:scrollHorizontally="true"
+	       	android:marqueeRepeatLimit ="marquee_forever" 
+	       	android:singleLine="true"
+			android:textColor="@android:color/holo_blue_dark"
+			android:textSize="16sp" />
+	</RelativeLayout>
+</LinearLayout>

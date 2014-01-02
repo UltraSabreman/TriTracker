@@ -8,7 +8,6 @@ import java.util.Date;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable.Orientation;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,18 +52,20 @@ public class BussArrayAdaptor extends ArrayAdapter<Buss> {
 			if (curBuss.SignShort.contains(String.valueOf(curBuss.Route))) 
 				route = String.valueOf(curBuss.Route);
 			else
-				route = "MAX";
+				if (curBuss.SignShort.contains("WES"))
+					route = "WES";
+				else
+					route = "MAX";
+			
 			LineNumber.setText(route);
 			
 			String sign = "";
-			if (GlobalData.Orientation == 2 ) { //ORIENTATION_LANDSCAPE
-				if (route.compareTo("MAX") == 0)
-					sign = curBuss.SignLong.replace("MAX ", "");
-				else
-					sign = curBuss.SignLong;
-			} else {
-				sign = curBuss.SignShort.replace(String.valueOf(curBuss.Route + " "), "");
-			}
+			if (GlobalData.Orientation == 2 ) //ORIENTATION_LANDSCAPE
+				sign = curBuss.SignLong.replace(route + " ", "");
+			else
+				sign = curBuss.SignShort.replace(route + " ", "");
+			
+			
 			LineName.setText(sign);			
 			LineName.setSelected(true);
 			

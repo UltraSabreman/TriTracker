@@ -21,13 +21,15 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+		setContentView(R.layout.activity_stop_list);
 		Util.parents.push(getClass());
 
 		Util.initToast(getApplicationContext());
 		Util.readData(getApplicationContext());
 		Util.subscribeToEdit(getApplicationContext(), this, R.id.UIStopIDBox);
 
+		((TextView) findViewById(R.id.NoMembers)).setText("You have nothing in your favorites");
+		
 		initList();
 		onActivityChange();
 	}
@@ -55,15 +57,16 @@ public class MainActivity extends Activity {
 			((TextView) findViewById(R.id.NoMembers)).setVisibility(View.VISIBLE);
 		else
 			((TextView) findViewById(R.id.NoMembers)).setVisibility(View.INVISIBLE);
-		
+				
 		GlobalData.Orientation = getResources().getConfiguration().orientation;
 		favAdaptor.notifyDataSetChanged();
 		Util.dumpData(getApplicationContext());
 	}
 	
 	private void initList() {
+		Util.sortFavorites();
+		
 		ListView view = (ListView) findViewById(R.id.UIStopList);
-
 		favAdaptor = new StopArrayAdaptor(this, GlobalData.Favorites, true);
 		view.setAdapter(favAdaptor);
 		final Activity testAct = (Activity)this;
@@ -129,7 +132,12 @@ public class MainActivity extends Activity {
 		// Handle presses on the action bar items
 		switch (item.getItemId()) {
 		case R.id.action_sort:
-			Util.showToast("Not in yet", Toast.LENGTH_SHORT);
+			if (Util.sortFavorites()) {
+				Util.showToast("Favorites Sorted By: " + (GlobalData.FavOrder == 0 ? "Name" : (GlobalData.FavOrder == 1 ? "Stop ID" : "Acces Time")), Toast.LENGTH_SHORT);
+				Util.incFavoriteSort();
+				onActivityChange();
+			} else
+				Util.showToast("Nothing to sort", Toast.LENGTH_SHORT);
 			return true;
 		case R.id.action_search:
 			Util.showToast("Not in yet", Toast.LENGTH_SHORT);

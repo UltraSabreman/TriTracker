@@ -1,40 +1,65 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="fill_parent"
 	android:layout_height="?android:attr/listPreferredItemHeightSmall"
-	android:orientation="horizontal"
-	android:padding="6dip" >
+	android:padding="6dip"  >
 
-	<TextView
-		android:id="@+id/StopName"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_alignParentLeft="true"
-		android:layout_toLeftOf="@+id/StopID"
-		android:ellipsize="marquee"
-		android:scrollHorizontally="true"
-       	android:marqueeRepeatLimit ="marquee_forever" 
-       	android:singleLine="true" 
-		android:textSize="16sp"
-		android:textColor="@android:color/holo_blue_dark"/>
-
-	<TextView
-		android:id="@+id/StopID"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_alignParentRight="true"
-		android:maxLines="1"
-		android:textSize="16sp" 
-		android:textColor="@android:color/background_dark" />
+	<RelativeLayout
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent" >
+			
+		<TextView
+			android:id="@+id/StopName"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_toLeftOf="@+id/StopID"
+			android:layout_toRightOf="@+id/UIseperator2"
+			android:ellipsize="marquee"
+			android:scrollHorizontally="true"
+	       	android:marqueeRepeatLimit ="marquee_forever" 
+	       	android:singleLine="true" 
+			android:textSize="16sp"
+			android:paddingRight="6dp"
+			android:textColor="@android:color/holo_blue_dark"/>
+		
+		<ImageView
+			android:id="@+id/FavIcon"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentLeft="true"
+			android:layout_centerVertical="true"
+			android:src="@drawable/ic_action_important_yellow" 
+			android:clickable="true"
+			android:contentDescription="@string/fav_desc"/>
+			
+		<View
+			android:id="@+id/UIseperator2"
+			android:background="@color/TestColor"
+			android:layout_width="1dp"
+			android:layout_height="fill_parent"
+			android:layout_marginLeft="3dp"
+			android:layout_marginRight="3dp"
+			android:layout_toRightOf="@+id/FavIcon"/>
+		
 	
-	<TextView
-		android:id="@+id/LineNames"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_below="@+id/StopName"
-		android:maxLines="1"
-		android:textSize="12sp" 
-		android:paddingLeft="@dimen/activity_horizontal_margin"
-		android:textColor="@android:color/darker_gray" />
-
-</RelativeLayout>
+		<TextView
+			android:id="@+id/StopID"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentRight="true"
+			android:maxLines="1"
+			android:textSize="16sp" 
+			android:textColor="@android:color/background_dark" />
+		
+		<TextView
+			android:id="@+id/LineNames"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_below="@+id/StopName"
+			android:layout_toRightOf="@+id/UIseperator2"
+			android:maxLines="1"
+			android:textSize="12sp" 
+			android:paddingLeft="@dimen/activity_horizontal_margin"
+			android:textColor="@android:color/darker_gray" />
+	</RelativeLayout>
+</LinearLayout>
