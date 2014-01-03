@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Currency;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Stack;
@@ -28,6 +29,7 @@ import android.widget.Toast;
 import com.example.tritracker.json.ActiveJSONRequest;
 import com.example.tritracker.json.BackgroundJSONRequest;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 
 public class Util {
@@ -49,8 +51,20 @@ public class Util {
 		}
 	}
 	
+	public static int getBussMinutes(Buss b) {
+		Date est = null;
+		
+    	if (b.Status.compareTo("estimated") == 0) 
+    		est = new Date(b.EstimatedTime.getTime() - new Date().getTime());
+    	else
+    		est = new Date(b.ScheduledTime.getTime() - new Date().getTime());
+    	
+		return est.getMinutes();
+	}
+	
 	public static void updateAllStops(Context c) {
 		for(Stop s : GlobalData.History) {
+			s.clearArivals();
 			new BackgroundJSONRequest(c)
 			.execute("http://developer.trimet.org/ws/V1/arrivals?locIDs="
 					+ s.StopID
@@ -58,6 +72,7 @@ public class Util {
 					+ c.getString(R.string.appid));
 		}
 		for(Stop s : GlobalData.Favorites) {
+			s.clearArivals();
 			if (!histHasStop(s)) {
 				new BackgroundJSONRequest(c)
 				.execute("http://developer.trimet.org/ws/V1/arrivals?locIDs="
@@ -111,8 +126,6 @@ public class Util {
 		} else if (Type == 2) { //Buss
 			if (GlobalData.CurrentStop == null || GlobalData.CurrentStop.Busses == null) return false;
 			Collections.sort(GlobalData.CurrentStop.Busses, new BussSorter(GlobalData.StopOrder));
-			if (GlobalData.StopOrder == 2) //By time
-				Collections.reverse(GlobalData.CurrentStop.Busses);
 			return true;
 		}
 		return false;
@@ -180,14 +193,14 @@ public class Util {
 			}
 		}
 	}
-
+	
 	public static void dumpData(Context c) {
 		try {
 			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(
 					c.openFileOutput(c.getString(R.string.data_path),
 							Context.MODE_PRIVATE)));
 
-			Gson gson = new Gson();
+			Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
 			String data = gson.toJson(GlobalData.getJsonWrap());
 
 			bw.write(data);
@@ -214,7 +227,7 @@ public class Util {
 				fileContents += line;
 			}
 
-			Gson gson = new Gson();
+			Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
 			GlobalData.JsonWrapper wrap = gson.fromJson(fileContents,
 					GlobalData.JsonWrapper.class);
 			if (wrap != null) {
@@ -315,4 +328,6 @@ public class Util {
 		if (timerRunnable != null)
 			timerHandler.removeCallbacks(timerRunnable);
 	}
+	
+
 }

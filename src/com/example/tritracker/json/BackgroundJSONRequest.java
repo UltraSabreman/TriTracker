@@ -66,7 +66,7 @@ public class BackgroundJSONRequest extends AsyncTask<String, String, String> {
 		Gson gson = new Gson();
 		results res = gson.fromJson(result, results.class);
 
-		if (res.resultSet.errorMessage != null) return;
+		if (res == null || res.resultSet == null || res.resultSet.errorMessage != null) return;
 		
 		ResultSet rs = res.resultSet;		
 		Stop temp = new Stop(rs.location[0]);
@@ -77,14 +77,25 @@ public class BackgroundJSONRequest extends AsyncTask<String, String, String> {
 		else
 			temp.Busses = null;
 		
-		if (Util.histHasStop(temp))
+		if (Util.histHasStop(temp)) {
 			Util.listGetStop(temp, GlobalData.History).Update(temp, false);
+			if (GlobalData.histAdaptor != null)
+				GlobalData.histAdaptor.notifyDataSetChanged();
+		}
 
-		if (Util.favHasStop(temp))
+		if (Util.favHasStop(temp)) {
 			Util.listGetStop(temp, GlobalData.Favorites).Update(temp, false);
+			if (GlobalData.favAdaptor != null)
+				GlobalData.favAdaptor.notifyDataSetChanged();
+		}
+
 		
-		if (GlobalData.CurrentStop != null && GlobalData.CurrentStop.StopID == temp.StopID)
-			GlobalData.CurrentStop = temp;
+		if (GlobalData.CurrentStop != null && GlobalData.CurrentStop.StopID == temp.StopID) {
+			GlobalData.CurrentStop.Update(temp, false);
+			if (GlobalData.bussAdaptor != null)
+				GlobalData.bussAdaptor.notifyDataSetChanged();
+		}
+
 
 		Util.dumpData(context);
 	}

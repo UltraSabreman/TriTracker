@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class BussArrayAdaptor extends ArrayAdapter<Buss> {
@@ -53,6 +54,11 @@ public class BussArrayAdaptor extends ArrayAdapter<Buss> {
 			TextView LineName = (TextView) v.findViewById(R.id.LineName);
 			TextView Shedule = (TextView) v.findViewById(R.id.Schedule);
 			TextView Time = (TextView) v.findViewById(R.id.Time);
+			
+			if(curBuss.notification != null && curBuss.notification.IsSet) {
+				((ImageView) v.findViewById(R.id.ReminderIcon)).setVisibility(View.VISIBLE);
+			}else
+				((ImageView) v.findViewById(R.id.ReminderIcon)).setVisibility(View.INVISIBLE);
 
 			String route = "";
 			if (curBuss.SignShort.contains(String.valueOf(curBuss.Route))) 
@@ -98,7 +104,7 @@ public class BussArrayAdaptor extends ArrayAdapter<Buss> {
 							s = s.replaceFirst("0", "");
 					}
 					Time.setTextColor(Color.parseColor("#5CC439"));
-				} else if (min > 30 && min < 60) {
+				} else if (min >= 30 && min < 60) {
 					formatter = new SimpleDateFormat("mm");
 					s = formatter.format(est) + " Min";
 					Time.setTextColor(Color.parseColor("#FACF11"));

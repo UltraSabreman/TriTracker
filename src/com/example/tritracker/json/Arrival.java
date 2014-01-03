@@ -11,6 +11,16 @@ public class Arrival {
 	public String estimated;
 	public int route;
 	public String fullSign;
+	public BlockPos blockPosition;
+	
 
 	public Map<String, Object> otherProperties = new HashMap<String, Object>();
+	
+	public class BlockPos {
+		public Trip [] trip;
+		
+		public class Trip {
+			public String tripNum;
+		}
+	}
 }

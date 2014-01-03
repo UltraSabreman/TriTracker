@@ -1,0 +1,21 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	android:orientation="vertical" >
+
+    <SeekBar
+    	android:id="@+id/reminderTime"
+    	android:layout_width="match_parent"
+    	android:layout_height="wrap_content" 
+    	android:fitsSystemWindows="true"
+    	android:layout_centerHorizontal="true" />
+
+    <TextView
+    	android:id="@+id/reminderLabel"
+    	android:layout_width="wrap_content"
+    	android:layout_height="wrap_content"
+    	android:layout_below="@+id/reminderTime"
+    	android:layout_centerHorizontal="true"
+    	android:labelFor="@+id/reminderTime" />
+	
+</RelativeLayout>

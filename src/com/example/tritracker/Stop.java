@@ -2,21 +2,20 @@ package com.example.tritracker;
 
 import java.util.ArrayList;
 import java.util.Date;
-
-import android.os.Parcel;
-import android.os.Parcelable;
+import java.util.Iterator;
 
 import com.example.tritracker.json.Location;
+import com.google.gson.annotations.Expose;
 //make me more specific
 //import android.content.
 
-public class Stop implements Parcelable {
-	public String Name = "Invalid Street";
-	public int StopID = -1;
-	public String Direction = "Up Up and Away!";
-	public Date LastAccesed = null;
+public class Stop  {
+	@Expose public String Name = "Invalid Street";
+	@Expose public int StopID = -1;
+	@Expose public String Direction = "Up Up and Away!";
+	@Expose public Date LastAccesed = null;
 
-	public ArrayList<Buss> Busses = new ArrayList<Buss>();
+	@Expose public ArrayList<Buss> Busses = new ArrayList<Buss>();
 
 	public Stop(Location l) {
 		Name = l.desc;
@@ -34,47 +33,26 @@ public class Stop implements Parcelable {
 		if (s.Busses == null)
 			Busses = null;
 		else if(Busses != null) {
-			Busses.clear();
-			for (Buss b : s.Busses)
-				Busses.add(new Buss(b));
+			for (Buss b : s.Busses) {
+				Buss tempBuss = getBuss(b);
+				if (tempBuss != null)
+					tempBuss.update(b);
+				else
+					Busses.add(new Buss(b));
+			}
 		}
 	}
 
-	public String toString() {
-		return Name + " " + StopID;
+	public Buss getBuss(Buss ib) {
+		for (Buss b : Busses)
+			if (b != null && b.ScheduledTime.compareTo(ib.ScheduledTime) == 0)
+				return b;
+		return null;
 	}
-
-	// 99.9% of the time you can just ignore this
-	public int describeContents() {
-		return 0;
-	}
-
-	// write your object's data to the passed-in Parcel
-	public void writeToParcel(Parcel out, int flags) {
-		out.writeString(Name);
-		out.writeInt(StopID);
-		out.writeString(Direction);
-		out.writeLong(LastAccesed.getTime());
-	}
-
-	// this is used to regenerate your object. All Parcelables must have a
-	// CREATOR that implements these two methods
-	public static final Parcelable.Creator<Stop> CREATOR = new Parcelable.Creator<Stop>() {
-		public Stop createFromParcel(Parcel in) {
-			return new Stop(in);
-		}
-
-		public Stop[] newArray(int size) {
-			return new Stop[size];
-		}
-	};
-
-	// example constructor that takes a Parcel and gives you an object populated
-	// with it's values
-	private Stop(Parcel in) {
-		Name = in.readString();
-		StopID = in.readInt();
-		Direction = in.readString();
-		LastAccesed = new Date(in.readLong());
+	
+	public void clearArivals() {
+		for (Iterator<Buss> it = Busses.iterator(); it.hasNext(); )
+			if (Util.getBussMinutes(it.next()) <= 0)
+	            it.remove();
 	}
 }

@@ -38,6 +38,14 @@
 		android:layout_height="50dp"
 		android:layout_alignParentBottom="true"
 		android:layout_centerHorizontal="true" >
+		
+		<View 
+			android:id="@+id/alertBackground"
+			android:layout_width="fill_parent"
+			android:layout_height="?android:attr/listPreferredItemHeightSmall"
+			android:background="@drawable/background" 
+			android:alpha="0.3"
+			android:visibility="invisible"/>
 
 		<TextView
 			android:id="@+id/UIStopInfoName"

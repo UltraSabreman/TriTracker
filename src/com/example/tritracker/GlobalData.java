@@ -2,6 +2,8 @@ package com.example.tritracker;
 
 import java.util.ArrayList;
 
+import com.google.gson.annotations.Expose;
+
 //Oh my god I know this is absolutely terrible and stupid
 //but i'm just learning java + the android API and I want to make
 //this as painless as possible. 
@@ -15,10 +17,10 @@ public class GlobalData {
 	public static int HistOrder = 0;
 	public static int StopOrder = 0;
 	public static int RefreshDelay = 5;
-	public static ArrayList<Stop> Undos = new ArrayList<Stop>(); // TODO
 	public static Stop CurrentStop = null;
 	public static int Orientation;
-	
+	public static ArrayList<Stop> Undos = new ArrayList<Stop>(); // TODO
+		
 	public static StopArrayAdaptor favAdaptor;
 	public static StopArrayAdaptor histAdaptor;
 	public static BussArrayAdaptor bussAdaptor;
@@ -28,12 +30,12 @@ public class GlobalData {
 	}
 
 	public static class JsonWrapper {
-		public ArrayList<Stop> Favorites = new ArrayList<Stop>();
-		public ArrayList<Stop> History = new ArrayList<Stop>();
-		public int FavOrder = 0;
-		public int HistOrder = 0;
-		public int StopOrder = 0;
-		public int RefreshDelay = 0;
+		@Expose public ArrayList<Stop> Favorites = new ArrayList<Stop>();
+		@Expose public ArrayList<Stop> History = new ArrayList<Stop>();
+		@Expose public int FavOrder = 0;
+		@Expose public int HistOrder = 0;
+		@Expose public int StopOrder = 0;
+		@Expose public int RefreshDelay = 0;
 
 		public JsonWrapper(ArrayList<Stop> fav, ArrayList<Stop> hist, int f, int h, int s, int r) {
 			Favorites = fav;

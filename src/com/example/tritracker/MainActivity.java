@@ -1,8 +1,14 @@
 package com.example.tritracker;
 
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.NotificationCompat;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -140,6 +146,7 @@ public class MainActivity extends Activity {
 			}
 			return true;
 		case R.id.action_search:
+
 			Util.showToast("Not in yet", Toast.LENGTH_SHORT);
 			return true;
 		case R.id.action_settings:
