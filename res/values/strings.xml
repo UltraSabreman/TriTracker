@@ -30,6 +30,7 @@
 	<string name="title_activity_alert_details">Alert Details</string>
 	<string name="affected_line">Affected Line: </string>
 	<string name="title_activity_settings">Settings</string>
-	<string name="hello_world">Hello world!</string>
+	<string name="refresh_label">Auto-refresh delay: </string>
+	<string name="refresh_hint">Delay in Seconds</string>
 
 </resources>

@@ -7,16 +7,15 @@
 	android:paddingRight="@dimen/activity_horizontal_margin"
 	android:paddingTop="@dimen/activity_vertical_margin"
 	tools:context=".SettingsView" >
-	
-	
 
 	<Button
-		android:id="@+id/Cancel"
+		android:id="@+id/Apply"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:layout_alignParentBottom="true"
-		android:layout_alignParentRight="true"
-		android:text="Apply" />
+		android:text="@android:string/ok"
+		android:textAlignment="gravity" 
+		android:onClick="applyChanges"/>
 
 	<TextView
 		android:id="@+id/Label1"
@@ -26,30 +25,25 @@
 		android:layout_alignParentTop="true"
 		android:textSize="20sp"
 		android:textColor="@android:color/holo_blue_dark"
-		android:text="Set the auto refresh delay: " />
+		android:text="@string/refresh_label" />
+	
+	<ImageView
+		android:id="@+id/help1"
+		android:layout_width="20dp"
+		android:layout_height="20dp"
+		android:onClick="helpRefresh"
+		android:layout_alignParentRight="true"
+		android:src="@drawable/ic_action_help"
+		android:contentDescription="@string/content"
+		/>
 
-	<SeekBar
+	<EditText
 		android:id="@+id/Delay"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:layout_centerHorizontal="true"
-		android:layout_below="@+id/Label1"/>
-	
-	<TextView
-		android:id="@+id/Label2"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_below="@+id/Delay"
-		android:textSize="12sp"
-		android:text="Delay set to: 5 sec" />
-	
-	<TextView
-		android:id="@+id/Label3"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_below="@+id/Label2"
-		android:textSize="12sp"
-		android:textColor="@android:color/darker_gray"
-		android:text="The higher the value, the more data freindly the app is. A Value of 0 will prevent auto refresh." />
+		android:layout_below="@+id/Label1"
+		android:hint="@string/refresh_hint"
+		android:inputType="number"/>
 
 </RelativeLayout>

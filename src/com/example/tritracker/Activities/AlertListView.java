@@ -7,7 +7,6 @@ import android.support.v4.app.NavUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.example.tritracker.GlobalData;
 import com.example.tritracker.R;
