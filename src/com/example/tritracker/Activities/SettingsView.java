@@ -6,35 +6,30 @@ import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ListView;
-import android.widget.Toast;
+import android.widget.SeekBar;
 
-import com.example.tritracker.GlobalData;
 import com.example.tritracker.R;
 import com.example.tritracker.Util;
-import com.example.tritracker.ArrayAdaptors.AlertArrayAdaptor;
 
-public class AlertList extends Activity {
-	AlertArrayAdaptor ar;
-	
+public class SettingsView extends Activity {
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_alert_list);
-		Util.parents.push(getClass());
-
-		getActionBar().setDisplayHomeAsUpEnabled(true);
-
+		setContentView(R.layout.activity_settings);
 		
-		ar = new AlertArrayAdaptor(getApplicationContext(), GlobalData.CurrentStop.Alerts);
-	
-		((ListView) findViewById(R.id.AlertList)).setAdapter(ar);		
+		Util.parents.push(getClass());
+		
+		getActionBar().setDisplayHomeAsUpEnabled(true);
+		
+		SeekBar np = (SeekBar) findViewById(R.id.Delay);
+		np.setMax(60);
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.activity_alert_list, menu);
+		getMenuInflater().inflate(R.menu.settings, menu);
 		return true;
 	}
 	
@@ -47,9 +42,6 @@ public class AlertList extends Activity {
 					| Intent.FLAG_ACTIVITY_NEW_TASK);
 			NavUtils.navigateUpTo(this, parentActivityIntent);
 
-			return true;
-		case R.id.action_settings:
-			Util.showToast("Not in yet", Toast.LENGTH_SHORT);
 			return true;
 		}
 		return super.onOptionsItemSelected(item);

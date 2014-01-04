@@ -21,7 +21,7 @@ import com.example.tritracker.ArrayAdaptors.StopArrayAdaptor;
 import com.example.tritracker.NotMyCode.SwipeDismissListViewTouchListener;
 import com.example.tritracker.json.ActiveJSONRequest;
 
-public class MainActivity extends Activity {
+public class MainView extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -34,9 +34,11 @@ public class MainActivity extends Activity {
 
 		((TextView) findViewById(R.id.NoMembers)).setText("You have nothing in your favorites");
 		
+		
 		initList();
-		Util.restartTimer(getApplicationContext());
 		Util.updateAllStops(getApplicationContext());
+		Util.restartTimer(getApplicationContext());
+		
 		onActivityChange();
 	}
 
@@ -143,7 +145,7 @@ public class MainActivity extends Activity {
 			Util.showToast("Not in yet", Toast.LENGTH_SHORT);
 			return true;
 		case R.id.action_settings:
-			Util.showToast("Not in yet", Toast.LENGTH_SHORT);
+			startActivity(new Intent(this, SettingsView.class));
 			return true;
 		case R.id.action_history:
 			startActivity(new Intent(this, HistoryView.class));

@@ -195,66 +195,73 @@ public final class R {
         public static final int undobar_divider=0x7f020019;
     }
     public static final class id {
-        public static final int Alert=0x7f0a000d;
-        public static final int AlertDiscritpion=0x7f0a000f;
-        public static final int AlertIcon=0x7f0a0010;
-        public static final int AlertLines=0x7f0a000e;
+        public static final int Alert=0x7f0a0012;
+        public static final int AlertDiscritpion=0x7f0a0014;
+        public static final int AlertIcon=0x7f0a0015;
+        public static final int AlertLines=0x7f0a0013;
         public static final int AlertList=0x7f0a0000;
-        public static final int FavIcon=0x7f0a001c;
-        public static final int LineName=0x7f0a0016;
-        public static final int LineNames=0x7f0a001a;
-        public static final int LineNumber=0x7f0a0013;
-        public static final int NoArrivals=0x7f0a0004;
-        public static final int NoClickScreen=0x7f0a000a;
-        public static final int NoMembers=0x7f0a000c;
-        public static final int ReminderIcon=0x7f0a0011;
-        public static final int ReminderTime=0x7f0a0012;
-        public static final int Schedule=0x7f0a0015;
-        public static final int Spinner=0x7f0a000b;
-        public static final int StopID=0x7f0a0019;
-        public static final int StopName=0x7f0a0018;
-        public static final int Time=0x7f0a0017;
-        public static final int UIBussList=0x7f0a0001;
-        public static final int UIStopIDBox=0x7f0a0009;
-        public static final int UIStopInfo=0x7f0a0003;
-        public static final int UIStopInfoDirection=0x7f0a0007;
-        public static final int UIStopInfoName=0x7f0a0006;
-        public static final int UIStopList=0x7f0a0008;
-        public static final int UIseperator=0x7f0a0002;
-        public static final int UIseperator2=0x7f0a001b;
-        public static final int UIseperator3=0x7f0a0014;
-        public static final int action_cancel_reminder=0x7f0a0027;
-        public static final int action_clear=0x7f0a0020;
-        public static final int action_create_reminder=0x7f0a0025;
-        public static final int action_edit_reminder=0x7f0a0026;
-        public static final int action_favorite=0x7f0a0024;
-        public static final int action_history=0x7f0a0023;
-        public static final int action_search=0x7f0a0022;
-        public static final int action_settings=0x7f0a001f;
-        public static final int action_sort=0x7f0a0021;
-        public static final int alertBackground=0x7f0a0005;
-        public static final int reminderLabel=0x7f0a001e;
-        public static final int reminderTime=0x7f0a001d;
+        public static final int Cancel=0x7f0a0001;
+        public static final int Delay=0x7f0a0003;
+        public static final int FavIcon=0x7f0a0021;
+        public static final int Label1=0x7f0a0002;
+        public static final int Label2=0x7f0a0005;
+        public static final int Label3=0x7f0a0004;
+        public static final int LineName=0x7f0a001b;
+        public static final int LineNames=0x7f0a001f;
+        public static final int LineNumber=0x7f0a0018;
+        public static final int NoArrivals=0x7f0a0009;
+        public static final int NoClickScreen=0x7f0a000f;
+        public static final int NoMembers=0x7f0a0011;
+        public static final int ReminderIcon=0x7f0a0016;
+        public static final int ReminderTime=0x7f0a0017;
+        public static final int Schedule=0x7f0a001a;
+        public static final int Spinner=0x7f0a0010;
+        public static final int StopID=0x7f0a001e;
+        public static final int StopName=0x7f0a001d;
+        public static final int Time=0x7f0a001c;
+        public static final int UIBussList=0x7f0a0006;
+        public static final int UIStopIDBox=0x7f0a000e;
+        public static final int UIStopInfo=0x7f0a0008;
+        public static final int UIStopInfoDirection=0x7f0a000c;
+        public static final int UIStopInfoName=0x7f0a000b;
+        public static final int UIStopList=0x7f0a000d;
+        public static final int UIseperator=0x7f0a0007;
+        public static final int UIseperator2=0x7f0a0020;
+        public static final int UIseperator3=0x7f0a0019;
+        public static final int action_cancel_reminder=0x7f0a002c;
+        public static final int action_clear=0x7f0a0025;
+        public static final int action_create_reminder=0x7f0a002a;
+        public static final int action_edit_reminder=0x7f0a002b;
+        public static final int action_favorite=0x7f0a0029;
+        public static final int action_history=0x7f0a0028;
+        public static final int action_search=0x7f0a0027;
+        public static final int action_settings=0x7f0a0024;
+        public static final int action_sort=0x7f0a0026;
+        public static final int alertBackground=0x7f0a000a;
+        public static final int reminderLabel=0x7f0a0023;
+        public static final int reminderTime=0x7f0a0022;
     }
     public static final class integer {
         public static final int undobar_hide_delay=0x7f060000;
     }
     public static final class layout {
         public static final int activity_alert_list=0x7f030000;
-        public static final int activity_stop_detail=0x7f030001;
-        public static final int activity_stop_list=0x7f030002;
-        public static final int alert_layout=0x7f030003;
-        public static final int buss_layout=0x7f030004;
-        public static final int fav_stop_layout=0x7f030005;
-        public static final int hist_stop_layout=0x7f030006;
-        public static final int set_reminder=0x7f030007;
+        public static final int activity_settings=0x7f030001;
+        public static final int activity_stop_detail=0x7f030002;
+        public static final int activity_stop_list=0x7f030003;
+        public static final int alert_layout=0x7f030004;
+        public static final int buss_layout=0x7f030005;
+        public static final int fav_stop_layout=0x7f030006;
+        public static final int hist_stop_layout=0x7f030007;
+        public static final int set_reminder=0x7f030008;
     }
     public static final class menu {
         public static final int activity_alert_list=0x7f090000;
         public static final int history_view=0x7f090001;
         public static final int main_action_bar=0x7f090002;
-        public static final int stop_view=0x7f090003;
-        public static final int stop_view_context=0x7f090004;
+        public static final int settings=0x7f090003;
+        public static final int stop_view=0x7f090004;
+        public static final int stop_view_context=0x7f090005;
     }
     public static final class string {
         public static final int action_cancel_reminder=0x7f070017;
@@ -274,6 +281,7 @@ public final class R {
         public static final int data_path=0x7f07000c;
         public static final int fav_desc=0x7f070014;
         public static final int fav_empty=0x7f07000a;
+        public static final int hello_world=0x7f07001d;
         public static final int hist_emtpy=0x7f07000b;
         public static final int no_arrivals=0x7f070019;
         public static final int no_stop=0x7f070011;
@@ -284,6 +292,7 @@ public final class R {
         public static final int title_activity_favorites_view=0x7f070010;
         public static final int title_activity_history_view=0x7f07000f;
         public static final int title_activity_loading_overlay=0x7f070013;
+        public static final int title_activity_settings=0x7f07001c;
         public static final int undo=0x7f07000e;
     }
     public static final class style {

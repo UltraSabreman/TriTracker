@@ -2,6 +2,7 @@ package com.example.tritracker;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -106,13 +107,12 @@ public class Util {
 		if (busses.compareTo("") != 0) {
 			busses = busses.substring(0, busses.length() - 1);
 			
-			if (busses.compareTo("") != 0) {
-					new BackgroundJSONRequest(c)
-					.execute("http://developer.trimet.org/ws/V1/detours?routes="
-							+ busses
-							+ "&json=true&appID="
-							+ c.getString(R.string.appid));
-			}
+			new BackgroundJSONRequest(c)
+			.execute("http://developer.trimet.org/ws/V1/detours?routes="
+					+ busses
+					+ "&json=true&appID="
+					+ c.getString(R.string.appid));
+			
 		}
 		refreshAdaptors();
 	}
@@ -125,6 +125,7 @@ public class Util {
 		if (whichList == 2)
 			list = new String [] {"Buss name", "Buss Route", "Arrival Time"};
 		
+		
 		builder.setSingleChoiceItems(list ,(whichList == 0 ? GlobalData.FavOrder : (whichList == 1 ? GlobalData.HistOrder : GlobalData.StopOrder)), 
 			new DialogInterface.OnClickListener() {
 			@Override
@@ -133,8 +134,9 @@ public class Util {
 					GlobalData.FavOrder = which;
 				else if (whichList == 1)
 					GlobalData.HistOrder = which;
-				else
+				else 
 					GlobalData.StopOrder = which;
+				
 			}
 		}); 
 				
@@ -210,15 +212,6 @@ public class Util {
 		return false;
 	}
 	
-	public static void incSortType(int Type) {
-		if (Type == 0)
-			GlobalData.FavOrder = (GlobalData.FavOrder + 1) % 3;
-		else if(Type == 1)
-			GlobalData.HistOrder = (GlobalData.HistOrder + 1) % 3;
-		else if(Type == 2)
-			GlobalData.StopOrder = (GlobalData.StopOrder + 1) % 3;
-	}
-	
 	
 	public static void subscribeToEdit(final Context c, final Activity a,
 			int name) {
@@ -270,6 +263,10 @@ public class Util {
 	}
 	
 	public static void dumpData(Context c) {
+		File test = new File(c.getString(R.string.data_path));
+		if (test.exists())
+			test.delete();
+		
 		try {
 			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(
 					c.openFileOutput(c.getString(R.string.data_path),

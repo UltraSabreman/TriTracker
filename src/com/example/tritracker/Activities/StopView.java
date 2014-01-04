@@ -29,6 +29,7 @@ import com.example.tritracker.R;
 import com.example.tritracker.Util;
 import com.example.tritracker.ArrayAdaptors.BussArrayAdaptor;
 import com.example.tritracker.Stop.Alert;
+import com.example.tritracker.json.BackgroundJSONRequest;
 
 public class StopView extends Activity {
 	private Buss menuBuss = null;
@@ -37,7 +38,7 @@ public class StopView extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_stop_detail);
 		Util.parents.push(getClass());
-
+		
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 
 		setTitle("Stop ID: " + GlobalData.CurrentStop.StopID);
@@ -58,14 +59,21 @@ public class StopView extends Activity {
 			alert.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					startActivity(new Intent(act, AlertList.class));
+					startActivity(new Intent(act, AlertListView.class));
 				}
 			});
 			
 		}else 
 			((View) findViewById(R.id.alertBackground)).setVisibility(View.INVISIBLE);
 		
-		initList();		
+		initList();
+		
+		new BackgroundJSONRequest(getApplicationContext())
+		.execute("http://developer.trimet.org/ws/V1/detours?routes="
+				+ String.valueOf(GlobalData.CurrentStop.StopID)
+				+ "&json=true&appID="
+				+ getString(R.string.appid));
+		GlobalData.bussAdaptor.notifyDataSetChanged();
 		invalidateOptionsMenu();
 	}
 	
@@ -139,7 +147,7 @@ public class StopView extends Activity {
 							}
 						}
 						if (affected)
-							 view.getContext().startActivity(new Intent(view.getContext(), AlertList.class));
+							 view.getContext().startActivity(new Intent(view.getContext(), AlertListView.class));
 					}
 				 }
 			});
@@ -187,6 +195,7 @@ public class StopView extends Activity {
 	        		   buss.notification.editNotification(b.getProgress());
 	        	   } else
 	        		   buss.setNotification(new NotificationHandler(getApplicationContext(), getIntent(), GlobalData.CurrentStop, menuBuss, b.getProgress()));
+	        	   GlobalData.bussAdaptor.notifyDataSetChanged();
 	           }
 	       });
 		
@@ -259,7 +268,7 @@ public class StopView extends Activity {
 
 			return true;
 		case R.id.action_settings:
-			Util.showToast("Not in yet", Toast.LENGTH_SHORT);
+			startActivity(new Intent(this, SettingsView.class));
 			return true;
 		case R.id.action_sort:
 			Util.buildSortDialog((Activity) this, 2);

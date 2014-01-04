@@ -36,12 +36,6 @@ public class HistoryView extends Activity {
 		initList();
 		onActivityChange();
 	}
-
-	@Override
-	public void onResume() {
-		onActivityChange();
-		super.onResume();
-	}
 	
 	private void onActivityChange() {
 		if (GlobalData.History == null || GlobalData.History.size() == 0)
@@ -115,6 +109,13 @@ public class HistoryView extends Activity {
 		getMenuInflater().inflate(R.menu.history_view, menu);
 		return true;
 	}
+	
+	@Override
+	public void onResume() {
+		onActivityChange();
+		super.onResume();
+	}
+	
 	@Override
 	public void onRestart() {
 		onActivityChange();
@@ -150,7 +151,7 @@ public class HistoryView extends Activity {
 			onActivityChange();
 			return true;
 		case R.id.action_settings:
-			Util.showToast("Not in yet", Toast.LENGTH_SHORT);
+			startActivity(new Intent(this, SettingsView.class));
 			return true;
 
 		}

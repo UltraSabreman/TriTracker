@@ -2,7 +2,7 @@ package com.example.tritracker;
 
 import java.util.Date;
 
-import com.example.tritracker.Activities.MainActivity;
+import com.example.tritracker.Activities.MainView;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -94,7 +94,7 @@ public class NotificationHandler {
 			        .setAutoCancel(true)
 			        .setLights(0xffFF8800, 1500, 1000);
 				// Creates an explicit intent for an Activity in your app
-				Intent resultIntent = new Intent(notContext, MainActivity.class);
+				Intent resultIntent = new Intent(notContext, MainView.class);
 			
 				// The stack builder object will contain an artificial back stack for the
 				// started Activity.
@@ -102,7 +102,7 @@ public class NotificationHandler {
 				// your application to the Home screen.
 				TaskStackBuilder stackBuilder = TaskStackBuilder.create(notContext);
 				// Adds the back stack for the Intent (but not the Intent itself)
-				stackBuilder.addParentStack(MainActivity.class);
+				stackBuilder.addParentStack(MainView.class);
 				// Adds the Intent that starts the Activity to the top of the stack
 				stackBuilder.addNextIntent(resultIntent);
 				PendingIntent resultPendingIntent =

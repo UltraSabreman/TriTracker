@@ -3,7 +3,7 @@
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
 	android:padding="6dip"
-	tools:context=".AlertList" >
+	tools:context=".AlertListView" >
 	
 	<TextView
 		android:id="@+id/Alert"

@@ -24,7 +24,7 @@
 		android:label="@string/app_name"
 		android:theme="@style/AppTheme" >
 		<activity
-			android:name="com.example.tritracker.Activities.MainActivity"
+			android:name="com.example.tritracker.Activities.MainView"
 			android:label="@string/app_name"
 			android:windowSoftInputMode="stateHidden" >
 			<intent-filter>
@@ -52,8 +52,12 @@
 				android:value="com.example.tritracker.MainActivity" />
 		</activity>
 		<activity
-			android:name="com.example.tritracker.Activities.AlertList"
+			android:name="com.example.tritracker.Activities.AlertListView"
 			android:label="@string/title_activity_alert_details" >
+		</activity>
+		<activity
+			android:name="com.example.tritracker.Activities.SettingsView"
+			android:label="@string/title_activity_settings" >
 		</activity>
 	</application>
 

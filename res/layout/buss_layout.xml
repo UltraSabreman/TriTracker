@@ -39,7 +39,7 @@
 			android:layout_toRightOf="@+id/ReminderIcon"
 			android:textColor="@android:color/darker_gray"
 			android:visibility="invisible"
-			android:textSize="10dp"
+			android:textSize="10sp"
 			/>
 		
 		<TextView
