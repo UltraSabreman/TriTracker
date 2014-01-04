@@ -12,7 +12,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.tritracker.GlobalData;
 import com.example.tritracker.R;
@@ -147,8 +146,14 @@ public class HistoryView extends Activity implements UndoBarController.UndoListe
 			NavUtils.navigateUpTo(this, parentActivityIntent);
 			return true;
 		case R.id.action_clear:
+			for (Stop s : GlobalData.History)
+				GlobalData.HUndos.add(s);
+			
 			GlobalData.histAdaptor.clear();
-			Util.showToast("History Cleared", Toast.LENGTH_SHORT);
+			
+			mUndoBarController.showUndoBar(false, 
+					"Removed " + GlobalData.HUndos.size() + " Stop" + (GlobalData.HUndos.size() > 1 ? "s" : ""),null);
+			
 			onActivityChange();
 			return true;
 		/*case R.id.action_search:
