@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 
-import com.example.tritracker.json.Location;
+import com.example.tritracker.json.JSONResult;
 import com.google.gson.annotations.Expose;
 //make me more specific
 //import android.content.
@@ -16,13 +16,22 @@ public class Stop  {
 	@Expose public Date LastAccesed = null;
 
 	@Expose public ArrayList<Buss> Busses = new ArrayList<Buss>();
+	public ArrayList<Alert> Alerts = new ArrayList<Alert>();
 
-	public Stop(Location l) {
+	public Stop(JSONResult.ResultSet.Location l) {
 		Name = l.desc;
 		StopID = l.locid;
 		Direction = l.dir;
 	}
 
+	public boolean hasNotifications() {
+		if (Busses != null && Busses.size() != 0)
+			for (Buss b : Busses)
+				if (b.notification != null && b.notification.IsSet)
+					return true;
+		return false;
+	}
+	
 	public void Update(Stop s, boolean shouldUpdateDate) {
 		Name = new String(s.Name);
 		StopID = s.StopID;
@@ -30,9 +39,7 @@ public class Stop  {
 		if (shouldUpdateDate && s.LastAccesed != null)
 			LastAccesed = s.LastAccesed;
 		
-		if (s.Busses == null)
-			Busses = null;
-		else if(Busses != null) {
+		if(Busses != null) {
 			for (Buss b : s.Busses) {
 				Buss tempBuss = getBuss(b);
 				if (tempBuss != null)
@@ -40,19 +47,27 @@ public class Stop  {
 				else
 					Busses.add(new Buss(b));
 			}
+			
+			for (Iterator<Buss> it = Busses.iterator(); it.hasNext(); )
+				if (s.getBuss(it.next()) == null)
+					it.remove();	
 		}
 	}
 
 	public Buss getBuss(Buss ib) {
 		for (Buss b : Busses)
-			if (b != null && b.ScheduledTime.compareTo(ib.ScheduledTime) == 0)
+			if (b != null && b.compareTo(ib))
 				return b;
 		return null;
 	}
 	
-	public void clearArivals() {
-		for (Iterator<Buss> it = Busses.iterator(); it.hasNext(); )
-			if (Util.getBussMinutes(it.next()) <= 0)
-	            it.remove();
+	public static class Alert {
+		public String Discription = "";
+		public int AffectedLine = -1;
+		
+		public Alert(String d, int a) {
+			Discription = d;
+			AffectedLine = a;
+		}
 	}
 }

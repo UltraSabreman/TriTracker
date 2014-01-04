@@ -1,0 +1,32 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:padding="6dip"
+	tools:context=".AlertList" >
+	
+	<TextView
+		android:id="@+id/Alert"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentTop="true"
+		android:text="@string/affected_line" 
+		android:textColor="@android:color/holo_blue_dark"/>
+	
+	<TextView
+		android:id="@+id/AlertLines" 
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_toRightOf="@+id/Alert"
+		android:textColor="@android:color/black"/>
+	
+	<TextView
+		android:id="@+id/AlertDiscritpion"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_below="@+id/Alert"
+		android:layout_marginTop="3dp"
+		android:textColor="@android:color/darker_gray"/>
+
+
+</RelativeLayout>

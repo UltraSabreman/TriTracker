@@ -2,6 +2,8 @@ package com.example.tritracker;
 
 import java.util.ArrayList;
 
+import com.example.tritracker.ArrayAdaptors.BussArrayAdaptor;
+import com.example.tritracker.ArrayAdaptors.StopArrayAdaptor;
 import com.google.gson.annotations.Expose;
 
 //Oh my god I know this is absolutely terrible and stupid
@@ -11,19 +13,22 @@ import com.google.gson.annotations.Expose;
 //I promise to come back and repent for my sins once i finish this/
 //get more experience.
 public class GlobalData {
-	public static ArrayList<Stop> Favorites = new ArrayList<Stop>();
-	public static ArrayList<Stop> History = new ArrayList<Stop>();
 	public static int FavOrder = 0;
 	public static int HistOrder = 0;
 	public static int StopOrder = 0;
 	public static int RefreshDelay = 5;
-	public static Stop CurrentStop = null;
 	public static int Orientation;
+	
+	public static Stop CurrentStop = null;
+	
+	public static ArrayList<Stop> Favorites = new ArrayList<Stop>();
+	public static ArrayList<Stop> History = new ArrayList<Stop>();
 	public static ArrayList<Stop> Undos = new ArrayList<Stop>(); // TODO
 		
 	public static StopArrayAdaptor favAdaptor;
 	public static StopArrayAdaptor histAdaptor;
 	public static BussArrayAdaptor bussAdaptor;
+	
 
 	public static JsonWrapper getJsonWrap() {
 		return new JsonWrapper(Favorites, History, FavOrder, HistOrder, StopOrder, RefreshDelay);

@@ -1,40 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="fill_parent"
 	android:layout_height="?android:attr/listPreferredItemHeightSmall"
 	android:orientation="horizontal"
+	android:clipToPadding="false"
+	android:clipChildren="false"
 	android:padding="6dip" >
-
-	<TextView
-		android:id="@+id/StopName"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_alignParentLeft="true"
-		android:layout_toLeftOf="@+id/StopID"
-		android:ellipsize="marquee"
-		android:scrollHorizontally="true"
-       	android:marqueeRepeatLimit ="marquee_forever" 
-       	android:singleLine="true" 
-		android:textSize="16sp"
-		android:textColor="@android:color/holo_blue_dark"/>
-
-	<TextView
-		android:id="@+id/StopID"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_alignParentRight="true"
-		android:maxLines="1"
-		android:textSize="16sp" 
-		android:textColor="@android:color/background_dark" />
 	
-	<TextView
-		android:id="@+id/LineNames"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_below="@+id/StopName"
-		android:maxLines="1"
-		android:textSize="12sp" 
-		android:paddingLeft="@dimen/activity_horizontal_margin"
-		android:textColor="@android:color/darker_gray" />
-
-</RelativeLayout>
+	<RelativeLayout
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent" >
+		<ImageView 
+			android:id="@+id/AlertIcon"
+			android:layout_width="18dp"
+			android:layout_height="18dp"
+			android:layout_marginLeft="-8dp"
+			android:layout_marginTop="-8dp"
+			android:src="@drawable/ic_action_error"
+			android:visibility="invisible"
+			android:contentDescription="@string/content"/>	
+		<ImageView 
+			android:id="@+id/ReminderIcon"
+			android:layout_width="18dp"
+			android:layout_height="18dp"
+			android:layout_marginLeft="-8dp"
+			android:layout_marginBottom="-8dp"
+			android:layout_alignParentBottom="true"
+			android:src="@drawable/ic_action_time"
+			android:visibility="invisible"
+			android:contentDescription="@string/content"/>
+		<TextView
+			android:id="@+id/StopName"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentLeft="true"
+			android:layout_toLeftOf="@+id/StopID"
+			android:ellipsize="marquee"
+			android:scrollHorizontally="true"
+	       	android:marqueeRepeatLimit ="marquee_forever" 
+	       	android:singleLine="true" 
+			android:textSize="16sp"
+			android:layout_marginLeft="6dp"
+			android:textColor="@android:color/holo_blue_dark"/>
+	
+		<TextView
+			android:id="@+id/StopID"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentRight="true"
+			android:maxLines="1"
+			android:textSize="16sp" 
+			android:layout_marginRight="6dp"
+			android:textColor="@android:color/background_dark" />
+		
+		<TextView
+			android:id="@+id/LineNames"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_below="@+id/StopName"
+			android:maxLines="1"
+			android:textSize="12sp" 
+			android:layout_marginLeft="@dimen/activity_horizontal_margin"
+			android:textColor="@android:color/darker_gray" />
+		</RelativeLayout>
+</LinearLayout>

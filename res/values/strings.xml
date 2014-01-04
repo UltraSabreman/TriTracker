@@ -25,5 +25,9 @@
 	<string name="action_create_reminder">Set Reminder for Buss</string>
 	<string name="action_edit_reminder">Edit the Reminder</string>
 	<string name="action_cancel_reminder">Cancel the Reminder</string>
+	<string name="content">A Picture</string>
+	<string name="no_arrivals">No arrival information available.</string>
+	<string name="title_activity_alert_details">Alert Details</string>
+	<string name="affected_line">Affected Line: </string>
 
 </resources>

@@ -2,7 +2,7 @@ package com.example.tritracker;
 
 import java.util.Date;
 
-import com.example.tritracker.json.Arrival;
+import com.example.tritracker.json.JSONResult;
 import com.google.gson.annotations.Expose;
 //import java.util.Vector;
 
@@ -14,16 +14,14 @@ public class Buss {
 	@Expose public String SignLong;
 	@Expose public Date EstimatedTime;
 	@Expose public Date ScheduledTime;
-	//@Expose public String TripNumber;
 	public NotificationHandler notification = null;
 
-	public Buss(Arrival a) {
+	public Buss(JSONResult.ResultSet.Arrival a) {
 		Route = a.route;
 		Detouring = a.detour;
 		Status = a.status;
 		SignShort = a.shortSign;
 		SignLong = a.fullSign;
-		//TripNumber = a.blockPosition.trip[0].tripNum;
 
 		EstimatedTime = Util.dateFromString(a.estimated);
 		ScheduledTime = Util.dateFromString(a.scheduled);
@@ -38,14 +36,20 @@ public class Buss {
 		notification = n;
 	}
 	
+	public boolean compareTo(Buss b) {
+		if (b == null) return false;
+		if (ScheduledTime.compareTo(b.ScheduledTime) == 0) 
+			return true;
+		return false;
+	}
+	
 	public void update(Buss b) {
 		Route = b.Route;
 		Detouring = b.Detouring;
 		Status = new String(b.Status);
 		SignShort = new String(b.SignShort);
 		SignLong = new String(b.SignLong);
-		//TripNumber = new String(b.TripNumber);
-
+		
 		if (b.EstimatedTime != null)
 			EstimatedTime = new Date(b.EstimatedTime.getTime());
 		if (b.ScheduledTime != null)

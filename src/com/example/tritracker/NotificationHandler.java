@@ -2,6 +2,8 @@ package com.example.tritracker;
 
 import java.util.Date;
 
+import com.example.tritracker.Activities.MainActivity;
+
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -13,16 +15,18 @@ import android.support.v4.app.NotificationCompat;
 
 public class NotificationHandler {  
     private Context notContext;
-    private Intent notIntent;
     private Handler notHandle = new Handler();
     private Runnable notRun;
     private NotificationManager not;
-    private Buss trackedBuss;
+    public Buss trackedBuss;
     private Stop trackedStop;
     private int timeToWait;
     
     public boolean IsSet = false;
     
+    public int getTime() {
+    	return timeToWait;
+    }
     
     public NotificationHandler(final Context c, Intent i, Stop s, Buss b, int time) {
     	set(c,i,s,b,time);
@@ -32,7 +36,6 @@ public class NotificationHandler {
     	trackedBuss = b;
     	trackedStop = s;
     	notContext = c;
-    	notIntent = i;
     	timeToWait = time;
     	
     	if (notRun != null && notHandle != null)
@@ -59,15 +62,16 @@ public class NotificationHandler {
     }
     
     public void cancelNotification() { 
-    	notHandle.removeCallbacks(notRun);
+    	if (notHandle != null && notRun != null)
+    		notHandle.removeCallbacks(notRun);
     	IsSet = false;
-    	not.cancel(0);
+    	if (not != null)
+    		not.cancel(0);
     }
     
     public void editNotification(int time) {
-    	notHandle.removeCallbacks(notRun);
+    	cancelNotification();
     	timeToWait = time;
-    	not.cancel(0);
     	notHandle.post(notRun);
     }
     

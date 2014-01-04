@@ -24,7 +24,7 @@
 		android:label="@string/app_name"
 		android:theme="@style/AppTheme" >
 		<activity
-			android:name="com.example.tritracker.MainActivity"
+			android:name="com.example.tritracker.Activities.MainActivity"
 			android:label="@string/app_name"
 			android:windowSoftInputMode="stateHidden" >
 			<intent-filter>
@@ -36,7 +36,7 @@
 			</intent-filter>
 		</activity>
 		<activity
-			android:name="com.example.tritracker.StopView"
+			android:name="com.example.tritracker.Activities.StopView"
 			android:icon="@drawable/ic_launcher"
 			android:windowSoftInputMode="stateHidden" >
 			<meta-data
@@ -44,12 +44,16 @@
 				android:value="com.example.tritracker.MainActivity" />
 		</activity>
 		<activity
-			android:name="com.example.tritracker.HistoryView"
+			android:name="com.example.tritracker.Activities.HistoryView"
 			android:label="@string/title_activity_history_view"
 			android:windowSoftInputMode="stateHidden" >
 			<meta-data
 				android:name="android.support.PARENT_ACTIVITY"
 				android:value="com.example.tritracker.MainActivity" />
+		</activity>
+		<activity
+			android:name="com.example.tritracker.Activities.AlertList"
+			android:label="@string/title_activity_alert_details" >
 		</activity>
 	</application>
 

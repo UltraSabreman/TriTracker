@@ -11,13 +11,14 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Currency;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Stack;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Handler;
 import android.view.KeyEvent;
 import android.view.inputmethod.EditorInfo;
@@ -54,34 +55,20 @@ public class Util {
 	public static int getBussMinutes(Buss b) {
 		Date est = null;
 		
-    	if (b.Status.compareTo("estimated") == 0) 
+    	if (b.Status.compareTo("estimated") == 0 && b.EstimatedTime != null) {
     		est = new Date(b.EstimatedTime.getTime() - new Date().getTime());
-    	else
-    		est = new Date(b.ScheduledTime.getTime() - new Date().getTime());
-    	
-		return est.getMinutes();
+    	} else {
+        	est = new Date(b.ScheduledTime.getTime() - new Date().getTime());
+    	}
+     	
+		return mToS(est.getTime())/60;
 	}
 	
-	public static void updateAllStops(Context c) {
-		for(Stop s : GlobalData.History) {
-			s.clearArivals();
-			new BackgroundJSONRequest(c)
-			.execute("http://developer.trimet.org/ws/V1/arrivals?locIDs="
-					+ s.StopID
-					+ "&json=true&appID="
-					+ c.getString(R.string.appid));
-		}
-		for(Stop s : GlobalData.Favorites) {
-			s.clearArivals();
-			if (!histHasStop(s)) {
-				new BackgroundJSONRequest(c)
-				.execute("http://developer.trimet.org/ws/V1/arrivals?locIDs="
-						+ s.StopID
-						+ "&json=true&appID="
-						+ c.getString(R.string.appid));
-			}
-		}
-
+	public static int mToS(long mill) {
+		return (int)(mill / 1000);
+	}
+	
+	public static void refreshAdaptors() {
 		if (GlobalData.favAdaptor != null)
 			GlobalData.favAdaptor.notifyDataSetChanged();
 		if (GlobalData.histAdaptor != null)
@@ -90,12 +77,104 @@ public class Util {
 			GlobalData.bussAdaptor.notifyDataSetChanged();
 	}
 	
-	public static void initListsAndAdaptors(Context c) {
+	public static void updateAllStops(Context c) {
+		String stops = "";
+		for(Stop s : GlobalData.History) 
+			stops += String.valueOf(s.StopID) + ",";
 		
+		for(Stop s : GlobalData.Favorites) 
+			if (!histHasStop(s)) 
+				stops += String.valueOf(s.StopID) + ",";
+		
+		if (stops.compareTo("") != 0) {
+			stops = stops.substring(0, stops.length() - 1);
+			new BackgroundJSONRequest(c)
+			.execute("http://developer.trimet.org/ws/V1/arrivals?locIDs="
+					+ stops
+					+ "&json=true&appID="
+					+ c.getString(R.string.appid));
+		}
+		
+		String busses = "";
+		for(Stop s : GlobalData.Favorites)
+			if (!histHasStop(s))
+				busses += Util.getListOfLines(s, false) + ",";
+				
+		for(Stop s : GlobalData.History)
+			busses += Util.getListOfLines(s, false) + ",";
+		
+		if (busses.compareTo("") != 0) {
+			busses = busses.substring(0, busses.length() - 1);
+			
+			if (busses.compareTo("") != 0) {
+					new BackgroundJSONRequest(c)
+					.execute("http://developer.trimet.org/ws/V1/detours?routes="
+							+ busses
+							+ "&json=true&appID="
+							+ c.getString(R.string.appid));
+			}
+		}
+		refreshAdaptors();
 	}
 	
-	public static void getAlerts() {
-		//TODO do me
+	public static void buildSortDialog(final Activity a, final int whichList) {
+		AlertDialog.Builder builder = new AlertDialog.Builder(a);
+		
+		builder.setTitle("Sort By");
+		String [] list = new String [] {"Stop name", "Stop ID", "Last Accesed"};
+		if (whichList == 2)
+			list = new String [] {"Buss name", "Buss Route", "Arrival Time"};
+		
+		builder.setSingleChoiceItems(list ,(whichList == 0 ? GlobalData.FavOrder : (whichList == 1 ? GlobalData.HistOrder : GlobalData.StopOrder)), 
+			new DialogInterface.OnClickListener() {
+			@Override
+            public void onClick(DialogInterface dialog, int which) {
+				if (whichList == 0)
+					GlobalData.FavOrder = which;
+				else if (whichList == 1)
+					GlobalData.HistOrder = which;
+				else
+					GlobalData.StopOrder = which;
+			}
+		}); 
+				
+		builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+	           public void onClick(DialogInterface dialog, int id) {
+	        	   Util.refreshAdaptors();
+	           }
+		});
+	       
+		builder.create().show();
+	}
+	
+	public static String getListOfLines(Stop s, boolean test) {
+		//this lists the routes, and adds commas between them.
+		if (s.Busses != null && s.Busses.size() != 0) {
+			if (test) {
+				String str = "";
+				for (Buss b :  s.Busses) {
+					String [] words = b.SignLong.split(" ");
+					String tempRoute = words[0];
+					if (tempRoute.compareTo("MAX") == 0)
+						tempRoute = (words[1].isEmpty() ? words[2] : words[1]) + "-Line";
+					if (!str.contains(tempRoute))
+							str+= tempRoute + " ";
+				}
+				
+				return str.replaceAll("( [0-9a-zA-Z])", ",$1");
+			} else {
+				String str = "";
+				for (Buss b :  s.Busses) {
+					String tempRoute = String.valueOf(b.Route);
+					if (!str.contains(tempRoute)) {
+						str += (tempRoute + ",");
+					}
+				}
+				
+				return str.substring(0, str.length() - 1);
+			}
+		}
+		return "";
 	}
 	
 	public static void initToast(Context ic) {
@@ -151,7 +230,6 @@ public class Util {
 				if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER))
 						|| (actionId == EditorInfo.IME_ACTION_DONE)) {
 					EditText edit = (EditText) a.findViewById(R.id.UIStopIDBox);
-					// GlobalData.CurrentStop =
 					new ActiveJSONRequest(c, a)
 							.execute("http://developer.trimet.org/ws/V1/arrivals?locIDs="
 									+ edit.getText().toString()
@@ -167,20 +245,17 @@ public class Util {
 	}
 
 	public static boolean favHasStop(Stop s) {
-		return (listGetStop(s, GlobalData.Favorites) != null ? true : false);
+		return (listGetStop(s.StopID, GlobalData.Favorites) != null ? true : false);
 	}
 
 	public static boolean histHasStop(Stop s) {
-		return (listGetStop(s, GlobalData.History) != null ? true : false);
+		return (listGetStop(s.StopID, GlobalData.History) != null ? true : false);
 	}
 
-	public static Stop listGetStop(Stop s, ArrayList<Stop> l) {
-		if (s == null)
-			return null;
-
-		for (Stop stop : l)
-			if (s.StopID == stop.StopID)
-				return stop;
+	public static Stop listGetStop(int stopID, ArrayList<Stop> l) {
+		for (Stop s : l)
+			if (stopID == s.StopID)
+				return s;
 
 		return null;
 	}

@@ -2,6 +2,9 @@ package com.example.tritracker.json;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -17,12 +20,12 @@ import android.os.AsyncTask;
 import com.example.tritracker.Buss;
 import com.example.tritracker.GlobalData;
 import com.example.tritracker.Stop;
+import com.example.tritracker.Stop.Alert;
 import com.example.tritracker.Util;
 import com.google.gson.Gson;
 
 public class BackgroundJSONRequest extends AsyncTask<String, String, String> {
 	private Context context = null;
-	//private Activity activity = null;
 
 	@Override
 	protected String doInBackground(String... uri) {
@@ -63,41 +66,77 @@ public class BackgroundJSONRequest extends AsyncTask<String, String, String> {
 	protected void onPostExecute(String result) {
 		super.onPostExecute(result);
 		
+		if (result.compareTo("{\"resultSet\":{}}") == 0) return;
+		
 		Gson gson = new Gson();
-		results res = gson.fromJson(result, results.class);
+		JSONResult res = gson.fromJson(result, JSONResult.class);
+		
+		if (res.resultSet.detour != null) {
+			for (Stop s : GlobalData.History)
+				if (s.Alerts != null) {
+					s.Alerts.clear();
+					s.Alerts = null;
+				}
+			for (Stop s : GlobalData.Favorites)
+				if (s.Alerts != null) {
+					s.Alerts.clear();
+					s.Alerts = null;
+				}
+			
+			for (JSONResult.ResultSet.Detour d : res.resultSet.detour) {
+				
+				ArrayList<String> stopIds = new ArrayList<String>();
+				Matcher m = Pattern.compile("Stop ID ([0-9]+)").matcher(d.desc);
+				while (m.find()) {
+					stopIds.add(m.group(1));
+			    }
+			    
+				for (String si : stopIds){
+					Stop hist = Util.listGetStop(Integer.parseInt(si), GlobalData.History);
+					if (hist != null) {
+						hist.Alerts = new ArrayList<Alert>();
+						hist.Alerts.add(new Stop.Alert(d.desc, Integer.parseInt(d.route[0].route))); //Is this safe?
+					}
+					
+					
+					Stop fav = Util.listGetStop(Integer.parseInt(si), GlobalData.Favorites);
+					if (fav != null) {
+						fav.Alerts = new ArrayList<Alert>();
+						fav.Alerts.add(new Stop.Alert(d.desc, Integer.parseInt(d.route[0].route))); //Is this safe?
+					}
+					
+				}
+			}
+			return;
+		}
 
 		if (res == null || res.resultSet == null || res.resultSet.errorMessage != null) return;
 		
-		ResultSet rs = res.resultSet;		
-		Stop temp = new Stop(rs.location[0]);
-
-		if (rs.arrival != null)
-			for (Arrival a : rs.arrival)
-				temp.Busses.add(new Buss(a));
-		else
-			temp.Busses = null;
+		JSONResult.ResultSet rs = res.resultSet;	
+		ArrayList<Stop> stops = new ArrayList<Stop>();
+		for (JSONResult.ResultSet.Location l : rs.location) {
+			stops.add(new Stop(l));
+		}
 		
-		if (Util.histHasStop(temp)) {
-			Util.listGetStop(temp, GlobalData.History).Update(temp, false);
-			if (GlobalData.histAdaptor != null)
-				GlobalData.histAdaptor.notifyDataSetChanged();
-		}
-
-		if (Util.favHasStop(temp)) {
-			Util.listGetStop(temp, GlobalData.Favorites).Update(temp, false);
-			if (GlobalData.favAdaptor != null)
-				GlobalData.favAdaptor.notifyDataSetChanged();
-		}
-
-		
-		if (GlobalData.CurrentStop != null && GlobalData.CurrentStop.StopID == temp.StopID) {
-			GlobalData.CurrentStop.Update(temp, false);
-			if (GlobalData.bussAdaptor != null)
-				GlobalData.bussAdaptor.notifyDataSetChanged();
-		}
-
-
-		Util.dumpData(context);
-	}
+		for (Stop s: stops) {
+			if (rs.arrival != null)
+				for (JSONResult.ResultSet.Arrival a : rs.arrival) {
+						if (s.StopID == a.locid)
+							s.Busses.add(new Buss(a));
+					}
+			
+			
+			if (Util.histHasStop(s)) 
+				Util.listGetStop(s.StopID, GlobalData.History).Update(s, false);	
 	
+			if (Util.favHasStop(s))
+				Util.listGetStop(s.StopID, GlobalData.Favorites).Update(s, false);			
+			
+			if (GlobalData.CurrentStop != null && GlobalData.CurrentStop.StopID == s.StopID) 
+				GlobalData.CurrentStop.Update(s, false);
+					
+		}
+		Util.refreshAdaptors();
+		Util.dumpData(context);	
+	}
 }

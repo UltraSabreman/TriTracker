@@ -22,14 +22,14 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 import com.example.tritracker.Buss;
 import com.example.tritracker.GlobalData;
 import com.example.tritracker.R;
 import com.example.tritracker.Stop;
-import com.example.tritracker.StopView;
 import com.example.tritracker.Util;
+import com.example.tritracker.Activities.StopView;
 import com.google.gson.Gson;
 
 public class ActiveJSONRequest extends AsyncTask<String, String, String> {
@@ -70,7 +70,7 @@ public class ActiveJSONRequest extends AsyncTask<String, String, String> {
 
 	@Override
 	protected void onPreExecute() {
-		((ProgressBar) activity.findViewById(R.id.Spinner)).setVisibility(View.VISIBLE);
+		((RelativeLayout) activity.findViewById(R.id.NoClickScreen)).setVisibility(View.VISIBLE);
 		activity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
 				WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);		
 	}
@@ -78,11 +78,11 @@ public class ActiveJSONRequest extends AsyncTask<String, String, String> {
 	@Override
 	protected void onPostExecute(String result) {
 		super.onPostExecute(result);
-		((ProgressBar) activity.findViewById(R.id.Spinner)).setVisibility(View.INVISIBLE);
+		((RelativeLayout) activity.findViewById(R.id.NoClickScreen)).setVisibility(View.INVISIBLE);
 		activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 		
 		Gson gson = new Gson();
-		ResultSet rs = gson.fromJson(result, results.class).resultSet;
+		JSONResult.ResultSet rs = gson.fromJson(result, JSONResult.class).resultSet;
 
 		if (rs.errorMessage != null) {
 			AlertDialog.Builder builder = new AlertDialog.Builder(activity);
@@ -113,20 +113,28 @@ public class ActiveJSONRequest extends AsyncTask<String, String, String> {
 		temp.LastAccesed = new Date();
 
 		if (rs.arrival != null)
-			for (Arrival a : rs.arrival)
+			for (JSONResult.ResultSet.Arrival a : rs.arrival)
 				temp.Busses.add(new Buss(a));
 		else
 			temp.Busses = null;
 
-		GlobalData.CurrentStop = temp;
-
-		Stop t = Util.listGetStop(temp, GlobalData.History);
-		if (t == null)
-			GlobalData.History.add(temp);
-		else
+		Stop t = Util.listGetStop(temp.StopID, GlobalData.History);
+		if (t == null) {
+			Stop w = Util.listGetStop(temp.StopID, GlobalData.Favorites);
+			if (w == null) {
+				GlobalData.History.add(temp);
+				GlobalData.CurrentStop = temp;
+			} else {
+				w.Update(temp, true);
+				GlobalData.History.add(w);
+				GlobalData.CurrentStop = w;
+			}
+		} else {
 			t.Update(temp, true);
-			
+			GlobalData.CurrentStop = t;
+		}
 
+		Util.refreshAdaptors();
 		Util.dumpData(context);
 		context.startActivity(new Intent(context, StopView.class)
 				.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));

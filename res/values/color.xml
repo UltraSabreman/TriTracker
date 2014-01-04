@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+	<color name="Idk">#90EDEDED</color>
 <color name="TestColor">#E0E0E0</color>
  <color name="White">#FFFFFF</color>
  <color name="Ivory">#FFFFF0</color>
