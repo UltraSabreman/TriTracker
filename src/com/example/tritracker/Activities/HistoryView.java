@@ -21,7 +21,7 @@ import com.example.tritracker.Util;
 import com.example.tritracker.ArrayAdaptors.StopArrayAdaptor;
 import com.example.tritracker.NotMyCode.SwipeDismissListViewTouchListener;
 import com.example.tritracker.NotMyCode.UndoBarController;
-import com.example.tritracker.json.ForegroundJSONRequest;
+import com.example.tritracker.json.JSONRequestManger;
 
 public class HistoryView extends Activity implements UndoBarController.UndoListener{
 	private UndoBarController mUndoBarController;
@@ -69,11 +69,7 @@ public class HistoryView extends Activity implements UndoBarController.UndoListe
 				Stop temp = GlobalData.histAdaptor.getItem(position);
 				if (temp != null) {
 					GlobalData.CurrentStop = temp;
-					new ForegroundJSONRequest(getApplicationContext(), testAct)
-							.execute("http://developer.trimet.org/ws/V1/arrivals?locIDs="
-									+ temp.StopID
-									+ "&json=true&appID="
-									+ getString(R.string.appid), String.valueOf(temp.StopID));
+					new JSONRequestManger(getApplicationContext(), testAct, temp.StopID).start();
 				}
 			}
 		});
@@ -177,6 +173,7 @@ public class HistoryView extends Activity implements UndoBarController.UndoListe
 	        	if (!Util.histHasStop(s))
 	        		GlobalData.histAdaptor.add(s);
 	        }
+	        GlobalData.HUndos.clear();
 	        onActivityChange();
     	} else
     		GlobalData.HUndos.clear();

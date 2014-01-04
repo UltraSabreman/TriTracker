@@ -16,8 +16,8 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.impl.client.DefaultHttpClient;
 
+import android.app.Activity;
 import android.content.Context;
-import android.os.AsyncTask;
 
 import com.example.tritracker.Buss;
 import com.example.tritracker.GlobalData;
@@ -26,16 +26,17 @@ import com.example.tritracker.Stop.Alert;
 import com.example.tritracker.Util;
 import com.google.gson.Gson;
 
-public class BackgroundJSONRequest extends AsyncTask<String, String, String> {
+public class BackgroundJSONRequest extends Thread {
 	private Context context = null;
+	private Activity activity = null;
+	private String url = "";
 
-	@Override
-	protected String doInBackground(String... uri) {
+	public void run() {
 		HttpClient httpclient = new DefaultHttpClient();
 		HttpResponse response;
 		String responseString = null;
 		try {			
-			response = httpclient.execute(new HttpGet(uri[0]));
+			response = httpclient.execute(new HttpGet(url));
 			StatusLine statusLine = response.getStatusLine();
 			if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
 				ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -53,21 +54,17 @@ public class BackgroundJSONRequest extends AsyncTask<String, String, String> {
 		} catch (IOException e) {
 		}
 		//this will silently fail on all issues, since this a background request.
-		
-		return responseString;
+		parseJson(responseString);
 	}
 
-	public BackgroundJSONRequest(Context context) {
+	public BackgroundJSONRequest(Context context, Activity act, String url) {
 		this.context = context;
+		this.activity = act;
+		this.url = url;
 	}
 
-	@Override
-	protected void onPreExecute() {
-	}
-	
-	@Override
-	protected void onPostExecute(String result) {
-		super.onPostExecute(result);
+
+	protected void parseJson(String result) {
 		
 		if (result == null || result.compareTo("{\"resultSet\":{}}") == 0) return;
 		
@@ -139,7 +136,13 @@ public class BackgroundJSONRequest extends AsyncTask<String, String, String> {
 				GlobalData.CurrentStop.Update(s, false);
 					
 		}
-		Util.refreshAdaptors();
+		
+	   	activity.runOnUiThread(new Runnable() {
+	   	     @Override
+	   	     public void run() {
+	   	    	 Util.refreshAdaptors();
+	   	     }
+	   	});
 		Util.dumpData(context);	
 	}
 }

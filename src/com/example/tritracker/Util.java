@@ -2,7 +2,6 @@ package com.example.tritracker;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -28,7 +27,7 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
-import com.example.tritracker.json.ForegroundJSONRequest;
+import com.example.tritracker.json.JSONRequestManger;
 import com.example.tritracker.json.ForegroundJSONRequest.checkStops;
 import com.example.tritracker.json.BackgroundJSONRequest;
 import com.google.gson.Gson;
@@ -79,7 +78,7 @@ public class Util {
 			GlobalData.bussAdaptor.notifyDataSetChanged();
 	}
 	
-	public static void updateAllStops(Context c) {
+	public static void updateAllStops(Context c, Activity a) {
 		String stops = "";
 		for(Stop s : GlobalData.History) 
 			stops += String.valueOf(s.StopID) + ",";
@@ -90,11 +89,11 @@ public class Util {
 		
 		if (stops.compareTo("") != 0) {
 			stops = stops.substring(0, stops.length() - 1);
-			new BackgroundJSONRequest(c)
-			.execute("http://developer.trimet.org/ws/V1/arrivals?locIDs="
+			
+			new BackgroundJSONRequest(c, a, "http://developer.trimet.org/ws/V1/arrivals?locIDs="
 					+ stops
 					+ "&json=true&appID="
-					+ c.getString(R.string.appid));
+					+ c.getString(R.string.appid)).start();
 		}
 		
 		String busses = "";
@@ -108,12 +107,10 @@ public class Util {
 		if (busses.compareTo("") != 0) {
 			busses = busses.substring(0, busses.length() - 1);
 			
-			new BackgroundJSONRequest(c)
-			.execute("http://developer.trimet.org/ws/V1/detours?routes="
+			new BackgroundJSONRequest(c, a, "http://developer.trimet.org/ws/V1/detours?routes="
 					+ busses
 					+ "&json=true&appID="
-					+ c.getString(R.string.appid));
-			
+					+ c.getString(R.string.appid)).start();			
 		}
 		refreshAdaptors();
 		dumpData(c);
@@ -214,7 +211,6 @@ public class Util {
 		return false;
 	}
 	
-	
 	public static void subscribeToEdit(final Context c, final Activity a, int name) {
 		EditText edit = (EditText) a.findViewById(name);
 
@@ -224,12 +220,7 @@ public class Util {
 				if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER))
 						|| (actionId == EditorInfo.IME_ACTION_DONE)) {
 					EditText edit = (EditText) a.findViewById(R.id.UIStopIDBox);
-					new ForegroundJSONRequest(c, a)
-							.execute("http://developer.trimet.org/ws/V1/arrivals?locIDs="
-									+ edit.getText().toString()
-									+ "&json=true&appID="
-									+ c.getString(R.string.appid), edit.getText().toString());
-
+					new JSONRequestManger(c, a, Integer.parseInt(edit.getText().toString())).start();
 					edit.getText().clear();
 
 				}
@@ -389,14 +380,14 @@ public class Util {
 	    }
 	}
 	
-	public static void restartTimer(final Context c) {
+	public static void restartTimer(final Context c, final Activity a) {
 		if (timerRunnable != null)
 			timerHandler.removeCallbacks(timerRunnable);
 		
 		timerRunnable = new Runnable() {
 	        @Override
 	        public void run() {
-	        	Util.updateAllStops(c);
+	        	Util.updateAllStops(c, a);
 	        	
 	        	if (GlobalData.RefreshDelay > 0)
 	        		timerHandler.postDelayed(this, (int)(GlobalData.RefreshDelay * 1000));

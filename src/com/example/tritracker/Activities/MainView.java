@@ -20,7 +20,7 @@ import com.example.tritracker.Util;
 import com.example.tritracker.ArrayAdaptors.StopArrayAdaptor;
 import com.example.tritracker.NotMyCode.SwipeDismissListViewTouchListener;
 import com.example.tritracker.NotMyCode.UndoBarController;
-import com.example.tritracker.json.ForegroundJSONRequest;
+import com.example.tritracker.json.JSONRequestManger;
 
 public class MainView extends Activity implements UndoBarController.UndoListener{
 	private UndoBarController mUndoBarController;
@@ -41,8 +41,8 @@ public class MainView extends Activity implements UndoBarController.UndoListener
 		setTitle("Favorites");
 		
 		initList();
-		Util.updateAllStops(getApplicationContext());
-		Util.restartTimer(getApplicationContext());
+		Util.updateAllStops(getApplicationContext(), this);
+		Util.restartTimer(getApplicationContext(), this);
 		
 		onActivityChange();
 	}
@@ -82,18 +82,13 @@ public class MainView extends Activity implements UndoBarController.UndoListener
 		GlobalData.favAdaptor = new StopArrayAdaptor(this, GlobalData.Favorites, true);
 		view.setAdapter(GlobalData.favAdaptor);
 		final Activity testAct = (Activity)this;
-
 		view.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> arg0, View arg1,
 					int position, long arg3) {
 				Stop temp = GlobalData.favAdaptor.getItem(position);
 				if (temp != null) {
 					GlobalData.CurrentStop = temp;
-					new ForegroundJSONRequest(getApplicationContext(), testAct)
-							.execute("http://developer.trimet.org/ws/V1/arrivals?locIDs="
-									+ temp.StopID
-									+ "&json=true&appID="
-									+ getString(R.string.appid), String.valueOf(temp.StopID));
+					new JSONRequestManger(getApplicationContext(), testAct, temp.StopID).start();
 				}
 			}
 		});
@@ -170,6 +165,7 @@ public class MainView extends Activity implements UndoBarController.UndoListener
 	        	if (!Util.favHasStop(s))
 	        		GlobalData.favAdaptor.add(s);
 	        }
+	        GlobalData.FUndos.clear();
 	        onActivityChange();
     	}else
     		GlobalData.FUndos.clear();

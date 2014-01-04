@@ -29,7 +29,6 @@ import com.example.tritracker.R;
 import com.example.tritracker.Util;
 import com.example.tritracker.ArrayAdaptors.BussArrayAdaptor;
 import com.example.tritracker.Stop.Alert;
-import com.example.tritracker.json.BackgroundJSONRequest;
 
 public class StopView extends Activity {
 	private Buss menuBuss = null;
@@ -49,8 +48,8 @@ public class StopView extends Activity {
 		StopName.setText(GlobalData.CurrentStop.Name);
 		StopName.setSelected(true);
 		StopDir.setText(GlobalData.CurrentStop.Direction);
-		
-		
+					
+	
 		final Activity act = this;
 		if (GlobalData.CurrentStop.Alerts != null && GlobalData.CurrentStop.Alerts.size() != 0) {
 			View alert = (View) findViewById(R.id.alertBackground);
@@ -64,16 +63,9 @@ public class StopView extends Activity {
 			});
 			
 		}else 
-			((View) findViewById(R.id.alertBackground)).setVisibility(View.INVISIBLE);
+			((View) findViewById(R.id.alertBackground)).setVisibility(View.INVISIBLE);		
 		
-		initList();
-		
-		new BackgroundJSONRequest(getApplicationContext())
-		.execute("http://developer.trimet.org/ws/V1/detours?routes="
-				+ String.valueOf(GlobalData.CurrentStop.StopID)
-				+ "&json=true&appID="
-				+ getString(R.string.appid));
-		GlobalData.bussAdaptor.notifyDataSetChanged();
+		initList();		
 		invalidateOptionsMenu();
 	}
 	
@@ -162,7 +154,7 @@ public class StopView extends Activity {
 		final TextView t = (TextView) ourView.findViewById(R.id.reminderLabel);
 		t.setText("0 min before buss.");
 		final SeekBar b = (SeekBar) ourView.findViewById(R.id.reminderTime);
-		b.setMax(Util.getBussMinutes(menuBuss));	
+		b.setMax(Math.max(Util.getBussMinutes(menuBuss), 60));	
 		
 		b.setOnSeekBarChangeListener(new  SeekBar.OnSeekBarChangeListener() {
 			public  void  onStopTrackingTouch(SeekBar seekBar) {

@@ -24,10 +24,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.AsyncTask;
-import android.view.View;
-import android.view.WindowManager;
-import android.widget.RelativeLayout;
 
 import com.example.tritracker.Buss;
 import com.example.tritracker.GlobalData;
@@ -37,22 +33,22 @@ import com.example.tritracker.Util;
 import com.example.tritracker.Activities.StopView;
 import com.google.gson.Gson;
 
-public class ForegroundJSONRequest extends AsyncTask<String, String, String> {
+public class ForegroundJSONRequest extends Thread{
 	private Context context = null;
 	private Activity activity = null;
 	private int stopId = 0;
 	private int error = 0;
+	private String url = "";
+	public boolean failed = false;
 
-	@Override
-	protected String doInBackground(String... uri) {
+	public void run() {
 	    final HttpParams httpParams = new BasicHttpParams();
 	    HttpConnectionParams.setConnectionTimeout(httpParams, 30000);
 		HttpClient httpclient = new DefaultHttpClient(httpParams);
 		HttpResponse response;
 		String responseString = null;
 		try {					    
-			stopId = Integer.parseInt(uri[1]);
-			response = httpclient.execute(new HttpGet(uri[0]));
+			response = httpclient.execute(new HttpGet(url));
 			StatusLine statusLine = response.getStatusLine();
 			if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
 				ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -74,21 +70,17 @@ public class ForegroundJSONRequest extends AsyncTask<String, String, String> {
 			error = 4;
 		}
 		
-		return responseString;
+		parseJson(responseString);
 	}
 
-	public ForegroundJSONRequest(Context context, Activity activity) {
+
+	public ForegroundJSONRequest(Context context, Activity activity, String url, int StopID) {
 		this.context = context;
 		this.activity = activity;
+		this.url = url;
+		this.stopId = StopID;
 	}
-
-	@Override
-	protected void onPreExecute() {
-		((RelativeLayout) activity.findViewById(R.id.NoClickScreen)).setVisibility(View.VISIBLE);
-		activity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-				WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);		
-	}
-	
+		
 	public interface checkStops {
 	    public void doStops();
 	}
@@ -110,12 +102,7 @@ public class ForegroundJSONRequest extends AsyncTask<String, String, String> {
 		return;
     }
 	
-	@Override
-	protected void onPostExecute(String result) {
-		super.onPostExecute(result);
-		((RelativeLayout) activity.findViewById(R.id.NoClickScreen)).setVisibility(View.INVISIBLE);
-		activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-		
+	protected void parseJson(String result) {	
 		if (result == null) {
 			if (error == 1)
 				Util.messageDiag(activity, new checkStops() { public void doStops() { function(); }}, 
@@ -133,7 +120,7 @@ public class ForegroundJSONRequest extends AsyncTask<String, String, String> {
 				Util.messageDiag(activity, new checkStops() { public void doStops() { function(); }}, 
 						"Are you connected?", "Can't reach the Trimet servers right now, are you connected to the internet?" +
 						"\n\nIf you've visited this stop before, and you want to see the cached times, click ok.");
-	
+		
 			return;
 		}
 		
@@ -141,27 +128,34 @@ public class ForegroundJSONRequest extends AsyncTask<String, String, String> {
 		JSONResult.ResultSet rs = gson.fromJson(result, JSONResult.class).resultSet;
 
 		if (rs.errorMessage != null) {
-			AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-
-			String error = rs.errorMessage.content;
-			String id = "";
-			Matcher m = Pattern.compile("([0-9]+)").matcher(error);
-		    if (m.find()) {
-		    	id = m.group(1);
-		    }
-			
-			// 2. Chain together various setter methods to set the dialog characteristics
-			builder.setMessage("A stop with the ID \"" + id + "\" doesn't exist.")
-			       .setTitle(R.string.no_stop);
-			
-			builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-		           public void onClick(DialogInterface dialog, int id) {
-		               // User clicked OK button
-		           }
-		       });
-			
-			// 3. Get the AlertDialog from create()
-			builder.create().show();
+			final String em = rs.errorMessage.content;
+		   	activity.runOnUiThread(new Runnable() {
+		   	     @Override
+		   	     public void run() {
+					AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+		
+					String error = em;
+					String id = "";
+					Matcher m = Pattern.compile("([0-9]+)").matcher(error);
+				    if (m.find()) {
+				    	id = m.group(1);
+				    }
+					
+					// 2. Chain together various setter methods to set the dialog characteristics
+					builder.setMessage("A stop with the ID \"" + id + "\" doesn't exist.")
+					       .setTitle(R.string.no_stop);
+					
+					builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+				           public void onClick(DialogInterface dialog, int id) {
+				               // User clicked OK button
+				           }
+				       });
+					
+					// 3. Get the AlertDialog from create()
+					builder.create().show();
+		   	     }
+		   	});
+		   	failed = true;
 			return;
 		}
 		
@@ -178,11 +172,18 @@ public class ForegroundJSONRequest extends AsyncTask<String, String, String> {
 		if (t == null) {
 			Stop w = Util.listGetStop(temp.StopID, GlobalData.Favorites);
 			if (w == null) {
-				GlobalData.histAdaptor.add(temp);
+				if (GlobalData.histAdaptor != null)
+					GlobalData.histAdaptor.add(temp);
+				else
+					GlobalData.History.add(temp);
+				
 				GlobalData.CurrentStop = temp;
 			} else {
 				w.Update(temp, true);
-				GlobalData.histAdaptor.add(w);
+				if (GlobalData.histAdaptor != null)
+					GlobalData.histAdaptor.add(temp);
+				else
+					GlobalData.History.add(temp);
 				GlobalData.CurrentStop = w;
 			}
 		} else {
@@ -190,11 +191,14 @@ public class ForegroundJSONRequest extends AsyncTask<String, String, String> {
 			GlobalData.CurrentStop = t;
 		}
 
-		Util.refreshAdaptors();
+	   	activity.runOnUiThread(new Runnable() {
+	   	     @Override
+	   	     public void run() {
+	   	    	 Util.refreshAdaptors();
+	   	     }
+	   	});
 		Util.dumpData(context);
-		context.startActivity(new Intent(context, StopView.class)
-				.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-
+		
 	}
 	
 }

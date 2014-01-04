@@ -32,6 +32,7 @@ public class SettingsView extends Activity {
 		EditText np = (EditText) findViewById(R.id.Delay);
 		np.setText(String.valueOf(GlobalData.RefreshDelay));
 		
+		final Activity act = this;
 		np.setOnEditorActionListener(new OnEditorActionListener() {
 			public boolean onEditorAction(TextView v, int actionId,
 					KeyEvent event) {
@@ -40,7 +41,7 @@ public class SettingsView extends Activity {
 					EditText edit = (EditText) findViewById(R.id.Delay);
 					
 					GlobalData.RefreshDelay = Integer.parseInt(edit.getText().toString());
-					Util.restartTimer(getApplicationContext());
+					Util.restartTimer(getApplicationContext(), act);
 				}
 				return false;
 			}
