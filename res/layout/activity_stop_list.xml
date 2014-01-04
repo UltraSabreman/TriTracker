@@ -2,8 +2,8 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent"
-	android:showDividers="middle" >
-
+	android:showDividers="middle"
+	android:id="@+id/mainView" >    
 	<ListView
 		android:id="@+id/UIStopList"
 		android:layout_width="match_parent"
@@ -28,7 +28,6 @@
 		android:layout_alignParentBottom="true"
 		android:selectAllOnFocus="true"/>
 
-	
 	<RelativeLayout 
 		android:id="@+id/NoClickScreen"
 		android:layout_width="fill_parent"
@@ -43,6 +42,7 @@
 	    	android:layout_height="wrap_content"
 	    	android:layout_centerInParent="true"/>
 	</RelativeLayout>
+
 	
 	<TextView
 		android:id="@+id/NoMembers"
@@ -53,4 +53,17 @@
     	android:textSize="16sp"
     	android:textColor="@android:color/darker_gray"
     	android:visibility="invisible"/>
+	
+	
+	<LinearLayout 
+			android:id="@+id/undobar" 
+			style="@style/UndoBar"
+			android:layout_alignParentBottom="true"
+			android:clickable="true"
+			android:focusable="true"
+			android:layout_above="@+id/UIStopIDBox">
+        <TextView android:id="@+id/undobar_message" style="@style/UndoBarMessage" />
+        <Button android:id="@+id/undobar_button" style="@style/UndoBarButton" />
+    </LinearLayout>
+    
 </RelativeLayout>

@@ -276,12 +276,12 @@ public class StopView extends Activity {
 			return true;
 		case R.id.action_favorite:
 			if (Util.favHasStop(GlobalData.CurrentStop)) {
-				GlobalData.Favorites.remove(GlobalData.CurrentStop);
-				Util.removeStop(GlobalData.CurrentStop, GlobalData.Favorites);
+				GlobalData.favAdaptor.remove(GlobalData.CurrentStop);
+				//Util.removeStop(GlobalData.CurrentStop, GlobalData.Favorites);
 				Util.showToast("Removed stop from favorites.",
 						Toast.LENGTH_SHORT);
 			} else {
-				GlobalData.Favorites.add(GlobalData.CurrentStop);
+				GlobalData.favAdaptor.add(GlobalData.CurrentStop);
 				Util.showToast("Added stop to favorites.", Toast.LENGTH_SHORT);
 			}
 

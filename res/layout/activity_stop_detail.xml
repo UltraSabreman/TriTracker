@@ -42,7 +42,7 @@
 		<View 
 			android:id="@+id/alertBackground"
 			android:layout_width="fill_parent"
-			android:layout_height="?android:attr/listPreferredItemHeightSmall"
+			android:layout_height="fill_parent"
 			android:background="@drawable/background" 
 			android:alpha="0.3"
 			android:visibility="invisible"/>

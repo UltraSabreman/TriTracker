@@ -58,10 +58,11 @@ public class StopArrayAdaptor extends ArrayAdapter<Stop> {
 				    public void onClick(View v) {
 						if (Util.favHasStop(curStop)) {
 							pic.setImageDrawable(v.getResources().getDrawable(R.drawable.ic_action_not_important_yellow));
-							Util.removeStop(curStop, GlobalData.Favorites);
+							//Util.removeStop(curStop, GlobalData.Favorites);
+							GlobalData.favAdaptor.remove(curStop);
 						} else {
 							pic.setImageDrawable(v.getResources().getDrawable(R.drawable.ic_action_important_yellow));
-							GlobalData.Favorites.add(curStop);
+							GlobalData.favAdaptor.add(curStop);
 						}
 				    }
 				});

@@ -13,8 +13,4 @@
 		android:id="@+id/action_cancel_reminder"
 		android:title="@string/action_cancel_reminder"
 		android:visible="false"/>
-	
-
-
-
 </menu>

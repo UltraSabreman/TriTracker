@@ -1,16 +1,9 @@
 package com.example.tritracker.Activities;
 
-import com.example.tritracker.GlobalData;
-import com.example.tritracker.R;
-import com.example.tritracker.Stop;
-import com.example.tritracker.Util;
-import com.example.tritracker.ArrayAdaptors.StopArrayAdaptor;
-import com.example.tritracker.NotMyCode.SwipeDismissListViewTouchListener;
-import com.example.tritracker.json.ActiveJSONRequest;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.NavUtils;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,7 +14,18 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class HistoryView extends Activity {
+import com.example.tritracker.GlobalData;
+import com.example.tritracker.R;
+import com.example.tritracker.Stop;
+import com.example.tritracker.Util;
+import com.example.tritracker.ArrayAdaptors.StopArrayAdaptor;
+import com.example.tritracker.NotMyCode.SwipeDismissListViewTouchListener;
+import com.example.tritracker.NotMyCode.UndoBarController;
+import com.example.tritracker.json.ForegroundJSONRequest;
+
+public class HistoryView extends Activity implements UndoBarController.UndoListener{
+	private UndoBarController mUndoBarController;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -31,6 +35,8 @@ public class HistoryView extends Activity {
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 
 		((TextView) findViewById(R.id.NoMembers)).setText("You have nothing in your history");
+		
+		mUndoBarController = new UndoBarController(findViewById(R.id.undobar), this);
 		
 		Util.subscribeToEdit(getApplicationContext(), this, R.id.UIStopIDBox);
 		initList();
@@ -46,6 +52,8 @@ public class HistoryView extends Activity {
 		GlobalData.Orientation = getResources().getConfiguration().orientation;
 		GlobalData.histAdaptor.notifyDataSetChanged();
 		Util.dumpData(getApplicationContext());
+		
+		findViewById(R.id.mainView).invalidate();
 	}
 
 	private void initList() {
@@ -58,14 +66,14 @@ public class HistoryView extends Activity {
 		view.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> arg0, View arg1,
 					int position, long arg3) {
-				Stop temp = GlobalData.History.get(position);
+				Stop temp = GlobalData.histAdaptor.getItem(position);
 				if (temp != null) {
 					GlobalData.CurrentStop = temp;
-					new ActiveJSONRequest(getApplicationContext(), testAct)
+					new ForegroundJSONRequest(getApplicationContext(), testAct)
 							.execute("http://developer.trimet.org/ws/V1/arrivals?locIDs="
 									+ temp.StopID
 									+ "&json=true&appID="
-									+ getString(R.string.appid));
+									+ getString(R.string.appid), String.valueOf(temp.StopID));
 				}
 			}
 		});
@@ -87,11 +95,14 @@ public class HistoryView extends Activity {
 					public void onDismiss(ListView listView,
 							int[] reverseSortedPositions) {
 						for (int position : reverseSortedPositions) {
-							GlobalData.histAdaptor.remove(GlobalData.histAdaptor.getItem(position));
-							Toast.makeText(getApplicationContext(),
-									"Removed Stop",
-									android.R.integer.config_shortAnimTime)
-									.show();
+							Stop stop = GlobalData.histAdaptor.getItem(position);
+							if (stop != null) {
+								GlobalData.HUndos.add(stop);
+								GlobalData.histAdaptor.remove(stop);
+							
+								mUndoBarController.showUndoBar(false, 
+										"Removed " + GlobalData.HUndos.size() + " Stop" + (GlobalData.HUndos.size() > 1 ? "s" : ""),null);
+							}
 						}
 						onActivityChange();
 					}
@@ -131,6 +142,7 @@ public class HistoryView extends Activity {
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+		mUndoBarController.hideUndoBar(false);
 		switch (item.getItemId()) {
 		case android.R.id.home:
 			Intent parentActivityIntent = new Intent(this, Util.parents.pop());
@@ -139,13 +151,13 @@ public class HistoryView extends Activity {
 			NavUtils.navigateUpTo(this, parentActivityIntent);
 			return true;
 		case R.id.action_clear:
-			GlobalData.History.clear();
+			GlobalData.histAdaptor.clear();
 			Util.showToast("History Cleared", Toast.LENGTH_SHORT);
 			onActivityChange();
 			return true;
-		case R.id.action_search:
+		/*case R.id.action_search:
 			Util.showToast("Not in yet", Toast.LENGTH_SHORT);
-			return true;
+			return true;*/
 		case R.id.action_sort:
 			Util.buildSortDialog((Activity) this, 1);
 			onActivityChange();
@@ -157,4 +169,16 @@ public class HistoryView extends Activity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
+	
+    @Override
+    public void onUndo(Parcelable token, boolean fail) {
+    	if (!fail) {
+	        for (Stop s: GlobalData.HUndos) {
+	        	if (!Util.histHasStop(s))
+	        		GlobalData.histAdaptor.add(s);
+	        }
+	        onActivityChange();
+    	} else
+    		GlobalData.HUndos.clear();
+    }
 }

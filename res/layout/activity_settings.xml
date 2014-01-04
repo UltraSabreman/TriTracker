@@ -8,15 +8,6 @@
 	android:paddingTop="@dimen/activity_vertical_margin"
 	tools:context=".SettingsView" >
 
-	<Button
-		android:id="@+id/Apply"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:layout_alignParentBottom="true"
-		android:text="@android:string/ok"
-		android:textAlignment="gravity" 
-		android:onClick="applyChanges"/>
-
 	<TextView
 		android:id="@+id/Label1"
 		android:layout_width="wrap_content"
@@ -24,7 +15,6 @@
 		android:layout_alignParentLeft="true"
 		android:layout_alignParentTop="true"
 		android:textSize="20sp"
-		android:textColor="@android:color/holo_blue_dark"
 		android:text="@string/refresh_label" />
 	
 	<ImageView
@@ -33,7 +23,8 @@
 		android:layout_height="20dp"
 		android:onClick="helpRefresh"
 		android:layout_alignParentRight="true"
-		android:src="@drawable/ic_action_help"
+		android:layout_alignBottom="@+id/Label1"
+		android:src="@drawable/ic_action_help2"
 		android:contentDescription="@string/content"
 		/>
 

@@ -28,7 +28,8 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
-import com.example.tritracker.json.ActiveJSONRequest;
+import com.example.tritracker.json.ForegroundJSONRequest;
+import com.example.tritracker.json.ForegroundJSONRequest.checkStops;
 import com.example.tritracker.json.BackgroundJSONRequest;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -115,6 +116,7 @@ public class Util {
 			
 		}
 		refreshAdaptors();
+		dumpData(c);
 	}
 	
 	public static void buildSortDialog(final Activity a, final int whichList) {
@@ -213,9 +215,8 @@ public class Util {
 	}
 	
 	
-	public static void subscribeToEdit(final Context c, final Activity a,
-			int name) {
-		EditText edit = (EditText) a.findViewById(R.id.UIStopIDBox);
+	public static void subscribeToEdit(final Context c, final Activity a, int name) {
+		EditText edit = (EditText) a.findViewById(name);
 
 		edit.setOnEditorActionListener(new OnEditorActionListener() {
 			public boolean onEditorAction(TextView v, int actionId,
@@ -223,11 +224,11 @@ public class Util {
 				if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER))
 						|| (actionId == EditorInfo.IME_ACTION_DONE)) {
 					EditText edit = (EditText) a.findViewById(R.id.UIStopIDBox);
-					new ActiveJSONRequest(c, a)
+					new ForegroundJSONRequest(c, a)
 							.execute("http://developer.trimet.org/ws/V1/arrivals?locIDs="
 									+ edit.getText().toString()
 									+ "&json=true&appID="
-									+ c.getString(R.string.appid));
+									+ c.getString(R.string.appid), edit.getText().toString());
 
 					edit.getText().clear();
 
@@ -263,9 +264,9 @@ public class Util {
 	}
 	
 	public static void dumpData(Context c) {
-		File test = new File(c.getString(R.string.data_path));
+		/*File test = new File(c.getString(R.string.data_path));
 		if (test.exists())
-			test.delete();
+			test.delete();*/
 		
 		try {
 			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(
@@ -278,14 +279,26 @@ public class Util {
 			bw.write(data);
 			bw.close();
 		} catch (JsonSyntaxException e) {
-
 		} catch (FileNotFoundException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
 		} catch (IOException e2) {
-			// TODO Auto-generated catch block
-			e2.printStackTrace();
 		}
+	}
+	
+	public static void messageDiag(Activity act, final checkStops myFunc, String title, String msg) {
+		AlertDialog.Builder builder = new AlertDialog.Builder(act);
+		
+		builder.setTitle(title).setMessage(msg);
+		builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+	           public void onClick(DialogInterface dialog, int id) {
+	        	   if (myFunc != null)
+	        		   myFunc.doStops();
+	           }
+		});
+		builder.setNegativeButton("Canel", new DialogInterface.OnClickListener() {
+	           public void onClick(DialogInterface dialog, int id) {
+	           }
+		});
+		builder.create().show();
 	}
 
 	public static void readData(Context c) {
@@ -321,8 +334,6 @@ public class Util {
 		} catch (FileNotFoundException e) {
 
 		} catch (IOException e) {
-
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

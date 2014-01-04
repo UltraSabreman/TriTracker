@@ -1,15 +1,17 @@
 package com.example.tritracker.Activities;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
 
 import com.example.tritracker.GlobalData;
 import com.example.tritracker.R;
@@ -20,7 +22,7 @@ public class SettingsView extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setTheme(android.R.style.Theme_Holo);
+		//setTheme(android.R.style.Theme_Holo_);
 		setContentView(R.layout.activity_settings);
 		
 		Util.parents.push(getClass());
@@ -29,25 +31,25 @@ public class SettingsView extends Activity {
 		
 		EditText np = (EditText) findViewById(R.id.Delay);
 		np.setText(String.valueOf(GlobalData.RefreshDelay));
-	}
-
-	public void applyChanges(View view) {
-		GlobalData.RefreshDelay = Integer.parseInt(((EditText) findViewById(R.id.Delay)).getText().toString());
-		goBack();
+		
+		np.setOnEditorActionListener(new OnEditorActionListener() {
+			public boolean onEditorAction(TextView v, int actionId,
+					KeyEvent event) {
+				if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER))
+						|| (actionId == EditorInfo.IME_ACTION_DONE)) {
+					EditText edit = (EditText) findViewById(R.id.Delay);
+					
+					GlobalData.RefreshDelay = Integer.parseInt(edit.getText().toString());
+					Util.restartTimer(getApplicationContext());
+				}
+				return false;
+			}
+		});
 	}
 	
 	public void helpRefresh(View view) {
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		
-		builder.setTitle("Auto-refresh delay")
-		.setMessage("The delay (in seconds) at witch the app will refresh all stops. The higher the number, the less data-hungry it will be. Set to 0 to dissable");		
-		
-		builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-	           public void onClick(DialogInterface dialog, int id) {
-	           }
-		});
-	       
-		builder.create().show();
+		Util.messageDiag(this, null, "Auto-refresh delay", 
+		"The delay (in seconds) at witch the app will refresh all stops. The higher the number, the less data-hungry it will be. Set to 0 to dissable");
 	}
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {

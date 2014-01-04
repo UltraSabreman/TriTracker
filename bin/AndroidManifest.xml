@@ -22,10 +22,10 @@
 		android:allowBackup="true"
 		android:icon="@drawable/ic_launcher"
 		android:label="@string/app_name"
+		android:logo="@drawable/ic_buss_white"
 		android:theme="@style/AppTheme" >
 		<activity
 			android:name="com.example.tritracker.Activities.MainView"
-			android:label="@string/app_name"
 			android:windowSoftInputMode="stateHidden" >
 			<intent-filter>
 				<action
@@ -37,7 +37,6 @@
 		</activity>
 		<activity
 			android:name="com.example.tritracker.Activities.StopView"
-			android:icon="@drawable/ic_launcher"
 			android:windowSoftInputMode="stateHidden" >
 			<meta-data
 				android:name="android.support.PARENT_ACTIVITY"
@@ -47,9 +46,6 @@
 			android:name="com.example.tritracker.Activities.HistoryView"
 			android:label="@string/title_activity_history_view"
 			android:windowSoftInputMode="stateHidden" >
-			<meta-data
-				android:name="android.support.PARENT_ACTIVITY"
-				android:value="com.example.tritracker.MainActivity" />
 		</activity>
 		<activity
 			android:name="com.example.tritracker.Activities.AlertListView"

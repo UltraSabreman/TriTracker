@@ -23,7 +23,9 @@ public class GlobalData {
 	
 	public static ArrayList<Stop> Favorites = new ArrayList<Stop>();
 	public static ArrayList<Stop> History = new ArrayList<Stop>();
-	public static ArrayList<Stop> Undos = new ArrayList<Stop>(); // TODO
+	
+	public static ArrayList<Stop> FUndos = new ArrayList<Stop>();
+	public static ArrayList<Stop> HUndos = new ArrayList<Stop>();
 		
 	public static StopArrayAdaptor favAdaptor;
 	public static StopArrayAdaptor histAdaptor;

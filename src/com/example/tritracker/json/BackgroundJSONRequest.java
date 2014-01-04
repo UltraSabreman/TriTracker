@@ -8,10 +8,12 @@ import java.util.regex.Pattern;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
+import org.apache.http.NoHttpResponseException;
 import org.apache.http.StatusLine;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.content.Context;
@@ -45,11 +47,12 @@ public class BackgroundJSONRequest extends AsyncTask<String, String, String> {
 				response.getEntity().getContent().close();
 				throw new IOException(statusLine.getReasonPhrase());
 			}
+		} catch (ConnectTimeoutException e) { 
+		} catch (NoHttpResponseException e) { 
 		} catch (ClientProtocolException e) {
-			// TODO Handle problems..
 		} catch (IOException e) {
-			// TODO Handle problems..
 		}
+		//this will silently fail on all issues, since this a background request.
 		
 		return responseString;
 	}
@@ -66,7 +69,7 @@ public class BackgroundJSONRequest extends AsyncTask<String, String, String> {
 	protected void onPostExecute(String result) {
 		super.onPostExecute(result);
 		
-		if (result.compareTo("{\"resultSet\":{}}") == 0) return;
+		if (result == null || result.compareTo("{\"resultSet\":{}}") == 0) return;
 		
 		Gson gson = new Gson();
 		JSONResult res = gson.fromJson(result, JSONResult.class);

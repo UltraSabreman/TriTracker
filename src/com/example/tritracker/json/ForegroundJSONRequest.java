@@ -8,11 +8,16 @@ import java.util.regex.Pattern;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
+import org.apache.http.NoHttpResponseException;
 import org.apache.http.StatusLine;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -32,16 +37,21 @@ import com.example.tritracker.Util;
 import com.example.tritracker.Activities.StopView;
 import com.google.gson.Gson;
 
-public class ActiveJSONRequest extends AsyncTask<String, String, String> {
+public class ForegroundJSONRequest extends AsyncTask<String, String, String> {
 	private Context context = null;
 	private Activity activity = null;
+	private int stopId = 0;
+	private int error = 0;
 
 	@Override
 	protected String doInBackground(String... uri) {
-		HttpClient httpclient = new DefaultHttpClient();
+	    final HttpParams httpParams = new BasicHttpParams();
+	    HttpConnectionParams.setConnectionTimeout(httpParams, 30000);
+		HttpClient httpclient = new DefaultHttpClient(httpParams);
 		HttpResponse response;
 		String responseString = null;
-		try {			
+		try {					    
+			stopId = Integer.parseInt(uri[1]);
 			response = httpclient.execute(new HttpGet(uri[0]));
 			StatusLine statusLine = response.getStatusLine();
 			if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
@@ -54,16 +64,20 @@ public class ActiveJSONRequest extends AsyncTask<String, String, String> {
 				response.getEntity().getContent().close();
 				throw new IOException(statusLine.getReasonPhrase());
 			}
+		} catch (ConnectTimeoutException e) { 
+			error = 1;
+		} catch (NoHttpResponseException e) { 
+			error = 2;
 		} catch (ClientProtocolException e) {
-			// TODO Handle problems..
+			error = 3;
 		} catch (IOException e) {
-			// TODO Handle problems..
+			error = 4;
 		}
 		
 		return responseString;
 	}
 
-	public ActiveJSONRequest(Context context, Activity activity) {
+	public ForegroundJSONRequest(Context context, Activity activity) {
 		this.context = context;
 		this.activity = activity;
 	}
@@ -75,11 +89,53 @@ public class ActiveJSONRequest extends AsyncTask<String, String, String> {
 				WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);		
 	}
 	
+	public interface checkStops {
+	    public void doStops();
+	}
+	
+    public void function() {
+    	Stop s = Util.listGetStop(stopId, GlobalData.History);
+		if (s != null) {
+			GlobalData.CurrentStop = s;
+			context.startActivity(new Intent(context, StopView.class)
+				.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+			return;
+		}
+		s = Util.listGetStop(stopId, GlobalData.Favorites);
+		if (s != null) {
+			GlobalData.CurrentStop = s;
+			context.startActivity(new Intent(context, StopView.class)
+				.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+		}			
+		return;
+    }
+	
 	@Override
 	protected void onPostExecute(String result) {
 		super.onPostExecute(result);
 		((RelativeLayout) activity.findViewById(R.id.NoClickScreen)).setVisibility(View.INVISIBLE);
 		activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+		
+		if (result == null) {
+			if (error == 1)
+				Util.messageDiag(activity, new checkStops() { public void doStops() { function(); }}, 
+						"Connection Timed-Out", "The connection timed-out (Trimet's servers might be busy, or you could have a poor connection)." +
+						"\n\nIf you've visited this stop before, and you want to see the cached times, click ok.");
+			else if (error == 2)
+				Util.messageDiag(activity, new checkStops() { public void doStops() { function(); }}, 
+						"Malformed reponce", "Trimet didn't respond correctly (their servers may be under heavy load)" +
+						"\n\nIf you've visited this stop before, and you want to see the cached times, click ok.");
+			else if (error == 3)
+				Util.messageDiag(activity, new checkStops() { public void doStops() { function(); }}, 
+						"Error Connecting", "It looks like Trimet changed their API. Please contact the developer ASAP and this will be fixed." +
+						"\n\nIf you've visited this stop before, and you want to see the cached times, click ok.");
+			else if (error == 4)
+				Util.messageDiag(activity, new checkStops() { public void doStops() { function(); }}, 
+						"Are you connected?", "Can't reach the Trimet servers right now, are you connected to the internet?" +
+						"\n\nIf you've visited this stop before, and you want to see the cached times, click ok.");
+	
+			return;
+		}
 		
 		Gson gson = new Gson();
 		JSONResult.ResultSet rs = gson.fromJson(result, JSONResult.class).resultSet;
@@ -122,11 +178,11 @@ public class ActiveJSONRequest extends AsyncTask<String, String, String> {
 		if (t == null) {
 			Stop w = Util.listGetStop(temp.StopID, GlobalData.Favorites);
 			if (w == null) {
-				GlobalData.History.add(temp);
+				GlobalData.histAdaptor.add(temp);
 				GlobalData.CurrentStop = temp;
 			} else {
 				w.Update(temp, true);
-				GlobalData.History.add(w);
+				GlobalData.histAdaptor.add(w);
 				GlobalData.CurrentStop = w;
 			}
 		} else {
