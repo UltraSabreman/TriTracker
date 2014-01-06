@@ -15,7 +15,7 @@ import com.example.tritracker.ArrayAdaptors.AlertArrayAdaptor;
 
 public class AlertListView extends Activity {
 	AlertArrayAdaptor ar;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -24,10 +24,10 @@ public class AlertListView extends Activity {
 
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 
-		
-		ar = new AlertArrayAdaptor(getApplicationContext(), GlobalData.CurrentStop.Alerts);
-	
-		((ListView) findViewById(R.id.AlertList)).setAdapter(ar);		
+		ar = new AlertArrayAdaptor(getApplicationContext(),
+				GlobalData.CurrentStop.Alerts);
+
+		((ListView) findViewById(R.id.AlertList)).setAdapter(ar);
 	}
 
 	@Override
@@ -36,7 +36,7 @@ public class AlertListView extends Activity {
 		getMenuInflater().inflate(R.menu.activity_alert_list, menu);
 		return true;
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {

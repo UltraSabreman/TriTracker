@@ -18,33 +18,40 @@ public class GlobalData {
 	public static int StopOrder = 0;
 	public static int RefreshDelay = 5;
 	public static int Orientation;
-	
+
 	public static Stop CurrentStop = null;
-	
+
 	public static ArrayList<Stop> Favorites = new ArrayList<Stop>();
 	public static ArrayList<Stop> History = new ArrayList<Stop>();
-	
+
 	public static ArrayList<Stop> FUndos = new ArrayList<Stop>();
 	public static ArrayList<Stop> HUndos = new ArrayList<Stop>();
-		
+
 	public static StopArrayAdaptor favAdaptor;
 	public static StopArrayAdaptor histAdaptor;
 	public static BussArrayAdaptor bussAdaptor;
-	
 
 	public static JsonWrapper getJsonWrap() {
-		return new JsonWrapper(Favorites, History, FavOrder, HistOrder, StopOrder, RefreshDelay);
+		return new JsonWrapper(Favorites, History, FavOrder, HistOrder,
+				StopOrder, RefreshDelay);
 	}
 
 	public static class JsonWrapper {
-		@Expose public ArrayList<Stop> Favorites = new ArrayList<Stop>();
-		@Expose public ArrayList<Stop> History = new ArrayList<Stop>();
-		@Expose public int FavOrder = 0;
-		@Expose public int HistOrder = 0;
-		@Expose public int StopOrder = 0;
-		@Expose public int RefreshDelay = 0;
+		@Expose
+		public ArrayList<Stop> Favorites = new ArrayList<Stop>();
+		@Expose
+		public ArrayList<Stop> History = new ArrayList<Stop>();
+		@Expose
+		public int FavOrder = 0;
+		@Expose
+		public int HistOrder = 0;
+		@Expose
+		public int StopOrder = 0;
+		@Expose
+		public int RefreshDelay = 0;
 
-		public JsonWrapper(ArrayList<Stop> fav, ArrayList<Stop> hist, int f, int h, int s, int r) {
+		public JsonWrapper(ArrayList<Stop> fav, ArrayList<Stop> hist, int f,
+				int h, int s, int r) {
 			Favorites = fav;
 			History = hist;
 			FavOrder = f;

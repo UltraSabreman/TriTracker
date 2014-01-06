@@ -34,7 +34,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-
 /**
  * A {@link View.OnTouchListener} that makes the list items in a
  * {@link ListView} dismissable. {@link ListView} is given special treatment

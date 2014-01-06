@@ -32,197 +32,218 @@ import com.example.tritracker.Stop.Alert;
 
 public class StopView extends Activity {
 	private Buss menuBuss = null;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_stop_detail);
 		Util.parents.push(getClass());
-		
+
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 
 		setTitle("Stop ID: " + GlobalData.CurrentStop.StopID);
 
 		TextView StopName = (TextView) findViewById(R.id.UIStopInfoName);
 		TextView StopDir = (TextView) findViewById(R.id.UIStopInfoDirection);
-		
+
 		StopName.setText(GlobalData.CurrentStop.Name);
 		StopName.setSelected(true);
 		StopDir.setText(GlobalData.CurrentStop.Direction);
-					
-	
+
 		final Activity act = this;
-		if (GlobalData.CurrentStop.Alerts != null && GlobalData.CurrentStop.Alerts.size() != 0) {
+		if (GlobalData.CurrentStop.Alerts != null
+				&& GlobalData.CurrentStop.Alerts.size() != 0) {
 			View alert = (View) findViewById(R.id.alertBackground);
 			alert.setVisibility(View.VISIBLE);
-			
+
 			alert.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
 					startActivity(new Intent(act, AlertListView.class));
 				}
 			});
-			
-		}else 
-			((View) findViewById(R.id.alertBackground)).setVisibility(View.INVISIBLE);		
-		
-		initList();		
+
+		} else
+			((View) findViewById(R.id.alertBackground))
+					.setVisibility(View.INVISIBLE);
+
+		initList();
 		invalidateOptionsMenu();
 	}
-	
+
 	@Override
 	public void onRestart() {
 		GlobalData.Orientation = getResources().getConfiguration().orientation;
 		GlobalData.bussAdaptor.notifyDataSetChanged();
 		super.onRestart();
 	}
-	
+
 	@Override
 	public void onDestroy() {
 		GlobalData.Orientation = getResources().getConfiguration().orientation;
-		//GlobalData.bussAdaptor.notifyDataSetChanged();
+		// GlobalData.bussAdaptor.notifyDataSetChanged();
 		super.onDestroy();
 	}
-	
 
 	void initList() {
-		if (GlobalData.CurrentStop.Busses == null || GlobalData.CurrentStop.Busses.size() == 0) {
+		if (GlobalData.CurrentStop.Busses == null
+				|| GlobalData.CurrentStop.Busses.size() == 0) {
 			TextView arrival = (TextView) findViewById(R.id.NoArrivals);
 			arrival.setVisibility(View.VISIBLE);
 			if (GlobalData.bussAdaptor != null) {
 				GlobalData.bussAdaptor.notifyDataSetInvalidated();
 				GlobalData.bussAdaptor.clear();
-			}			
-		}else {
-			final ListView view = (ListView) findViewById(R.id.UIBussList);		
-			GlobalData.bussAdaptor = new BussArrayAdaptor(this, GlobalData.CurrentStop.Busses);
+			}
+		} else {
+			final ListView view = (ListView) findViewById(R.id.UIBussList);
+			GlobalData.bussAdaptor = new BussArrayAdaptor(this,
+					GlobalData.CurrentStop.Busses);
 			view.setAdapter(GlobalData.bussAdaptor);
 			GlobalData.bussAdaptor.notifyDataSetChanged();
-			registerForContextMenu(view);			
-			
+			registerForContextMenu(view);
+
 			view.setOnCreateContextMenuListener(new OnCreateContextMenuListener() {
 				@Override
-				public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-				    MenuInflater inflater = getMenuInflater();
-				    inflater.inflate(R.menu.stop_view_context, menu);
+				public void onCreateContextMenu(ContextMenu menu, View v,
+						ContextMenuInfo menuInfo) {
+					MenuInflater inflater = getMenuInflater();
+					inflater.inflate(R.menu.stop_view_context, menu);
 
-				   
-			        if (menuBuss != null && menuBuss.notification != null && menuBuss.notification.IsSet) {
-			        	((MenuItem) menu.findItem(R.id.action_create_reminder)).setVisible(false);
-			        	((MenuItem) menu.findItem(R.id.action_edit_reminder)).setVisible(true);
-			        	((MenuItem) menu.findItem(R.id.action_cancel_reminder)).setVisible(true);
-			        }
+					if (menuBuss != null && menuBuss.notification != null
+							&& menuBuss.notification.IsSet) {
+						((MenuItem) menu.findItem(R.id.action_create_reminder))
+								.setVisible(false);
+						((MenuItem) menu.findItem(R.id.action_edit_reminder))
+								.setVisible(true);
+						((MenuItem) menu.findItem(R.id.action_cancel_reminder))
+								.setVisible(true);
+					}
 				}
 			});
 
 			final Activity act = this;
 			view.setOnItemLongClickListener(new OnItemLongClickListener() {
-				 public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int pos, long id) {
+				public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
+						int pos, long id) {
 					menuBuss = GlobalData.CurrentStop.Busses.get(pos);
 					if (menuBuss != null) {
 						act.openContextMenu(view);
 						return true;
 					}
-					
+
 					return false;
 				}
 			});
-			
+
 			view.setOnItemClickListener(new OnItemClickListener() {
-				public void onItemClick(AdapterView<?> arg0, View view, int pos, long id) {
+				public void onItemClick(AdapterView<?> arg0, View view,
+						int pos, long id) {
 					Buss buss = GlobalData.CurrentStop.Busses.get(pos);
 					boolean affected = false;
 					if (GlobalData.CurrentStop.Alerts != null) {
 						for (Alert d : GlobalData.CurrentStop.Alerts) {
 							if (d.AffectedLine == buss.Route) {
 								affected = true;
-								break;					
+								break;
 							}
 						}
 						if (affected)
-							 view.getContext().startActivity(new Intent(view.getContext(), AlertListView.class));
+							view.getContext().startActivity(
+									new Intent(view.getContext(),
+											AlertListView.class));
 					}
-				 }
+				}
 			});
 		}
 
 	}
-	
+
 	public void buildDialouge(final boolean add) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-		final View ourView = getLayoutInflater().inflate(R.layout.set_reminder, null);
+		final View ourView = getLayoutInflater().inflate(R.layout.set_reminder,
+				null);
 		final TextView t = (TextView) ourView.findViewById(R.id.reminderLabel);
 		t.setText("0 min before buss.");
 		final SeekBar b = (SeekBar) ourView.findViewById(R.id.reminderTime);
-		b.setMax(Math.max(Util.getBussMinutes(menuBuss), 60));	
-		
-		b.setOnSeekBarChangeListener(new  SeekBar.OnSeekBarChangeListener() {
-			public  void  onStopTrackingTouch(SeekBar seekBar) {
-            } 
- 
-            public  void  onStartTrackingTouch(SeekBar seekBar) { 
-            } 
-			@Override       
-			public  void  onProgressChanged(SeekBar seekBar, int  progress, boolean  fromUser) {     
-			    t.setText(progress + " min before buss arrives.");
-			}       
+		b.setMax(Math.min(Util.getBussMinutes(menuBuss), 60));
+
+		b.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+			public void onStopTrackingTouch(SeekBar seekBar) {
+			}
+
+			public void onStartTrackingTouch(SeekBar seekBar) {
+			}
+
+			@Override
+			public void onProgressChanged(SeekBar seekBar, int progress,
+					boolean fromUser) {
+				t.setText(progress + " min before buss arrives.");
+			}
 		});
-		
+
 		if (add)
 			builder.setTitle("Set a Reminder For:").setView(ourView);
 		else {
 			Buss buss = GlobalData.CurrentStop.getBuss(menuBuss);
-			builder.setTitle("Set a Reminder For:").setMessage("Previous reminder set at: " + buss.notification.getTime()).setView(ourView);
+			builder.setTitle("Set a Reminder For:")
+					.setMessage(
+							"Previous reminder set at: "
+									+ buss.notification.getTime())
+					.setView(ourView);
 			if (buss.notification.getTime() > b.getMax())
 				b.setProgress(b.getMax());
 			else
 				b.setProgress(buss.notification.getTime());
 		}
-		
-		
+
 		builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-	           public void onClick(DialogInterface dialog, int id) {
-	        	   Buss buss = GlobalData.CurrentStop.getBuss(menuBuss);
-	        	   if (buss.notification != null && buss.notification.IsSet && add) {
-	        		   buss.notification.editNotification(b.getProgress());
-	        	   } else
-	        		   buss.setNotification(new NotificationHandler(getApplicationContext(), getIntent(), GlobalData.CurrentStop, menuBuss, b.getProgress()));
-	        	   GlobalData.bussAdaptor.notifyDataSetChanged();
-	           }
-	       });
-		
-		builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-	           public void onClick(DialogInterface dialog, int id) {
-	           }
+			public void onClick(DialogInterface dialog, int id) {
+				Buss buss = GlobalData.CurrentStop.getBuss(menuBuss);
+				if (buss.notification != null && buss.notification.IsSet && add) {
+					buss.notification.editNotification(b.getProgress());
+				} else
+					buss.setNotification(new NotificationHandler(
+							getApplicationContext(), getIntent(),
+							GlobalData.CurrentStop, menuBuss, b.getProgress()));
+				GlobalData.bussAdaptor.notifyDataSetChanged();
+			}
 		});
-	       
+
+		builder.setNegativeButton("Cancel",
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+					}
+				});
+
 		builder.create().show();
 	}
-	
+
 	@Override
-	public boolean onContextItemSelected(MenuItem item) { 
-	    switch (item.getItemId()) {
-	        case R.id.action_create_reminder:
-	        	buildDialouge(true);
-	        	Util.refreshAdaptors();
-				Util.showToast("Reminder Set", Toast.LENGTH_SHORT);
-	            return true;
-	        case R.id.action_edit_reminder:
-	        	buildDialouge(false);
-	        	Util.refreshAdaptors();
-				Util.showToast("Reminder Updated", Toast.LENGTH_SHORT);
-	            return true;
-	        case R.id.action_cancel_reminder:
-	        	Buss buss = GlobalData.CurrentStop.getBuss(menuBuss);
-	        	if (buss.notification != null && buss.notification.IsSet) 
-	        		buss.notification.cancelNotification();
-	        	Util.refreshAdaptors();
-	        	Util.showToast("Reminder Canceled", Toast.LENGTH_SHORT);
-	            return true;
-	        default:
-	            return super.onContextItemSelected(item);
-	    }
+	public boolean onContextItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.action_create_reminder:
+			buildDialouge(true);
+			Util.refreshAdaptors();
+			Util.showToast("Reminder Set", Toast.LENGTH_SHORT);
+			return true;
+		case R.id.action_edit_reminder:
+			buildDialouge(false);
+			Util.refreshAdaptors();
+			Util.showToast("Reminder Updated", Toast.LENGTH_SHORT);
+			return true;
+		case R.id.action_cancel_reminder:
+			Buss buss = GlobalData.CurrentStop.getBuss(menuBuss);
+			if (buss.notification != null && buss.notification.IsSet)
+				buss.notification.cancelNotification();
+			Util.refreshAdaptors();
+			Util.showToast("Reminder Canceled", Toast.LENGTH_SHORT);
+			return true;
+		default:
+			return super.onContextItemSelected(item);
+		}
 	}
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -246,9 +267,7 @@ public class StopView extends Activity {
 					R.drawable.ic_action_not_important);
 		return menu;
 	}
-	
 
-	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
@@ -269,7 +288,8 @@ public class StopView extends Activity {
 		case R.id.action_favorite:
 			if (Util.favHasStop(GlobalData.CurrentStop)) {
 				GlobalData.favAdaptor.remove(GlobalData.CurrentStop);
-				//Util.removeStop(GlobalData.CurrentStop, GlobalData.Favorites);
+				// Util.removeStop(GlobalData.CurrentStop,
+				// GlobalData.Favorites);
 				Util.showToast("Removed stop from favorites.",
 						Toast.LENGTH_SHORT);
 			} else {

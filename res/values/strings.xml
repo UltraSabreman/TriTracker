@@ -33,7 +33,10 @@
 	<string name="refresh_label">Auto-refresh delay: </string>
 	<string name="refresh_hint">Delay in Seconds</string>
 	<string name="title_activity_favorites">Favorites</string>
-	<string name="hello_world">Hello world!</string>
 	<string name="title_activity_undo_popup">UndoPopup</string>
+	<string name="title_activity_test">TestActivity</string>
+	<string name="title_section1">Section 1</string>
+	<string name="title_section2">Section 2</string>
+	<string name="title_section3">Section 3</string>
 
 </resources>

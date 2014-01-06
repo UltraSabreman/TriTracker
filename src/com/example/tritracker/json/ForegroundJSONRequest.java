@@ -33,7 +33,7 @@ import com.example.tritracker.Util;
 import com.example.tritracker.Activities.StopView;
 import com.google.gson.Gson;
 
-public class ForegroundJSONRequest extends Thread{
+public class ForegroundJSONRequest extends Thread {
 	private Context context = null;
 	private Activity activity = null;
 	private int stopId = 0;
@@ -42,12 +42,12 @@ public class ForegroundJSONRequest extends Thread{
 	public boolean failed = false;
 
 	public void run() {
-	    final HttpParams httpParams = new BasicHttpParams();
-	    HttpConnectionParams.setConnectionTimeout(httpParams, 30000);
+		final HttpParams httpParams = new BasicHttpParams();
+		HttpConnectionParams.setConnectionTimeout(httpParams, 30000);
 		HttpClient httpclient = new DefaultHttpClient(httpParams);
 		HttpResponse response;
 		String responseString = null;
-		try {					    
+		try {
 			response = httpclient.execute(new HttpGet(url));
 			StatusLine statusLine = response.getStatusLine();
 			if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
@@ -60,105 +60,138 @@ public class ForegroundJSONRequest extends Thread{
 				response.getEntity().getContent().close();
 				throw new IOException(statusLine.getReasonPhrase());
 			}
-		} catch (ConnectTimeoutException e) { 
+		} catch (ConnectTimeoutException e) {
 			error = 1;
-		} catch (NoHttpResponseException e) { 
+		} catch (NoHttpResponseException e) {
 			error = 2;
 		} catch (ClientProtocolException e) {
 			error = 3;
 		} catch (IOException e) {
 			error = 4;
 		}
-		
+
 		parseJson(responseString);
 	}
 
-
-	public ForegroundJSONRequest(Context context, Activity activity, String url, int StopID) {
+	public ForegroundJSONRequest(Context context, Activity activity,
+			String url, int StopID) {
 		this.context = context;
 		this.activity = activity;
 		this.url = url;
 		this.stopId = StopID;
 	}
-		
+
 	public interface checkStops {
-	    public void doStops();
+		public void doStops();
 	}
-	
-    public void function() {
-    	Stop s = Util.listGetStop(stopId, GlobalData.History);
+
+	public void function() {
+		Stop s = Util.listGetStop(stopId, GlobalData.History);
 		if (s != null) {
 			GlobalData.CurrentStop = s;
 			context.startActivity(new Intent(context, StopView.class)
-				.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+					.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
 			return;
 		}
 		s = Util.listGetStop(stopId, GlobalData.Favorites);
 		if (s != null) {
 			GlobalData.CurrentStop = s;
 			context.startActivity(new Intent(context, StopView.class)
-				.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-		}			
+					.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+		}
 		return;
-    }
-	
-	protected void parseJson(String result) {	
+	}
+
+	protected void parseJson(String result) {
 		if (result == null) {
 			if (error == 1)
-				Util.messageDiag(activity, new checkStops() { public void doStops() { function(); }}, 
-						"Connection Timed-Out", "The connection timed-out (Trimet's servers might be busy, or you could have a poor connection)." +
-						"\n\nIf you've visited this stop before, and you want to see the cached times, click ok.");
+				Util.messageDiag(
+						activity,
+						new checkStops() {
+							public void doStops() {
+								function();
+							}
+						},
+						"Connection Timed-Out",
+						"The connection timed-out (Trimet's servers might be busy, or you could have a poor connection)."
+								+ "\n\nIf you've visited this stop before, and you want to see the cached times, click ok.");
 			else if (error == 2)
-				Util.messageDiag(activity, new checkStops() { public void doStops() { function(); }}, 
-						"Malformed reponce", "Trimet didn't respond correctly (their servers may be under heavy load)" +
-						"\n\nIf you've visited this stop before, and you want to see the cached times, click ok.");
+				Util.messageDiag(
+						activity,
+						new checkStops() {
+							public void doStops() {
+								function();
+							}
+						},
+						"Malformed reponce",
+						"Trimet didn't respond correctly (their servers may be under heavy load)"
+								+ "\n\nIf you've visited this stop before, and you want to see the cached times, click ok.");
 			else if (error == 3)
-				Util.messageDiag(activity, new checkStops() { public void doStops() { function(); }}, 
-						"Error Connecting", "It looks like Trimet changed their API. Please contact the developer ASAP and this will be fixed." +
-						"\n\nIf you've visited this stop before, and you want to see the cached times, click ok.");
+				Util.messageDiag(
+						activity,
+						new checkStops() {
+							public void doStops() {
+								function();
+							}
+						},
+						"Error Connecting",
+						"It looks like Trimet changed their API. Please contact the developer ASAP and this will be fixed."
+								+ "\n\nIf you've visited this stop before, and you want to see the cached times, click ok.");
 			else if (error == 4)
-				Util.messageDiag(activity, new checkStops() { public void doStops() { function(); }}, 
-						"Are you connected?", "Can't reach the Trimet servers right now, are you connected to the internet?" +
-						"\n\nIf you've visited this stop before, and you want to see the cached times, click ok.");
-		
+				Util.messageDiag(
+						activity,
+						new checkStops() {
+							public void doStops() {
+								function();
+							}
+						},
+						"Are you connected?",
+						"Can't reach the Trimet servers right now, are you connected to the internet?"
+								+ "\n\nIf you've visited this stop before, and you want to see the cached times, click ok.");
+
 			return;
 		}
-		
+
 		Gson gson = new Gson();
 		JSONResult.ResultSet rs = gson.fromJson(result, JSONResult.class).resultSet;
 
 		if (rs.errorMessage != null) {
 			final String em = rs.errorMessage.content;
-		   	activity.runOnUiThread(new Runnable() {
-		   	     @Override
-		   	     public void run() {
-					AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-		
+			activity.runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					AlertDialog.Builder builder = new AlertDialog.Builder(
+							activity);
+
 					String error = em;
 					String id = "";
 					Matcher m = Pattern.compile("([0-9]+)").matcher(error);
-				    if (m.find()) {
-				    	id = m.group(1);
-				    }
-					
-					// 2. Chain together various setter methods to set the dialog characteristics
-					builder.setMessage("A stop with the ID \"" + id + "\" doesn't exist.")
-					       .setTitle(R.string.no_stop);
-					
-					builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-				           public void onClick(DialogInterface dialog, int id) {
-				               // User clicked OK button
-				           }
-				       });
-					
+					if (m.find()) {
+						id = m.group(1);
+					}
+
+					// 2. Chain together various setter methods to set the
+					// dialog characteristics
+					builder.setMessage(
+							"A stop with the ID \"" + id + "\" doesn't exist.")
+							.setTitle(R.string.no_stop);
+
+					builder.setPositiveButton("Ok",
+							new DialogInterface.OnClickListener() {
+								public void onClick(DialogInterface dialog,
+										int id) {
+									// User clicked OK button
+								}
+							});
+
 					// 3. Get the AlertDialog from create()
 					builder.create().show();
-		   	     }
-		   	});
-		   	failed = true;
+				}
+			});
+			failed = true;
 			return;
 		}
-		
+
 		Stop temp = new Stop(rs.location[0]);
 		temp.LastAccesed = new Date();
 
@@ -176,7 +209,7 @@ public class ForegroundJSONRequest extends Thread{
 					GlobalData.histAdaptor.add(temp);
 				else
 					GlobalData.History.add(temp);
-				
+
 				GlobalData.CurrentStop = temp;
 			} else {
 				w.Update(temp, true);
@@ -191,14 +224,14 @@ public class ForegroundJSONRequest extends Thread{
 			GlobalData.CurrentStop = t;
 		}
 
-	   	activity.runOnUiThread(new Runnable() {
-	   	     @Override
-	   	     public void run() {
-	   	    	 Util.refreshAdaptors();
-	   	     }
-	   	});
+		activity.runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				Util.refreshAdaptors();
+			}
+		});
 		Util.dumpData(context);
-		
+
 	}
-	
+
 }

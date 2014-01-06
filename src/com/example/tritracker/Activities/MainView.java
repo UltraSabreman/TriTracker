@@ -22,8 +22,10 @@ import com.example.tritracker.NotMyCode.SwipeDismissListViewTouchListener;
 import com.example.tritracker.NotMyCode.UndoBarController;
 import com.example.tritracker.json.JSONRequestManger;
 
-public class MainView extends Activity implements UndoBarController.UndoListener{
+public class MainView extends Activity implements
+		UndoBarController.UndoListener {
 	private UndoBarController mUndoBarController;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -34,16 +36,18 @@ public class MainView extends Activity implements UndoBarController.UndoListener
 		Util.readData(getApplicationContext());
 		Util.subscribeToEdit(getApplicationContext(), this, R.id.UIStopIDBox);
 
-		((TextView) findViewById(R.id.NoMembers)).setText("You have nothing in your favorites");
-		
-		mUndoBarController = new UndoBarController(findViewById(R.id.undobar), this);
-		
+		((TextView) findViewById(R.id.NoMembers))
+				.setText("You have nothing in your favorites");
+
+		mUndoBarController = new UndoBarController(findViewById(R.id.undobar),
+				this);
+
 		setTitle("Favorites");
-		
+
 		initList();
 		Util.updateAllStops(getApplicationContext(), this);
 		Util.restartTimer(getApplicationContext(), this);
-		
+
 		onActivityChange();
 	}
 
@@ -52,13 +56,13 @@ public class MainView extends Activity implements UndoBarController.UndoListener
 		onActivityChange();
 		super.onResume();
 	}
-	
+
 	@Override
 	public void onRestart() {
 		onActivityChange();
 		super.onRestart();
 	}
-	
+
 	@Override
 	public void onDestroy() {
 		onActivityChange();
@@ -67,28 +71,32 @@ public class MainView extends Activity implements UndoBarController.UndoListener
 
 	private void onActivityChange() {
 		if (GlobalData.Favorites == null || GlobalData.Favorites.size() == 0)
-			((TextView) findViewById(R.id.NoMembers)).setVisibility(View.VISIBLE);
+			((TextView) findViewById(R.id.NoMembers))
+					.setVisibility(View.VISIBLE);
 		else
-			((TextView) findViewById(R.id.NoMembers)).setVisibility(View.INVISIBLE);
-				
+			((TextView) findViewById(R.id.NoMembers))
+					.setVisibility(View.INVISIBLE);
+
 		GlobalData.Orientation = getResources().getConfiguration().orientation;
 		GlobalData.favAdaptor.notifyDataSetChanged();
 		Util.dumpData(getApplicationContext());
-		//findViewById(R.id.mainView).invalidate();
+		// findViewById(R.id.mainView).invalidate();
 	}
-	
+
 	private void initList() {
 		ListView view = (ListView) findViewById(R.id.UIStopList);
-		GlobalData.favAdaptor = new StopArrayAdaptor(this, GlobalData.Favorites, true);
+		GlobalData.favAdaptor = new StopArrayAdaptor(this,
+				GlobalData.Favorites, true);
 		view.setAdapter(GlobalData.favAdaptor);
-		final Activity testAct = (Activity)this;
+		final Activity testAct = (Activity) this;
 		view.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> arg0, View arg1,
 					int position, long arg3) {
 				Stop temp = GlobalData.favAdaptor.getItem(position);
 				if (temp != null) {
 					GlobalData.CurrentStop = temp;
-					new JSONRequestManger(getApplicationContext(), testAct, temp.StopID).start();
+					new JSONRequestManger(getApplicationContext(), testAct,
+							temp.StopID).start();
 				}
 			}
 		});
@@ -107,15 +115,21 @@ public class MainView extends Activity implements UndoBarController.UndoListener
 					}
 
 					@Override
-					public void onDismiss(ListView listView, int[] reverseSortedPositions) {
+					public void onDismiss(ListView listView,
+							int[] reverseSortedPositions) {
 						for (int position : reverseSortedPositions) {
 							Stop stop = GlobalData.favAdaptor.getItem(position);
 							if (stop != null) {
 								GlobalData.FUndos.add(stop);
 								GlobalData.favAdaptor.remove(stop);
-							
-								mUndoBarController.showUndoBar(false, 
-										"Removed " + GlobalData.FUndos.size() + " Stop" + (GlobalData.FUndos.size() > 1 ? "s" : ""),null);
+
+								mUndoBarController.showUndoBar(
+										false,
+										"Removed "
+												+ GlobalData.FUndos.size()
+												+ " Stop"
+												+ (GlobalData.FUndos.size() > 1 ? "s"
+														: ""), null);
 							}
 						}
 						onActivityChange();
@@ -143,11 +157,14 @@ public class MainView extends Activity implements UndoBarController.UndoListener
 		switch (item.getItemId()) {
 		case R.id.action_sort:
 			Util.buildSortDialog((Activity) this, 0);
+			//startActivity(new Intent(this, TestActivity.class));
+			
 			onActivityChange();
 			return true;
-		/*case R.id.action_search:
-			Util.showToast("Not in yet", Toast.LENGTH_SHORT);
-			return true;*/
+			/*
+			 * case R.id.action_search: Util.showToast("Not in yet",
+			 * Toast.LENGTH_SHORT); return true;
+			 */
 		case R.id.action_settings:
 			startActivity(new Intent(this, SettingsView.class));
 			return true;
@@ -158,18 +175,17 @@ public class MainView extends Activity implements UndoBarController.UndoListener
 		}
 	}
 
-    @Override
-    public void onUndo(Parcelable token, boolean fail) {
-    	if (!fail) {
-	        for (Stop s: GlobalData.FUndos) {
-	        	if (!Util.favHasStop(s))
-	        		GlobalData.favAdaptor.add(s);
-	        }
-	        GlobalData.FUndos.clear();
-	        onActivityChange();
-    	}else
-    		GlobalData.FUndos.clear();
-    }
-    
+	@Override
+	public void onUndo(Parcelable token, boolean fail) {
+		if (!fail) {
+			for (Stop s : GlobalData.FUndos) {
+				if (!Util.favHasStop(s))
+					GlobalData.favAdaptor.add(s);
+			}
+			GlobalData.FUndos.clear();
+			onActivityChange();
+		} else
+			GlobalData.FUndos.clear();
+	}
 
 }

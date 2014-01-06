@@ -38,8 +38,8 @@ public class Util {
 	public static Stack<Class<?>> parents = new Stack<Class<?>>();
 	private static Toast msg;
 	private static Context c;
-    private static Handler timerHandler = new Handler();
-    private static Runnable timerRunnable = null;
+	private static Handler timerHandler = new Handler();
+	private static Runnable timerRunnable = null;
 
 	public static Date dateFromString(String s) {
 		if (s == null)
@@ -52,23 +52,23 @@ public class Util {
 			return null;
 		}
 	}
-	
+
 	public static int getBussMinutes(Buss b) {
 		Date est = null;
-		
-    	if (b.Status.compareTo("estimated") == 0 && b.EstimatedTime != null) {
-    		est = new Date(b.EstimatedTime.getTime() - new Date().getTime());
-    	} else {
-        	est = new Date(b.ScheduledTime.getTime() - new Date().getTime());
-    	}
-     	
-		return mToS(est.getTime())/60;
+
+		if (b.Status.compareTo("estimated") == 0 && b.EstimatedTime != null) {
+			est = new Date(b.EstimatedTime.getTime() - new Date().getTime());
+		} else {
+			est = new Date(b.ScheduledTime.getTime() - new Date().getTime());
+		}
+
+		return mToS(est.getTime()) / 60;
 	}
-	
+
 	public static int mToS(long mill) {
-		return (int)(mill / 1000);
+		return (int) (mill / 1000);
 	}
-	
+
 	public static void refreshAdaptors() {
 		if (GlobalData.favAdaptor != null)
 			GlobalData.favAdaptor.notifyDataSetChanged();
@@ -77,107 +77,110 @@ public class Util {
 		if (GlobalData.bussAdaptor != null)
 			GlobalData.bussAdaptor.notifyDataSetChanged();
 	}
-	
+
 	public static void updateAllStops(Context c, Activity a) {
 		String stops = "";
-		for(Stop s : GlobalData.History) 
+		for (Stop s : GlobalData.History)
 			stops += String.valueOf(s.StopID) + ",";
-		
-		for(Stop s : GlobalData.Favorites) 
-			if (!histHasStop(s)) 
+
+		for (Stop s : GlobalData.Favorites)
+			if (!histHasStop(s))
 				stops += String.valueOf(s.StopID) + ",";
-		
+
 		if (stops.compareTo("") != 0) {
 			stops = stops.substring(0, stops.length() - 1);
-			
-			new BackgroundJSONRequest(c, a, "http://developer.trimet.org/ws/V1/arrivals?locIDs="
-					+ stops
-					+ "&json=true&appID="
-					+ c.getString(R.string.appid)).start();
+
+			new BackgroundJSONRequest(c, a,
+					"http://developer.trimet.org/ws/V1/arrivals?locIDs="
+							+ stops + "&json=true&appID="
+							+ c.getString(R.string.appid)).start();
 		}
-		
+
 		String busses = "";
-		for(Stop s : GlobalData.Favorites)
+		for (Stop s : GlobalData.Favorites)
 			if (!histHasStop(s))
 				busses += Util.getListOfLines(s, false) + ",";
-				
-		for(Stop s : GlobalData.History)
+
+		for (Stop s : GlobalData.History)
 			busses += Util.getListOfLines(s, false) + ",";
-		
+
 		if (busses.compareTo("") != 0) {
 			busses = busses.substring(0, busses.length() - 1);
-			
-			new BackgroundJSONRequest(c, a, "http://developer.trimet.org/ws/V1/detours?routes="
-					+ busses
-					+ "&json=true&appID="
-					+ c.getString(R.string.appid)).start();			
+
+			new BackgroundJSONRequest(c, a,
+					"http://developer.trimet.org/ws/V1/detours?routes="
+							+ busses + "&json=true&appID="
+							+ c.getString(R.string.appid)).start();
 		}
 		refreshAdaptors();
 		dumpData(c);
 	}
-	
+
 	public static void buildSortDialog(final Activity a, final int whichList) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(a);
-		
+
 		builder.setTitle("Sort By");
-		String [] list = new String [] {"Stop name", "Stop ID", "Last Accesed"};
+		String[] list = new String[] { "Stop name", "Stop ID", "Last Accesed" };
 		if (whichList == 2)
-			list = new String [] {"Buss name", "Buss Route", "Arrival Time"};
-		
-		
-		builder.setSingleChoiceItems(list ,(whichList == 0 ? GlobalData.FavOrder : (whichList == 1 ? GlobalData.HistOrder : GlobalData.StopOrder)), 
-			new DialogInterface.OnClickListener() {
-			@Override
-            public void onClick(DialogInterface dialog, int which) {
-				if (whichList == 0)
-					GlobalData.FavOrder = which;
-				else if (whichList == 1)
-					GlobalData.HistOrder = which;
-				else 
-					GlobalData.StopOrder = which;
-				
-			}
-		}); 
-				
+			list = new String[] { "Buss name", "Buss Route", "Arrival Time" };
+
+		builder.setSingleChoiceItems(list,
+				(whichList == 0 ? GlobalData.FavOrder
+						: (whichList == 1 ? GlobalData.HistOrder
+								: GlobalData.StopOrder)),
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						if (whichList == 0)
+							GlobalData.FavOrder = which;
+						else if (whichList == 1)
+							GlobalData.HistOrder = which;
+						else
+							GlobalData.StopOrder = which;
+
+					}
+				});
+
 		builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-	           public void onClick(DialogInterface dialog, int id) {
-	        	   Util.refreshAdaptors();
-	           }
+			public void onClick(DialogInterface dialog, int id) {
+				Util.refreshAdaptors();
+			}
 		});
-	       
+
 		builder.create().show();
 	}
-	
+
 	public static String getListOfLines(Stop s, boolean test) {
-		//this lists the routes, and adds commas between them.
+		// this lists the routes, and adds commas between them.
 		if (s.Busses != null && s.Busses.size() != 0) {
 			if (test) {
 				String str = "";
-				for (Buss b :  s.Busses) {
-					String [] words = b.SignLong.split(" ");
+				for (Buss b : s.Busses) {
+					String[] words = b.SignLong.split(" ");
 					String tempRoute = words[0];
 					if (tempRoute.compareTo("MAX") == 0)
-						tempRoute = (words[1].isEmpty() ? words[2] : words[1]) + "-Line";
+						tempRoute = (words[1].isEmpty() ? words[2] : words[1])
+								+ "-Line";
 					if (!str.contains(tempRoute))
-							str+= tempRoute + " ";
+						str += tempRoute + " ";
 				}
-				
+
 				return str.replaceAll("( [0-9a-zA-Z])", ",$1");
 			} else {
 				String str = "";
-				for (Buss b :  s.Busses) {
+				for (Buss b : s.Busses) {
 					String tempRoute = String.valueOf(b.Route);
 					if (!str.contains(tempRoute)) {
 						str += (tempRoute + ",");
 					}
 				}
-				
+
 				return str.substring(0, str.length() - 1);
 			}
 		}
 		return "";
 	}
-	
+
 	public static void initToast(Context ic) {
 		c = ic;
 	}
@@ -188,30 +191,37 @@ public class Util {
 		msg = Toast.makeText(c, s, d);
 		msg.show();
 	}
-	
-	
+
 	public static boolean sortList(int Type) {
-		if (Type == 0) { //Favorites
-			if (GlobalData.Favorites == null) return false;
-			Collections.sort(GlobalData.Favorites, new StopSorter(GlobalData.FavOrder));
-			if (GlobalData.FavOrder == 2) //By time
+		if (Type == 0) { // Favorites
+			if (GlobalData.Favorites == null)
+				return false;
+			Collections.sort(GlobalData.Favorites, new StopSorter(
+					GlobalData.FavOrder));
+			if (GlobalData.FavOrder == 2) // By time
 				Collections.reverse(GlobalData.Favorites);
 			return true;
-		} else if (Type == 1) { //History
-			if (GlobalData.History == null) return false;
-			Collections.sort(GlobalData.History, new StopSorter(GlobalData.HistOrder));
-			if (GlobalData.HistOrder == 2) //By time
+		} else if (Type == 1) { // History
+			if (GlobalData.History == null)
+				return false;
+			Collections.sort(GlobalData.History, new StopSorter(
+					GlobalData.HistOrder));
+			if (GlobalData.HistOrder == 2) // By time
 				Collections.reverse(GlobalData.History);
 			return true;
-		} else if (Type == 2) { //Buss
-			if (GlobalData.CurrentStop == null || GlobalData.CurrentStop.Busses == null) return false;
-			Collections.sort(GlobalData.CurrentStop.Busses, new BussSorter(GlobalData.StopOrder));
+		} else if (Type == 2) { // Buss
+			if (GlobalData.CurrentStop == null
+					|| GlobalData.CurrentStop.Busses == null)
+				return false;
+			Collections.sort(GlobalData.CurrentStop.Busses, new BussSorter(
+					GlobalData.StopOrder));
 			return true;
 		}
 		return false;
 	}
-	
-	public static void subscribeToEdit(final Context c, final Activity a, int name) {
+
+	public static void subscribeToEdit(final Context c, final Activity a,
+			int name) {
 		EditText edit = (EditText) a.findViewById(name);
 
 		edit.setOnEditorActionListener(new OnEditorActionListener() {
@@ -220,7 +230,11 @@ public class Util {
 				if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER))
 						|| (actionId == EditorInfo.IME_ACTION_DONE)) {
 					EditText edit = (EditText) a.findViewById(R.id.UIStopIDBox);
-					new JSONRequestManger(c, a, Integer.parseInt(edit.getText().toString())).start();
+					String text = edit.getText().toString();
+					if (text != null && text.compareTo("") != 0)
+						new JSONRequestManger(c, a, Integer.parseInt(text))
+								.start();
+
 					edit.getText().clear();
 
 				}
@@ -230,11 +244,13 @@ public class Util {
 	}
 
 	public static boolean favHasStop(Stop s) {
-		return (listGetStop(s.StopID, GlobalData.Favorites) != null ? true : false);
+		return (listGetStop(s.StopID, GlobalData.Favorites) != null ? true
+				: false);
 	}
 
 	public static boolean histHasStop(Stop s) {
-		return (listGetStop(s.StopID, GlobalData.History) != null ? true : false);
+		return (listGetStop(s.StopID, GlobalData.History) != null ? true
+				: false);
 	}
 
 	public static Stop listGetStop(int stopID, ArrayList<Stop> l) {
@@ -244,27 +260,29 @@ public class Util {
 
 		return null;
 	}
-	
+
 	public static void removeStop(Stop s, ArrayList<Stop> l) {
-		for (Stop stop : l){
-			if (s.StopID == stop.StopID){
+		for (Stop stop : l) {
+			if (s.StopID == stop.StopID) {
 				l.remove(stop);
 				return;
 			}
 		}
 	}
-	
+
 	public static void dumpData(Context c) {
-		/*File test = new File(c.getString(R.string.data_path));
-		if (test.exists())
-			test.delete();*/
-		
+		/*
+		 * File test = new File(c.getString(R.string.data_path)); if
+		 * (test.exists()) test.delete();
+		 */
+
 		try {
 			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(
 					c.openFileOutput(c.getString(R.string.data_path),
 							Context.MODE_PRIVATE)));
 
-			Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+			Gson gson = new GsonBuilder()
+					.excludeFieldsWithoutExposeAnnotation().create();
 			String data = gson.toJson(GlobalData.getJsonWrap());
 
 			bw.write(data);
@@ -274,21 +292,23 @@ public class Util {
 		} catch (IOException e2) {
 		}
 	}
-	
-	public static void messageDiag(Activity act, final checkStops myFunc, String title, String msg) {
+
+	public static void messageDiag(Activity act, final checkStops myFunc,
+			String title, String msg) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(act);
-		
+
 		builder.setTitle(title).setMessage(msg);
 		builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-	           public void onClick(DialogInterface dialog, int id) {
-	        	   if (myFunc != null)
-	        		   myFunc.doStops();
-	           }
+			public void onClick(DialogInterface dialog, int id) {
+				if (myFunc != null)
+					myFunc.doStops();
+			}
 		});
-		builder.setNegativeButton("Canel", new DialogInterface.OnClickListener() {
-	           public void onClick(DialogInterface dialog, int id) {
-	           }
-		});
+		builder.setNegativeButton("Canel",
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+					}
+				});
 		builder.create().show();
 	}
 
@@ -303,7 +323,8 @@ public class Util {
 				fileContents += line;
 			}
 
-			Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+			Gson gson = new GsonBuilder()
+					.excludeFieldsWithoutExposeAnnotation().create();
 			GlobalData.JsonWrapper wrap = gson.fromJson(fileContents,
 					GlobalData.JsonWrapper.class);
 			if (wrap != null) {
@@ -328,80 +349,85 @@ public class Util {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private static class StopSorter implements Comparator<Stop> {
 		private int compareType = 0;
+
 		public StopSorter(int t) {
 			compareType = t;
-			//0 == By Name
-			//1 == By ID
-			//2 == By Acces Date
+			// 0 == By Name
+			// 1 == By ID
+			// 2 == By Acces Date
 		}
-		
-	    @Override
-	    public int compare(Stop s, Stop s2) {
-	    	if (s == null || s2 == null) return 0;
-	    	if (compareType == 0) 
-	    		return s.Name.compareTo(s2.Name);
-	    	if (compareType == 1)
-	    		return (s.StopID < s2.StopID ? -1 : (s.StopID > s2.StopID ? 1 : 0));
-	    	else {
-	    		if (s.LastAccesed != null && s2.LastAccesed != null)
-	    			return s.LastAccesed.compareTo(s2.LastAccesed);
-	    		else
-	    			return 0;
-	    	}
-	    }
+
+		@Override
+		public int compare(Stop s, Stop s2) {
+			if (s == null || s2 == null)
+				return 0;
+			if (compareType == 0)
+				return s.Name.compareTo(s2.Name);
+			if (compareType == 1)
+				return (s.StopID < s2.StopID ? -1 : (s.StopID > s2.StopID ? 1
+						: 0));
+			else {
+				if (s.LastAccesed != null && s2.LastAccesed != null)
+					return s.LastAccesed.compareTo(s2.LastAccesed);
+				else
+					return 0;
+			}
+		}
 	}
-	
+
 	private static class BussSorter implements Comparator<Buss> {
 		private int compareType = 0;
+
 		public BussSorter(int t) {
 			compareType = t;
-			//0 == By Name
-			//1 == By Line
-			//2 == By Arrival Time
+			// 0 == By Name
+			// 1 == By Line
+			// 2 == By Arrival Time
 		}
-		
-	    @Override
-	    public int compare(Buss o1, Buss o2) {
-	    	if (compareType == 0) 
-	    		if (GlobalData.Orientation == 2)
-	    			return o1.SignLong.compareTo(o2.SignLong);
-	    		else
-	    			return o1.SignShort.compareTo(o2.SignShort);
-	    	if (compareType == 1)
-	    		return (o1.Route < o2.Route ? -1 : (o1.Route > o2.Route ? 1 : 0));
-	    	else
-	    		if (o1.EstimatedTime != null && o2.EstimatedTime != null)
-	    			return o1.EstimatedTime.compareTo(o2.EstimatedTime); //fix me
-	    		else
-	    			return o1.ScheduledTime.compareTo(o2.ScheduledTime); //fix me
-	    }
+
+		@Override
+		public int compare(Buss o1, Buss o2) {
+			if (compareType == 0)
+				if (GlobalData.Orientation == 2)
+					return o1.SignLong.compareTo(o2.SignLong);
+				else
+					return o1.SignShort.compareTo(o2.SignShort);
+			if (compareType == 1)
+				return (o1.Route < o2.Route ? -1
+						: (o1.Route > o2.Route ? 1 : 0));
+			else if (o1.EstimatedTime != null && o2.EstimatedTime != null)
+				return o1.EstimatedTime.compareTo(o2.EstimatedTime); // fix me
+			else
+				return o1.ScheduledTime.compareTo(o2.ScheduledTime); // fix me
+		}
 	}
-	
+
 	public static void restartTimer(final Context c, final Activity a) {
 		if (timerRunnable != null)
 			timerHandler.removeCallbacks(timerRunnable);
-		
+
 		timerRunnable = new Runnable() {
-	        @Override
-	        public void run() {
-	        	Util.updateAllStops(c, a);
-	        	
-	        	if (GlobalData.RefreshDelay > 0)
-	        		timerHandler.postDelayed(this, (int)(GlobalData.RefreshDelay * 1000));
-	        }
-	    };
-	    
+			@Override
+			public void run() {
+				Util.updateAllStops(c, a);
+
+				if (GlobalData.RefreshDelay > 0)
+					timerHandler.postDelayed(this,
+							(int) (GlobalData.RefreshDelay * 1000));
+			}
+		};
+
 		if (GlobalData.RefreshDelay > 0)
-			timerHandler.postDelayed(timerRunnable, (int)(GlobalData.RefreshDelay * 1000));
+			timerHandler.postDelayed(timerRunnable,
+					(int) (GlobalData.RefreshDelay * 1000));
 	}
-	
+
 	public static void stopTimer() {
 		if (timerRunnable != null)
 			timerHandler.removeCallbacks(timerRunnable);
 	}
-	
 
 }

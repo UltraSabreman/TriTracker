@@ -22,9 +22,10 @@ import com.example.tritracker.NotMyCode.SwipeDismissListViewTouchListener;
 import com.example.tritracker.NotMyCode.UndoBarController;
 import com.example.tritracker.json.JSONRequestManger;
 
-public class HistoryView extends Activity implements UndoBarController.UndoListener{
+public class HistoryView extends Activity implements
+		UndoBarController.UndoListener {
 	private UndoBarController mUndoBarController;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -33,42 +34,48 @@ public class HistoryView extends Activity implements UndoBarController.UndoListe
 
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 
-		((TextView) findViewById(R.id.NoMembers)).setText("You have nothing in your history");
-		
-		mUndoBarController = new UndoBarController(findViewById(R.id.undobar), this);
-		
+		((TextView) findViewById(R.id.NoMembers))
+				.setText("You have nothing in your history");
+
+		mUndoBarController = new UndoBarController(findViewById(R.id.undobar),
+				this);
+
 		Util.subscribeToEdit(getApplicationContext(), this, R.id.UIStopIDBox);
 		initList();
 		onActivityChange();
 	}
-	
+
 	private void onActivityChange() {
 		if (GlobalData.History == null || GlobalData.History.size() == 0)
-			((TextView) findViewById(R.id.NoMembers)).setVisibility(View.VISIBLE);
+			((TextView) findViewById(R.id.NoMembers))
+					.setVisibility(View.VISIBLE);
 		else
-			((TextView) findViewById(R.id.NoMembers)).setVisibility(View.INVISIBLE);
-		
+			((TextView) findViewById(R.id.NoMembers))
+					.setVisibility(View.INVISIBLE);
+
 		GlobalData.Orientation = getResources().getConfiguration().orientation;
 		GlobalData.histAdaptor.notifyDataSetChanged();
 		Util.dumpData(getApplicationContext());
-		
+
 		findViewById(R.id.mainView).invalidate();
 	}
 
 	private void initList() {
 		ListView view = (ListView) findViewById(R.id.UIStopList);
-		GlobalData.histAdaptor = new StopArrayAdaptor(this, GlobalData.History, false);
+		GlobalData.histAdaptor = new StopArrayAdaptor(this, GlobalData.History,
+				false);
 		view.setAdapter(GlobalData.histAdaptor);
 		GlobalData.histAdaptor.notifyDataSetChanged();
 
-		final Activity testAct = (Activity)this;
+		final Activity testAct = (Activity) this;
 		view.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> arg0, View arg1,
 					int position, long arg3) {
 				Stop temp = GlobalData.histAdaptor.getItem(position);
 				if (temp != null) {
 					GlobalData.CurrentStop = temp;
-					new JSONRequestManger(getApplicationContext(), testAct, temp.StopID).start();
+					new JSONRequestManger(getApplicationContext(), testAct,
+							temp.StopID).start();
 				}
 			}
 		});
@@ -90,13 +97,19 @@ public class HistoryView extends Activity implements UndoBarController.UndoListe
 					public void onDismiss(ListView listView,
 							int[] reverseSortedPositions) {
 						for (int position : reverseSortedPositions) {
-							Stop stop = GlobalData.histAdaptor.getItem(position);
+							Stop stop = GlobalData.histAdaptor
+									.getItem(position);
 							if (stop != null) {
 								GlobalData.HUndos.add(stop);
 								GlobalData.histAdaptor.remove(stop);
-							
-								mUndoBarController.showUndoBar(false, 
-										"Removed " + GlobalData.HUndos.size() + " Stop" + (GlobalData.HUndos.size() > 1 ? "s" : ""),null);
+
+								mUndoBarController.showUndoBar(
+										false,
+										"Removed "
+												+ GlobalData.HUndos.size()
+												+ " Stop"
+												+ (GlobalData.HUndos.size() > 1 ? "s"
+														: ""), null);
 							}
 						}
 						onActivityChange();
@@ -115,26 +128,25 @@ public class HistoryView extends Activity implements UndoBarController.UndoListe
 		getMenuInflater().inflate(R.menu.history_view, menu);
 		return true;
 	}
-	
+
 	@Override
 	public void onResume() {
 		onActivityChange();
 		super.onResume();
 	}
-	
+
 	@Override
 	public void onRestart() {
 		onActivityChange();
 		super.onRestart();
 	}
-	
+
 	@Override
 	public void onDestroy() {
 		onActivityChange();
 		super.onDestroy();
 	}
-	
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		mUndoBarController.hideUndoBar(false);
@@ -148,17 +160,19 @@ public class HistoryView extends Activity implements UndoBarController.UndoListe
 		case R.id.action_clear:
 			for (Stop s : GlobalData.History)
 				GlobalData.HUndos.add(s);
-			
+
 			GlobalData.histAdaptor.clear();
-			
-			mUndoBarController.showUndoBar(false, 
-					"Removed " + GlobalData.HUndos.size() + " Stop" + (GlobalData.HUndos.size() > 1 ? "s" : ""),null);
-			
+
+			mUndoBarController.showUndoBar(false,
+					"Removed " + GlobalData.HUndos.size() + " Stop"
+							+ (GlobalData.HUndos.size() > 1 ? "s" : ""), null);
+
 			onActivityChange();
 			return true;
-		/*case R.id.action_search:
-			Util.showToast("Not in yet", Toast.LENGTH_SHORT);
-			return true;*/
+			/*
+			 * case R.id.action_search: Util.showToast("Not in yet",
+			 * Toast.LENGTH_SHORT); return true;
+			 */
 		case R.id.action_sort:
 			Util.buildSortDialog((Activity) this, 1);
 			onActivityChange();
@@ -170,17 +184,17 @@ public class HistoryView extends Activity implements UndoBarController.UndoListe
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	
-    @Override
-    public void onUndo(Parcelable token, boolean fail) {
-    	if (!fail) {
-	        for (Stop s: GlobalData.HUndos) {
-	        	if (!Util.histHasStop(s))
-	        		GlobalData.histAdaptor.add(s);
-	        }
-	        GlobalData.HUndos.clear();
-	        onActivityChange();
-    	} else
-    		GlobalData.HUndos.clear();
-    }
+
+	@Override
+	public void onUndo(Parcelable token, boolean fail) {
+		if (!fail) {
+			for (Stop s : GlobalData.HUndos) {
+				if (!Util.histHasStop(s))
+					GlobalData.histAdaptor.add(s);
+			}
+			GlobalData.HUndos.clear();
+			onActivityChange();
+		} else
+			GlobalData.HUndos.clear();
+	}
 }

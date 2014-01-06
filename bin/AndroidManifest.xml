@@ -55,6 +55,10 @@
 			android:name="com.example.tritracker.Activities.SettingsView"
 			android:label="@string/title_activity_settings" >
 		</activity>
+		<activity
+			android:name="com.example.tritracker.Activities.TestActivity"
+			android:label="@string/title_activity_test" >
+		</activity>
 	</application>
 
 </manifest>

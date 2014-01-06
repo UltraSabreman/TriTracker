@@ -35,7 +35,7 @@ public class BussArrayAdaptor extends ArrayAdapter<Buss> {
 	public void notifyDataSetChanged() {
 		Util.sortList(2);
 		super.notifyDataSetChanged();
-		
+
 	}
 
 	@Override
@@ -51,78 +51,82 @@ public class BussArrayAdaptor extends ArrayAdapter<Buss> {
 					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			v = inflater.inflate(R.layout.buss_layout, null);
 		}
-		
-		
 
 		Buss curBuss = busses.get(position);
 
 		if (curBuss != null) {
-			if (GlobalData.CurrentStop.Alerts != null && GlobalData.CurrentStop.Alerts.size() != 0) {
+			if (GlobalData.CurrentStop.Alerts != null
+					&& GlobalData.CurrentStop.Alerts.size() != 0) {
 				boolean affected = false;
 				for (Alert d : GlobalData.CurrentStop.Alerts) {
 					if (d.AffectedLine == curBuss.Route) {
 						affected = true;
-						break;					
+						break;
 					}
 				}
-				if (affected) 
-					((ImageView) v.findViewById(R.id.AlertIcon)).setVisibility(View.VISIBLE); 
+				if (affected)
+					((ImageView) v.findViewById(R.id.AlertIcon))
+							.setVisibility(View.VISIBLE);
 				else
-					((ImageView) v.findViewById(R.id.AlertIcon)).setVisibility(View.INVISIBLE);
-				
-			}else 
-				((ImageView) v.findViewById(R.id.AlertIcon)).setVisibility(View.INVISIBLE);
-			
+					((ImageView) v.findViewById(R.id.AlertIcon))
+							.setVisibility(View.INVISIBLE);
+
+			} else
+				((ImageView) v.findViewById(R.id.AlertIcon))
+						.setVisibility(View.INVISIBLE);
+
 			TextView LineNumber = (TextView) v.findViewById(R.id.LineNumber);
 			TextView LineName = (TextView) v.findViewById(R.id.LineName);
 			TextView Shedule = (TextView) v.findViewById(R.id.Schedule);
 			TextView Time = (TextView) v.findViewById(R.id.Time);
-			
-			if(curBuss.notification != null && curBuss.notification.IsSet) {
-				((ImageView) v.findViewById(R.id.ReminderIcon)).setVisibility(View.VISIBLE);
+
+			if (curBuss.notification != null && curBuss.notification.IsSet) {
+				((ImageView) v.findViewById(R.id.ReminderIcon))
+						.setVisibility(View.VISIBLE);
 				TextView t = (TextView) v.findViewById(R.id.ReminderTime);
 				t.setVisibility(View.VISIBLE);
 				t.setText(curBuss.notification.getTime() + " Min");
-			}else {
-				((ImageView) v.findViewById(R.id.ReminderIcon)).setVisibility(View.INVISIBLE);
-				((TextView) v.findViewById(R.id.ReminderTime)).setVisibility(View.INVISIBLE);
+			} else {
+				((ImageView) v.findViewById(R.id.ReminderIcon))
+						.setVisibility(View.INVISIBLE);
+				((TextView) v.findViewById(R.id.ReminderTime))
+						.setVisibility(View.INVISIBLE);
 			}
 
-
 			String route = "";
-			if (curBuss.SignShort.contains(String.valueOf(curBuss.Route))) 
+			if (curBuss.SignShort.contains(String.valueOf(curBuss.Route)))
 				route = String.valueOf(curBuss.Route);
+			else if (curBuss.SignShort.contains("WES"))
+				route = "WES";
 			else
-				if (curBuss.SignShort.contains("WES"))
-					route = "WES";
-				else
-					route = "MAX";
-			
+				route = "MAX";
+
 			LineNumber.setText(route);
-			
+
 			String sign = "";
-			if (GlobalData.Orientation == 2 ) //ORIENTATION_LANDSCAPE
+			if (GlobalData.Orientation == 2) // ORIENTATION_LANDSCAPE
 				sign = curBuss.SignLong.replace(route + " ", "");
 			else
 				sign = curBuss.SignShort.replace(route + " ", "");
-			
+
 			if (Character.isUpperCase(sign.charAt(0)))
 				LineName.setText(sign);
 			else
-				sign = sign.substring(0, 1).toUpperCase(Locale.US) + sign.substring(1);
-			
+				sign = sign.substring(0, 1).toUpperCase(Locale.US)
+						+ sign.substring(1);
+
 			LineName.setSelected(true);
-			
 
 			Format formatter = new SimpleDateFormat("hh:mm a", Locale.US);
 			String s = formatter.format(curBuss.ScheduledTime);
 
 			Shedule.setText("Scheduled at: " + s);
-			
+
 			if (curBuss.Status.compareTo("estimated") == 0) {
-				Date est = new Date(curBuss.EstimatedTime.getTime()	- new Date().getTime());
-				int min = Util.mToS(est.getTime())/60;
-				
+				Date est = new Date(curBuss.EstimatedTime.getTime()
+						- new Date().getTime());
+				int min = Util.mToS(est.getTime()) / 60;
+
 				if (min < 30) {
 					if (min == 0)
 						s = "Due";
