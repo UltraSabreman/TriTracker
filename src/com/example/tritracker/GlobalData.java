@@ -2,6 +2,7 @@ package com.example.tritracker;
 
 import java.util.ArrayList;
 
+
 import com.example.tritracker.ArrayAdaptors.BussArrayAdaptor;
 import com.example.tritracker.ArrayAdaptors.StopArrayAdaptor;
 import com.google.gson.annotations.Expose;
@@ -32,15 +33,12 @@ public class GlobalData {
 	public static BussArrayAdaptor bussAdaptor;
 
 	public static JsonWrapper getJsonWrap() {
-		return new JsonWrapper(Favorites, History, FavOrder, HistOrder,
-				StopOrder, RefreshDelay);
+		return new JsonWrapper();
 	}
 
 	public static class JsonWrapper {
 		@Expose
-		public ArrayList<Stop> Favorites = new ArrayList<Stop>();
-		@Expose
-		public ArrayList<Stop> History = new ArrayList<Stop>();
+		public ArrayList<Stop> stops = new ArrayList<Stop>();
 		@Expose
 		public int FavOrder = 0;
 		@Expose
@@ -49,15 +47,37 @@ public class GlobalData {
 		public int StopOrder = 0;
 		@Expose
 		public int RefreshDelay = 0;
+		
+		private boolean hasStop(Stop s) {
+			for (Stop st : stops)
+				if (s.StopID == st.StopID)
+					return true;
+			return false;
+		}
 
-		public JsonWrapper(ArrayList<Stop> fav, ArrayList<Stop> hist, int f,
-				int h, int s, int r) {
-			Favorites = fav;
-			History = hist;
-			FavOrder = f;
-			HistOrder = h;
-			StopOrder = s;
-			RefreshDelay = r;
+		public JsonWrapper() {
+			FavOrder = GlobalData.FavOrder;
+			HistOrder = GlobalData.HistOrder;
+			StopOrder = GlobalData.StopOrder;
+			RefreshDelay = GlobalData.RefreshDelay;
+			
+			
+			for (Stop s : GlobalData.History) {		
+				s.inHistory = true;
+				if (Util.favHasStop(s))
+					s.inFavorites = true;
+				else
+					s.inFavorites = false;
+				stops.add(s);
+			}
+			
+			for (Stop s : GlobalData.Favorites) {
+				if (!hasStop(s)) {
+					s.inHistory = false;
+					s.inFavorites = true;
+					stops.add(s);
+				}
+			}
 		}
 	}
 

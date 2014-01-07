@@ -1,5 +1,6 @@
 package com.example.tritracker;
 
+import com.example.tritracker.R;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
@@ -288,8 +289,14 @@ public class Util {
 			bw.write(data);
 			bw.close();
 		} catch (JsonSyntaxException e) {
-		} catch (FileNotFoundException e1) {
-		} catch (IOException e2) {
+			System.out.println("---Error: WRITE, json syntax");
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			System.out.println("---Error: WRITE, file not found");
+			e.printStackTrace();
+		} catch (IOException e) {
+			System.out.println("---Error: WRITE, IOexception");
+			e.printStackTrace();
 		}
 	}
 
@@ -328,24 +335,35 @@ public class Util {
 			GlobalData.JsonWrapper wrap = gson.fromJson(fileContents,
 					GlobalData.JsonWrapper.class);
 			if (wrap != null) {
-				if (wrap.Favorites != null) {
-					GlobalData.Favorites = new ArrayList<Stop>(wrap.Favorites);
-					GlobalData.FavOrder = wrap.FavOrder;
+				if (wrap.stops != null) {
+					GlobalData.Favorites = new ArrayList<Stop>();
+					GlobalData.History = new ArrayList<Stop>();
+					
+					for (Stop s : wrap.stops) {
+						if (s.inFavorites)
+							GlobalData.Favorites.add(s);
+						if (s.inHistory)
+							GlobalData.History.add(s);
+						
+						s.inFavorites = false;
+						s.inHistory = false;
+					}
 				}
-				if (wrap.History != null) {
-					GlobalData.History = new ArrayList<Stop>(wrap.History);
-					GlobalData.HistOrder = wrap.HistOrder;
-				}
+				
 				GlobalData.StopOrder = wrap.StopOrder;
+				GlobalData.HistOrder = wrap.HistOrder;
+				GlobalData.FavOrder = wrap.FavOrder;
 				GlobalData.RefreshDelay = wrap.RefreshDelay;
-
 			}
 			br.close();
 		} catch (JsonSyntaxException e) {
-
+			System.out.println("---Error: READ, json syntax");
+			e.printStackTrace();
 		} catch (FileNotFoundException e) {
-
+			System.out.println("---Error: READ, file not found");
+			e.printStackTrace();
 		} catch (IOException e) {
+			System.out.println("---Error: READ, IO eceptions");
 			e.printStackTrace();
 		}
 	}

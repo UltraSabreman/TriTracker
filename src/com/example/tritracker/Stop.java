@@ -18,7 +18,12 @@ public class Stop {
 	public String Direction = "Up Up and Away!";
 	@Expose
 	public Date LastAccesed = null;
-
+	
+	@Expose 
+	public boolean inHistory = false;
+	@Expose 
+	public boolean inFavorites = false;
+	
 	@Expose
 	public ArrayList<Buss> Busses = new ArrayList<Buss>();
 	public ArrayList<Alert> Alerts = new ArrayList<Alert>();
