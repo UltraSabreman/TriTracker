@@ -148,7 +148,8 @@ public class ForegroundJSONRequest extends Thread {
 						"Are you connected?",
 						"Can't reach the Trimet servers right now, are you connected to the internet?"
 								+ "\n\nIf you've visited this stop before, and you want to see the cached times, click ok.");
-
+			
+			failed = true;
 			return;
 		}
 
@@ -205,18 +206,15 @@ public class ForegroundJSONRequest extends Thread {
 		if (t == null) {
 			Stop w = Util.listGetStop(temp.StopID, GlobalData.Favorites);
 			if (w == null) {
-				if (GlobalData.histAdaptor != null)
-					GlobalData.histAdaptor.add(temp);
-				else
+				if (GlobalData.History != null)
 					GlobalData.History.add(temp);
 
 				GlobalData.CurrentStop = temp;
 			} else {
 				w.Update(temp, true);
-				if (GlobalData.histAdaptor != null)
-					GlobalData.histAdaptor.add(temp);
-				else
-					GlobalData.History.add(temp);
+				if (GlobalData.History != null)
+					GlobalData.History.add(w);
+				
 				GlobalData.CurrentStop = w;
 			}
 		} else {

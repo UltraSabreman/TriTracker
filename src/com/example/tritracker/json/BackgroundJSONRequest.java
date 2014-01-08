@@ -66,7 +66,7 @@ public class BackgroundJSONRequest extends Thread {
 
 	protected void parseJson(String result) {
 
-		if (result == null || result.compareTo("{\"resultSet\":{}}") == 0)
+		if (result == null || result.compareTo("{\"resultSet\":{}}") == 0 || result.compareTo("") == 0)
 			return;
 
 		Gson gson = new Gson();

@@ -1,12 +1,11 @@
 package com.example.tritracker;
 
-import com.example.tritracker.R;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -28,9 +27,9 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
-import com.example.tritracker.json.JSONRequestManger;
-import com.example.tritracker.json.ForegroundJSONRequest.checkStops;
 import com.example.tritracker.json.BackgroundJSONRequest;
+import com.example.tritracker.json.ForegroundJSONRequest.checkStops;
+import com.example.tritracker.json.JSONRequestManger;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
@@ -153,6 +152,7 @@ public class Util {
 
 	public static String getListOfLines(Stop s, boolean test) {
 		// this lists the routes, and adds commas between them.
+		if (s == null) return null;
 		if (s.Busses != null && s.Busses.size() != 0) {
 			if (test) {
 				String str = "";
@@ -271,23 +271,46 @@ public class Util {
 		}
 	}
 
+	public static void messageDiag(final Activity act, final checkStops myFunc,
+			final String title, final String msg) {
+		act.runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				AlertDialog.Builder builder = new AlertDialog.Builder(act);
+		
+				builder.setTitle(title).setMessage(msg);
+				builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						if (myFunc != null)
+							myFunc.doStops();
+					}
+				});
+				builder.setNegativeButton("Canel",
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int id) {
+							}
+						});
+				builder.create().show();
+			}
+		});
+	}
+
+	
 	public static void dumpData(Context c) {
-		/*
-		 * File test = new File(c.getString(R.string.data_path)); if
-		 * (test.exists()) test.delete();
-		 */
-
 		try {
-			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(
-					c.openFileOutput(c.getString(R.string.data_path),
-							Context.MODE_PRIVATE)));
+			String path = c.getString(R.string.data_path);
 
+			//BufferedWriter bw = new BufferedWriter(new FileWriter(new File(path)));
+			FileOutputStream outputStream = c.openFileOutput(path, Context.MODE_PRIVATE);
+	       // .write(outputString.getBytes());
+			
 			Gson gson = new GsonBuilder()
 					.excludeFieldsWithoutExposeAnnotation().create();
 			String data = gson.toJson(GlobalData.getJsonWrap());
-
-			bw.write(data);
-			bw.close();
+			outputStream.write(data.getBytes());
+			//bw.write(data);
+			//System.out.println(data);
+			outputStream.close();
 		} catch (JsonSyntaxException e) {
 			System.out.println("---Error: WRITE, json syntax");
 			e.printStackTrace();
@@ -300,36 +323,21 @@ public class Util {
 		}
 	}
 
-	public static void messageDiag(Activity act, final checkStops myFunc,
-			String title, String msg) {
-		AlertDialog.Builder builder = new AlertDialog.Builder(act);
-
-		builder.setTitle(title).setMessage(msg);
-		builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int id) {
-				if (myFunc != null)
-					myFunc.doStops();
-			}
-		});
-		builder.setNegativeButton("Canel",
-				new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int id) {
-					}
-				});
-		builder.create().show();
-	}
-
 	public static void readData(Context c) {
 		try {
-			BufferedReader br = new BufferedReader(new InputStreamReader(
-					c.openFileInput(c.getString(R.string.data_path))));
+			System.out.println(c.getFilesDir());
+			String path = c.getString(R.string.data_path); 
+		    FileInputStream inputStream = c.openFileInput(path);
+		    BufferedReader r = new BufferedReader(new InputStreamReader(inputStream));
 
 			String fileContents = "";
 			String line;
-			while ((line = br.readLine()) != null) {
+			while ((line = r.readLine()) != null) {
 				fileContents += line;
 			}
-
+			
+			//System.out.println((fileContents.compareTo("") == 0 || fileContents == null ? "NULL" : fileContents));
+			
 			Gson gson = new GsonBuilder()
 					.excludeFieldsWithoutExposeAnnotation().create();
 			GlobalData.JsonWrapper wrap = gson.fromJson(fileContents,
@@ -350,12 +358,12 @@ public class Util {
 					}
 				}
 				
-				GlobalData.StopOrder = wrap.StopOrder;
-				GlobalData.HistOrder = wrap.HistOrder;
-				GlobalData.FavOrder = wrap.FavOrder;
-				GlobalData.RefreshDelay = wrap.RefreshDelay;
+				GlobalData.StopOrder = wrap.stopOrder;
+				GlobalData.HistOrder = wrap.histOrder;
+				GlobalData.FavOrder = wrap.favOrder;
+				GlobalData.RefreshDelay = wrap.refreshDelay;
 			}
-			br.close();
+			r.close();
 		} catch (JsonSyntaxException e) {
 			System.out.println("---Error: READ, json syntax");
 			e.printStackTrace();
@@ -364,6 +372,9 @@ public class Util {
 			e.printStackTrace();
 		} catch (IOException e) {
 			System.out.println("---Error: READ, IO eceptions");
+			e.printStackTrace();
+		} catch (Exception  e) {
+			System.out.println("---Error: READ, WTF");
 			e.printStackTrace();
 		}
 	}

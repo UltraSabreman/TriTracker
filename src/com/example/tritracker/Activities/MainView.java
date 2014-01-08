@@ -26,6 +26,7 @@ public class MainView extends Activity implements
 		UndoBarController.UndoListener {
 	private UndoBarController mUndoBarController;
 
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

@@ -158,6 +158,8 @@ public class HistoryView extends Activity implements
 			NavUtils.navigateUpTo(this, parentActivityIntent);
 			return true;
 		case R.id.action_clear:
+			if (GlobalData.History == null || GlobalData.History.size() == 0) return true;			
+			
 			for (Stop s : GlobalData.History)
 				GlobalData.HUndos.add(s);
 

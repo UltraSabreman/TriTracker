@@ -40,13 +40,13 @@ public class GlobalData {
 		@Expose
 		public ArrayList<Stop> stops = new ArrayList<Stop>();
 		@Expose
-		public int FavOrder = 0;
+		public int favOrder = 0;
 		@Expose
-		public int HistOrder = 0;
+		public int histOrder = 0;
 		@Expose
-		public int StopOrder = 0;
+		public int stopOrder = 0;
 		@Expose
-		public int RefreshDelay = 0;
+		public int refreshDelay = 0;
 		
 		private boolean hasStop(Stop s) {
 			for (Stop st : stops)
@@ -56,10 +56,10 @@ public class GlobalData {
 		}
 
 		public JsonWrapper() {
-			FavOrder = GlobalData.FavOrder;
-			HistOrder = GlobalData.HistOrder;
-			StopOrder = GlobalData.StopOrder;
-			RefreshDelay = GlobalData.RefreshDelay;
+			favOrder = GlobalData.FavOrder;
+			histOrder = GlobalData.HistOrder;
+			stopOrder = GlobalData.StopOrder;
+			refreshDelay = GlobalData.RefreshDelay;
 			
 			
 			for (Stop s : GlobalData.History) {		
