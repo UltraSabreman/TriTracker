@@ -77,5 +77,6 @@ public class JSONRequestManger extends Thread {
 		this.context = context;
 		this.activity = activity;
 		this.StopID = StopID;
+		this.setName("JSON Request Manager");
 	}
 }

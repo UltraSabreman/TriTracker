@@ -328,7 +328,8 @@ public class Util {
 			System.out.println(c.getFilesDir());
 			String path = c.getString(R.string.data_path); 
 		    FileInputStream inputStream = c.openFileInput(path);
-		    BufferedReader r = new BufferedReader(new InputStreamReader(inputStream));
+		    InputStreamReader re = new InputStreamReader(inputStream);
+		    BufferedReader r = new BufferedReader(re);
 
 			String fileContents = "";
 			String line;

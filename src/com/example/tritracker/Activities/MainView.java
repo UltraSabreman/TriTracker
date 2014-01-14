@@ -33,6 +33,13 @@ public class MainView extends Activity implements
 		setContentView(R.layout.activity_stop_list);
 		Util.parents.push(getClass());
 
+		//somehow make sure that the context is properly intilized.
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}//wtf race condition
 		Util.initToast(getApplicationContext());
 		Util.readData(getApplicationContext());
 		Util.subscribeToEdit(getApplicationContext(), this, R.id.UIStopIDBox);

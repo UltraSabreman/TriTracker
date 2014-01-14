@@ -62,6 +62,7 @@ public class BackgroundJSONRequest extends Thread {
 		this.context = context;
 		this.activity = act;
 		this.url = url;
+		this.setName("JSON Background Request");
 	}
 
 	protected void parseJson(String result) {
