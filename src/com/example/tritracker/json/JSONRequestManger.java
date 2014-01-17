@@ -56,10 +56,8 @@ public class JSONRequestManger extends Thread {
 				}
 			}
 		} catch (InterruptedException e) {
-			System.out.println("----ERROR: Interrupt");
 			e.printStackTrace();
 		}
-		
 		activity.runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
@@ -73,7 +71,6 @@ public class JSONRequestManger extends Thread {
 		if (!shouldNotViewStop)
 			context.startActivity(new Intent(context, StopView.class)
 					.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-		System.out.println("----Request finished");
 	}
 
 	public JSONRequestManger(Context context, Activity activity, int StopID) {
