@@ -80,9 +80,14 @@ public class StopView extends Activity {
 
 	@Override
 	public void onDestroy() {
+		System.out.println("---lolwut---1---");
 		GlobalData.Orientation = getResources().getConfiguration().orientation;
-		// GlobalData.bussAdaptor.notifyDataSetChanged();
+		System.out.println("---lolwut---2---");
+		if (GlobalData.bussAdaptor != null)
+			GlobalData.bussAdaptor.notifyDataSetChanged();
+		System.out.println("---lolwut---3---");
 		super.onDestroy();
+		System.out.println("---lolwut---4---");
 	}
 
 	void initList() {

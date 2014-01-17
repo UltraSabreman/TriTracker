@@ -33,6 +33,22 @@ public class MainView extends Activity implements
 		setContentView(R.layout.activity_stop_list);
 		Util.parents.push(getClass());
 
+		setTitle("Favorites");
+
+	 //Write a service class that runs everthing and manages the app (stays alive and keeps track of shit)
+	// write one main view that uses the dropdown navigation wiht your gutted mainview and history view taking
+		//up the slots.
+		//Keep the stopview alive after app exit (through service?) so clicking notification takes you there?
+		// - Can also run notifications through service, make it init the stop view when clicked?
+		
+		//somehow make sure that the context is properly intilized.
+		/*try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}//wtf race condition*/
+		
 		Util.initToast(getApplicationContext());
 		Util.readData(getApplicationContext());
 		Util.subscribeToEdit(getApplicationContext(), this, R.id.UIStopIDBox);
@@ -42,8 +58,6 @@ public class MainView extends Activity implements
 
 		mUndoBarController = new UndoBarController(findViewById(R.id.undobar),
 				this);
-
-		setTitle("Favorites");
 
 		initList();
 		Util.updateAllStops(getApplicationContext(), this);

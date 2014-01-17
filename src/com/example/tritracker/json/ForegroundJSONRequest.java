@@ -79,6 +79,7 @@ public class ForegroundJSONRequest extends Thread {
 		this.activity = activity;
 		this.url = url;
 		this.stopId = StopID;
+		this.setName("JSON Forground Request");
 	}
 
 	public interface checkStops {
