@@ -1,0 +1,40 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:id="@+id/container"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	tools:context=".TestActivity"
+	tools:ignore="MergeRootFrame" >
+
+	<RelativeLayout
+		android:id="@+id/UIseperator"
+		android:background="@color/TestColor"
+		android:layout_width="match_parent"
+		android:layout_height="1dp"
+		android:layout_above="@+id/UIStopIDBox"/>
+	
+	<EditText
+		android:id="@+id/UIStopIDBox"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:hint="@string/stopid"
+		android:inputType="number"
+		android:singleLine="true"
+		android:layout_alignParentBottom="true"
+		android:selectAllOnFocus="true"/>
+
+	<RelativeLayout 
+		android:id="@+id/NoClickScreen"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:background="@color/Idk"
+		android:visibility="invisible" >
+
+		<ProgressBar
+	    	android:id="@+id/Spinner"
+	    	style="?android:attr/progressBarStyleLarge"
+	    	android:layout_width="wrap_content"
+	    	android:layout_height="wrap_content"
+	    	android:layout_centerInParent="true"/>
+	</RelativeLayout>
+</RelativeLayout>

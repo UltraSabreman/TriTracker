@@ -25,15 +25,17 @@ public class Util {
 		public void run(JSONResult r, int error);
 	}
 	
-	public static long getTimeFromDate(Date d, String type) {
-		if(type.toLowerCase(Locale.US).compareTo("s") == 0)
-			return d.getTime() / 1000;
-		else if(type.toLowerCase(Locale.US).compareTo("m") == 0)
-			return d.getTime() / (1000 / 60);
-		else if(type.toLowerCase(Locale.US).compareTo("h") == 0)
-			return d.getTime() / (1000 / 60 / 60);
-		else if(type.toLowerCase(Locale.US).compareTo("d") == 0)
-			return d.getTime() / (1000 / 60 / 60 / 24);
+	public static enum TimeType { Second, Minute, Hour, Day };
+	
+	public static long getTimeFromDate(Date d, TimeType type) {
+		if(type == TimeType.Second)
+			return (d.getTime() / 1000);
+		else if(type == TimeType.Minute)
+			return (d.getTime() / (1000 / 60));
+		else if(type == TimeType.Hour)
+			return (d.getTime() / (1000 / 60 / 60));
+		else if(type == TimeType.Day)
+			return (d.getTime() / (1000 / 60 / 60 / 24));
 		else
 			return d.getTime();
 	}
@@ -68,26 +70,24 @@ public class Util {
 
 
 	public static void buildSortDialog(final Activity a, final int whichList) {
-		/*AlertDialog.Builder builder = new AlertDialog.Builder(a);
+		AlertDialog.Builder builder = new AlertDialog.Builder(a);
 
 		builder.setTitle("Sort By");
 		String[] list = new String[] { "Stop name", "Stop ID", "Last Accesed" };
 		if (whichList == 2)
 			list = new String[] { "Buss name", "Buss Route", "Arrival Time" };
 
-		builder.setSingleChoiceItems(list,
-				(whichList == 0 ? GlobalData.FavOrder
-						: (whichList == 1 ? GlobalData.HistOrder
-								: GlobalData.StopOrder)),
+		builder.setSingleChoiceItems(list, 1,
+				//(whichList == 0 ? GlobalData.FavOrder : (whichList == 1 ? GlobalData.HistOrder : GlobalData.StopOrder)),
 				new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						if (whichList == 0)
+						/*if (whichList == 0)
 							GlobalData.FavOrder = which;
 						else if (whichList == 1)
 							GlobalData.HistOrder = which;
 						else
-							GlobalData.StopOrder = which;
+							GlobalData.StopOrder = which;*/
 
 					}
 				});
@@ -99,7 +99,7 @@ public class Util {
 			}
 		});
 
-		builder.create().show();*/
+		builder.create().show();
 		//TODO Sorting
 	}
 

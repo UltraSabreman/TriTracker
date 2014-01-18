@@ -35,46 +35,37 @@ import com.google.gson.JsonSyntaxException;
 import com.google.gson.annotations.Expose;
 
 public class MainService extends Service {
-	private Timer refreshTime;
+	private Timer refreshTime = null;
 	private DataStore stopData;
 	private Map<String, onUpdate> refreshList = new HashMap<String, onUpdate>();
 	private final IBinder mBinder = new LocalBinder();
 	
 	public class LocalBinder extends Binder { MainService getService() {
-            // Return this instance of LocalService so clients can call public methods
             return MainService.this;
         }
     }
 	
 	@Override
 	public IBinder onBind(Intent intent) {
-		readData();
 		
-		refreshTime = new Timer(stopData.RefreshDelay);
-		refreshTime.addCallBack("mainRefresh", 
-			new Timer.onUpdate() {
-				public void run() {
-					doUpdate();				
-				}
-			}
-		);
-		refreshTime.restartTimer();
 		return mBinder;
 	}
 	
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		/*readData();
-		
-		refreshTime = new Timer(stopData.RefreshDelay);
-		refreshTime.addCallBack("mainRefresh", 
-			new Timer.onUpdate() {
-				public void run() {
-					doUpdate();				
+		if (refreshTime == null) {
+			readData();
+			
+			refreshTime = new Timer(stopData.RefreshDelay);
+			refreshTime.addCallBack("mainRefresh", 
+				new Timer.onUpdate() {
+					public void run() {
+						doUpdate(true);				
+					}
 				}
-			}
-		);
-		refreshTime.restartTimer();*/
+			);
+			refreshTime.restartTimer();
+		}
 		System.out.println("Command start");
 		return START_STICKY;
 	}
@@ -146,8 +137,9 @@ public class MainService extends Service {
 			stopData.StopList.remove(s);
 	}
 	
-	public void doUpdate() {
-		updateAllStops();
+	public void doUpdate(boolean fetch) {
+		if (fetch)
+			updateAllStops();
 		dumpData();
 		
 		if (refreshList != null && refreshList.size() != 0) {
@@ -277,16 +269,9 @@ public class MainService extends Service {
 		    			
 			Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
 			stopData = gson.fromJson(r, DataStore.class);
-			//stopData = null;
+
 			if (stopData == null)
-				stopData = new DataStore();
-			
-			for(Stop s : stopData.StopList) {
-				s.inFavorites = true;
-				s.inHistory = true;
-				
-			}
-				
+				stopData = new DataStore();		
 			
 			r.close();
 		} catch (JsonSyntaxException e) {

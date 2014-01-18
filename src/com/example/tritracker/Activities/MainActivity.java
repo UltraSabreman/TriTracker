@@ -18,13 +18,8 @@ import com.example.tritracker.Timer;
 import com.example.tritracker.Util;
 import com.example.tritracker.activities.MainService.LocalBinder;
 
-public class MainActivity extends FragmentActivity implements
-		ActionBar.OnNavigationListener {
+public class MainActivity extends FragmentActivity implements ActionBar.OnNavigationListener {
 
-	/**
-	 * The serialization (saved instance state) Bundle key representing the
-	 * current dropdown position.
-	 */
 	private static final String STATE_SELECTED_NAVIGATION_ITEM = "selected_navigation_item";
 	
 	private MainService theService;
@@ -33,7 +28,7 @@ public class MainActivity extends FragmentActivity implements
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_test);
+		setContentView(R.layout.activity_main);
 		
 		Util.initToast(getApplicationContext());
 
@@ -55,6 +50,7 @@ public class MainActivity extends FragmentActivity implements
 	public void onStart() {
 		super.onStart();
 		Intent intent = new Intent(this, MainService.class);
+		startService(intent);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 	}
 	
@@ -62,14 +58,11 @@ public class MainActivity extends FragmentActivity implements
     protected void onStop() {
         super.onStop();
         // Unbind from the service
-        if (bound) {
-            unbindService(mConnection);
-            bound = false;
-        }
+       // if (bound)
+        //    unbindService(mConnection);
     }
     
     private ServiceConnection mConnection = new ServiceConnection() {
-
         @Override
         public void onServiceConnected(ComponentName className, IBinder service) {
             // We've bound to LocalService, cast the IBinder and get LocalService instance
@@ -93,16 +86,14 @@ public class MainActivity extends FragmentActivity implements
 	public void onRestoreInstanceState(Bundle savedInstanceState) {
 		// Restore the previously serialized current dropdown position.
 		if (savedInstanceState.containsKey(STATE_SELECTED_NAVIGATION_ITEM)) {
-			getActionBar().setSelectedNavigationItem(
-					savedInstanceState.getInt(STATE_SELECTED_NAVIGATION_ITEM));
+			getActionBar().setSelectedNavigationItem(savedInstanceState.getInt(STATE_SELECTED_NAVIGATION_ITEM));
 		}
 	}
 
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		// Serialize the current dropdown position.
-		outState.putInt(STATE_SELECTED_NAVIGATION_ITEM, getActionBar()
-				.getSelectedNavigationIndex());
+		outState.putInt(STATE_SELECTED_NAVIGATION_ITEM, getActionBar().getSelectedNavigationIndex());
 	}
 
 	@Override
@@ -117,7 +108,7 @@ public class MainActivity extends FragmentActivity implements
 		//mUndoBarController.hideUndoBar(false);
 		switch (item.getItemId()) {
 		case R.id.action_sort:
-			//Util.buildSortDialog(getActivity(), 0);
+			Util.buildSortDialog(this, 0);
 			//startActivity(new Intent(this, TestActivity.class));
 
 			return true;

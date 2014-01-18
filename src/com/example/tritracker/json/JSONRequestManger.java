@@ -1,13 +1,9 @@
 package com.example.tritracker.json;
 
 import java.util.Date;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 
 import com.example.tritracker.Buss;
 import com.example.tritracker.R;
@@ -21,7 +17,6 @@ public class JSONRequestManger extends Thread {
 	private MainService service = null;
 	private ResultCallback testBack = null;
 	private Context context = null;
-	private Activity activity = null;
 	
 	private int returnError = 0;
 	private Stop returnStop = null;
@@ -76,12 +71,11 @@ public class JSONRequestManger extends Thread {
 			testBack.run(returnStop, returnError);
 	}
 
-	public JSONRequestManger(MainService service, ResultCallback func, Activity a, Context c, int stop) {
+	public JSONRequestManger(MainService service, ResultCallback func, Context c, int stop) {
 		this.theStop = stop;
 		this.service = service;
 		this.testBack = func;
 		this.context = c;
-		this.activity = a;
 		this.setName("JSON Request Manager");
 	}
 	
@@ -119,7 +113,7 @@ public class JSONRequestManger extends Thread {
 			actualStop.inHistory = true;
 		}
 		
-		service.doUpdate();
+		service.doUpdate(false);
 		returnError = 0;
 		if(actualStop != null)
 			returnStop = actualStop;

@@ -23,15 +23,15 @@ import com.example.tritracker.Util;
 
 public class BussArrayAdaptor extends ArrayAdapter<Buss> {
 	// private final Context context;
-	private final ArrayList<Buss> busses;
+	private ArrayList<Buss> busses;
 	private Stop curStop;
 	private Context context;
 
-	public BussArrayAdaptor(Context context, ArrayList<Buss> busses, Stop curStop) {
-		super(context, R.layout.buss_layout, busses);
+	public BussArrayAdaptor(Context context, Stop curStop) {
+		super(context, R.layout.buss_layout, curStop.Busses);
+		busses = curStop.Busses;
 		// this.context = context;
 		this.curStop = curStop;
-		this.busses = busses;
 		this.context = context;
 	}
 
@@ -40,6 +40,12 @@ public class BussArrayAdaptor extends ArrayAdapter<Buss> {
 		Util.sortList(2);
 		super.notifyDataSetChanged();
 
+	}
+	
+	public void updateStop(Stop s) {
+		curStop = s;
+		busses = curStop.Busses;
+		notifyDataSetChanged();
 	}
 
 	@Override

@@ -3,56 +3,29 @@
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent"
 	android:showDividers="middle"
-	android:id="@+id/mainView" >    
+	android:id="@+id/mainView" >  
+	  
 	<ListView
 		android:id="@+id/UIStopList"
 		android:layout_width="match_parent"
 		android:layout_height="fill_parent"
-		android:layout_above="@+id/UIseperator"
 		android:divider="?android:attr/listDivider"/>
-	
-	<RelativeLayout
-		android:id="@+id/UIseperator"
-		android:background="@color/TestColor"
-		android:layout_width="match_parent"
-		android:layout_height="1dp"
-		android:layout_above="@+id/UIStopIDBox"/>
-	
-	<EditText
-		android:id="@+id/UIStopIDBox"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:hint="@string/stopid"
-		android:inputType="number"
-		android:singleLine="true"
-		android:layout_alignParentBottom="true"
-		android:selectAllOnFocus="true"/>
-
-	<RelativeLayout 
-		android:id="@+id/NoClickScreen"
-		android:layout_width="fill_parent"
-		android:layout_height="fill_parent"
-		android:background="@color/Idk"
-		android:visibility="invisible" >
-
-		<ProgressBar
-	    	android:id="@+id/Spinner"
-	    	style="?android:attr/progressBarStyleLarge"
-	    	android:layout_width="wrap_content"
-	    	android:layout_height="wrap_content"
-	    	android:layout_centerInParent="true"/>
-	</RelativeLayout>
-
 	
 	<TextView
 		android:id="@+id/NoMembers"
 		android:layout_width="fill_parent"
     	android:layout_height="fill_parent"
     	android:gravity="center"
-    	android:layout_above="@+id/UIStopIDBox"
     	android:textSize="16sp"
     	android:textColor="@android:color/darker_gray"
     	android:visibility="invisible"/>
+	
+	<RelativeLayout 
+		android:id="@+id/NoClickScreen2"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:background="@color/Idk"
+		android:visibility="invisible" />
 	
 	
 	<LinearLayout 
@@ -60,8 +33,7 @@
 			style="@style/UndoBar"
 			android:layout_alignParentBottom="true"
 			android:clickable="true"
-			android:focusable="true"
-			android:layout_above="@+id/UIStopIDBox">
+			android:focusable="true">
         <TextView android:id="@+id/undobar_message" style="@style/UndoBarMessage" />
         <Button android:id="@+id/undobar_button" style="@style/UndoBarButton" />
     </LinearLayout>

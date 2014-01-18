@@ -56,8 +56,7 @@ public class Timer {
 		};
 
 		if (interval > 0)
-			timerHandler.postDelayed(timerRunnable,
-					(int) (interval * 1000));
+			timerHandler.post(timerRunnable);
 	}
 
 	public void stopTimer() {

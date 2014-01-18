@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 
+import com.example.tritracker.Util.TimeType;
 import com.example.tritracker.activities.StopListFragment;
 
 public class NotificationHandler {
@@ -46,11 +47,11 @@ public class NotificationHandler {
 				else
 					est = new Date(trackedBuss.ScheduledTime.getTime()
 							- new Date().getTime());
-
-				if (Util.getTimeFromDate(est, "m") <= timeToWait)
+				
+				if (Util.getTimeFromDate(est, TimeType.Minute) <= timeToWait) {
 					doNotification();
-				else
 					timer.stopTimer();
+				}
 			}
 		});
 		
@@ -88,13 +89,9 @@ public class NotificationHandler {
 				.setContentText(trackedStop.Name)
 				.setTicker("Buss Arrival Alert")
 				.setPriority(Notification.PRIORITY_HIGH)
-				.setWhen(
-						trackedBuss.EstimatedTime != null ? trackedBuss.EstimatedTime
-								.getTime() : trackedBuss.ScheduledTime
-								.getTime())
-				.setDefaults(
-						Notification.DEFAULT_VIBRATE
-								| Notification.DEFAULT_SOUND)
+				.setWhen(trackedBuss.EstimatedTime != null ? trackedBuss.EstimatedTime.getTime() 
+						: trackedBuss.ScheduledTime.getTime())
+				.setDefaults(Notification.DEFAULT_VIBRATE | Notification.DEFAULT_SOUND)
 				.setAutoCancel(true).setLights(0xffFF8800, 1500, 1000);
 		// Creates an explicit intent for an Activity in your app
 		Intent resultIntent = new Intent(notContext, StopListFragment.class);
@@ -109,11 +106,9 @@ public class NotificationHandler {
 		stackBuilder.addParentStack(StopListFragment.class);
 		// Adds the Intent that starts the Activity to the top of the stack
 		stackBuilder.addNextIntent(resultIntent);
-		PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0,
-				PendingIntent.FLAG_UPDATE_CURRENT);
+		PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
 		mBuilder.setContentIntent(resultPendingIntent);
-		not = (NotificationManager) notContext
-				.getSystemService(Context.NOTIFICATION_SERVICE);
+		not = (NotificationManager) notContext.getSystemService(Context.NOTIFICATION_SERVICE);
 		// mId allows you to update the notification later on.
 		not.notify(0, mBuilder.build());
 	}

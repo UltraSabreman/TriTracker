@@ -31,6 +31,7 @@ import com.example.tritracker.NotificationHandler;
 import com.example.tritracker.R;
 import com.example.tritracker.Stop;
 import com.example.tritracker.Stop.Alert;
+import com.example.tritracker.Timer;
 import com.example.tritracker.Util;
 import com.example.tritracker.activities.MainService.LocalBinder;
 import com.example.tritracker.arrayadaptors.BussArrayAdaptor;
@@ -55,7 +56,7 @@ public class BussListActivity extends Activity {
     @Override
     protected void onStop() {
         super.onStop();
-        // Unbind from the service
+        theService.unsub("BussList");
         if (bound) 
             unbindService(mConnection);
     }
@@ -70,14 +71,27 @@ public class BussListActivity extends Activity {
             
             curStop = theService.getStop(curStop);
             
+            theService.sub("BussList", new Timer.onUpdate() {
+            	public void run() {
+            		BussListActivity.this.onUpdate();
+            	}
+            });
+            
             bound = true;
         }
 
+        
         @Override
         public void onServiceDisconnected(ComponentName arg0) {
             bound = false;
         }
     };
+    
+    public void onUpdate() {
+    	curStop = theService.getStop(curStop);
+    	adaptor.updateStop(curStop);
+    	//adaptor.notifyDataSetChanged();
+    }
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -138,7 +152,7 @@ public class BussListActivity extends Activity {
 			arrival.setVisibility(View.VISIBLE);
 		} else {
 			final ListView view = (ListView) findViewById(R.id.UIBussList);
-			adaptor = new BussArrayAdaptor(this, curStop.Busses, curStop);
+			adaptor = new BussArrayAdaptor(this, curStop);
 			view.setAdapter(adaptor);
 			adaptor.notifyDataSetChanged();
 			registerForContextMenu(view);
@@ -203,10 +217,11 @@ public class BussListActivity extends Activity {
 	public void buildDialouge(final boolean add) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-		final View ourView = getLayoutInflater().inflate(R.layout.set_reminder,
-				null);
+		final View ourView = getLayoutInflater().inflate(R.layout.set_reminder,	null);
 		final TextView t = (TextView) ourView.findViewById(R.id.reminderLabel);
+		
 		t.setText("0 min before buss.");
+		
 		final SeekBar b = (SeekBar) ourView.findViewById(R.id.reminderTime);
 		b.setMax(Math.min(Util.getBussMinutes(menuBuss), 60));
 
@@ -264,23 +279,26 @@ public class BussListActivity extends Activity {
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case R.id.action_create_reminder:
-			buildDialouge(true);
-			Util.showToast("Reminder Set", Toast.LENGTH_SHORT);
-			return true;
-		case R.id.action_edit_reminder:
-			buildDialouge(false);
-			Util.showToast("Reminder Updated", Toast.LENGTH_SHORT);
-			return true;
-		case R.id.action_cancel_reminder:
-			Buss buss = curStop.getBuss(menuBuss);
-			if (buss.notification != null && buss.notification.IsSet)
-				buss.notification.cancelNotification();
-			Util.showToast("Reminder Canceled", Toast.LENGTH_SHORT);
-			return true;
-		default:
-			return super.onContextItemSelected(item);
+			case R.id.action_create_reminder:
+				buildDialouge(true);
+				Util.showToast("Reminder Set", Toast.LENGTH_SHORT);
+				return true;
+			case R.id.action_edit_reminder:
+				buildDialouge(false);
+				Util.showToast("Reminder Updated", Toast.LENGTH_SHORT);
+				return true;
+			case R.id.action_cancel_reminder:
+				Buss buss = curStop.getBuss(menuBuss);
+				if (buss.notification != null && buss.notification.IsSet)
+					buss.notification.cancelNotification();
+				Util.showToast("Reminder Canceled", Toast.LENGTH_SHORT);
+				return true;
+			default:
+				
 		}
+		theService.doUpdate(false);
+		adaptor.notifyDataSetChanged();
+		return super.onContextItemSelected(item);
 	}
 
 	@Override
@@ -322,21 +340,22 @@ public class BussListActivity extends Activity {
 			return true;
 		case R.id.action_sort:
 			Util.buildSortDialog((Activity) this, 2);
+			
+			theService.doUpdate(false);
 			adaptor.notifyDataSetChanged();
 			return true;
 		case R.id.action_favorite:
 			if (curStop.inFavorites) {
 				curStop.inFavorites = false;
 				
-				Util.showToast("Removed stop from favorites.",
-						Toast.LENGTH_SHORT);
+				Util.showToast("Removed stop from favorites.", Toast.LENGTH_SHORT);
 			} else {
 				curStop.inFavorites = true;
 				Util.showToast("Added stop to favorites.", Toast.LENGTH_SHORT);
 			}
 
 			invalidateOptionsMenu();
-
+			theService.doUpdate(false);
 			return true;
 		}
 		return super.onOptionsItemSelected(item);

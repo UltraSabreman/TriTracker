@@ -85,10 +85,6 @@ public class StopListFragment extends Fragment implements UndoListener {
         }
     };
 	
-	public StopListFragment() {
-		
-	}
-	
 	public StopListFragment(MainService service, boolean t) {
 		isFavorites = t;
 		theService = service;
@@ -102,6 +98,7 @@ public class StopListFragment extends Fragment implements UndoListener {
 	
 	private void getJson(int stop) {
 		((RelativeLayout) getActivity().findViewById(R.id.NoClickScreen)).setVisibility(View.VISIBLE);
+		((RelativeLayout) getActivity().findViewById(R.id.NoClickScreen2)).setVisibility(View.VISIBLE);
 		getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 		
 		ResultCallback call = new JSONRequestManger.ResultCallback() { 
@@ -110,6 +107,7 @@ public class StopListFragment extends Fragment implements UndoListener {
 					@Override
 					public void run() {
 						((RelativeLayout) getActivity().findViewById(R.id.NoClickScreen)).setVisibility(View.INVISIBLE);
+						((RelativeLayout) getActivity().findViewById(R.id.NoClickScreen2)).setVisibility(View.INVISIBLE);
 						getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 					}
 				});
@@ -117,20 +115,17 @@ public class StopListFragment extends Fragment implements UndoListener {
 			}
 		};
 		
-		new JSONRequestManger(theService, call, getActivity(), getActivity().getApplicationContext(), stop).start();
+		new JSONRequestManger(theService, call, getActivity().getApplicationContext(), stop).start();
 		
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		//Util.parents.push(getClass());
 		ourView = inflater.inflate(R.layout.activity_stop_list,
 				container, false);
 
 		mUndoBarController = new UndoBarController(ourView.findViewById(R.id.undobar), this);
-		
-		
-		EditText edit = (EditText) ourView.findViewById(R.id.UIStopIDBox);
+		EditText edit = (EditText)  getActivity().findViewById(R.id.UIStopIDBox);
 
 		edit.setOnEditorActionListener(new OnEditorActionListener() {
 			public boolean onEditorAction(TextView v, int actionId,
@@ -148,11 +143,9 @@ public class StopListFragment extends Fragment implements UndoListener {
 				}
 				return false;
 			}
-		});
-		
+		});	
 	
 		initList();
-		
 		return ourView;
 	}
 
@@ -160,20 +153,9 @@ public class StopListFragment extends Fragment implements UndoListener {
 		Context c = getActivity().getApplicationContext();
 		
 		Intent tempIntent = new Intent(c, BussListActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		
 		tempIntent.putExtra("stop", s);
 		
 		c.startActivity(tempIntent);
-	}
-
-	public void function(int id) {
-		Stop s = theService.getStop(id);
-		Context c = getActivity().getApplicationContext();
-		if (s != null) {
-			showStop(s);
-			return;
-		}
-		return;
 	}
 	
 	public interface checkStops {
@@ -183,47 +165,32 @@ public class StopListFragment extends Fragment implements UndoListener {
 	
 	private void hanldeHTTPErrors(int error, final int id) {
 		Activity a = getActivity();
+		checkStops newCallback = new checkStops() {
+									public void doStops() {
+										Stop s = theService.getStop(id);
+										if (s != null)
+											showStop(s);
+										return;
+									}
+								};
+		
 		if (error == 1)
-			Util.messageDiag(
-					a,
-					new checkStops() {
-						public void doStops() {
-							function(id);
-						}
-					},
+			Util.messageDiag(a,	newCallback,
 					"Connection Timed-Out",
 					"The connection timed-out (Trimet's servers might be busy, or you could have a poor connection)."
 							+ "\n\nIf you've visited this stop before, and you want to see the cached times, click ok.");
 		else if (error == 2)
-			Util.messageDiag(
-					a,
-					new checkStops() {
-						public void doStops() {
-							function(id);
-						}
-					},
+			Util.messageDiag(a,	newCallback,
 					"Malformed reponce",
 					"Trimet didn't respond correctly (their servers may be under heavy load)"
 							+ "\n\nIf you've visited this stop before, and you want to see the cached times, click ok.");
 		else if (error == 3)
-			Util.messageDiag(
-					a,
-					new checkStops() {
-						public void doStops() {
-							function(id);
-						}
-					},
+			Util.messageDiag(a,	newCallback,
 					"Error Connecting",
 					"It looks like Trimet changed their API. Please contact the developer ASAP and this will be fixed."
 							+ "\n\nIf you've visited this stop before, and you want to see the cached times, click ok.");
 		else if (error == 4)
-			Util.messageDiag(
-					a,
-					new checkStops() {
-						public void doStops() {
-							function(id);
-						}
-					},
+			Util.messageDiag(a,	newCallback,
 					"Are you connected?",
 					"Can't reach the Trimet servers right now, are you connected to the internet?"
 							+ "\n\nIf you've visited this stop before, and you want to see the cached times, click ok.");
@@ -234,7 +201,7 @@ public class StopListFragment extends Fragment implements UndoListener {
 	public void requsetCallback(Stop s, int error) {		
 		if (s == null) return;
 		Activity a = getActivity();
-		Context c = a.getApplicationContext();
+		//Context c = a.getApplicationContext();
 		
 		if (error > 0) {
 			hanldeHTTPErrors(error, s.StopID);
@@ -263,7 +230,7 @@ public class StopListFragment extends Fragment implements UndoListener {
 			getActivity().runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
-					adaptor.notifyDataSetChanged();
+					adaptor.updateData(isFavorites ? theService.getFavorties() : theService.getHistory());
 					
 					if (adaptor == null || adaptor.getCount() == 0)
 						((TextView) ourView.findViewById(R.id.NoMembers)).setVisibility(View.VISIBLE);
@@ -276,12 +243,12 @@ public class StopListFragment extends Fragment implements UndoListener {
 	@Override
 	public void onResume() {
 		super.onResume();
+		
 	}
 	
 	@Override
 	public void onStop() {
-
-		//theService.unsub("Favorites");
+		theService.unsub("Favorites");
 		super.onStop();
 	}
 
@@ -368,6 +335,8 @@ public class StopListFragment extends Fragment implements UndoListener {
 			}
 			undoList.clear();
 		}
+		if(adaptor != null)
+			adaptor.notifyDataSetChanged();
 	}
 
 }

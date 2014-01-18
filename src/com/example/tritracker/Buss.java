@@ -4,7 +4,6 @@ import java.util.Date;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.transition.Scene;
 
 import com.example.tritracker.json.JSONResult;
 import com.google.gson.annotations.Expose;

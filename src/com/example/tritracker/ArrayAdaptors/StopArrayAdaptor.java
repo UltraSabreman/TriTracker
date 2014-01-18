@@ -18,7 +18,7 @@ import com.example.tritracker.Util;
 import com.example.tritracker.activities.MainService;
 
 public class StopArrayAdaptor extends ArrayAdapter<Stop> {
-	private final ArrayList<Stop> stops;
+	private ArrayList<Stop> stops;
 	private boolean fav = false;
 	private MainService theService;
 
@@ -34,6 +34,12 @@ public class StopArrayAdaptor extends ArrayAdapter<Stop> {
 	public void notifyDataSetChanged() {
 		//Util.sortList(fav ? 0 : 1); //Sorting
 		super.notifyDataSetChanged();
+	}
+	
+	
+	public void updateData(ArrayList<Stop> stops) {
+		this.stops = stops;
+		notifyDataSetChanged();
 	}
 
 	@Override

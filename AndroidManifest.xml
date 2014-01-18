@@ -28,13 +28,10 @@
 			android:name="com.example.tritracker.activities.MainService"
 			android:label="Tritracker Update Service"/>
 			
-		<!-- <activity
-			android:name="com.example.tritracker.activities.FavoritesActivity"
-			android:windowSoftInputMode="stateHidden" />-->
 			
 		<activity
 			android:name="com.example.tritracker.activities.MainActivity"
-			>
+			android:windowSoftInputMode="stateHidden">
 			
 			<intent-filter>
 				<action
@@ -52,11 +49,6 @@
 				android:name="android.support.PARENT_ACTIVITY"
 				android:value="com.example.tritracker.MainActivity" />
 		</activity>
-		<!-- <activity
-			android:name="com.example.tritracker.activities.HistoryActivity"
-			android:label="@string/title_activity_history_view"
-			android:windowSoftInputMode="stateHidden" >
-		</activity> -->
 		<activity
 			android:name="com.example.tritracker.activities.AlertListActivity"
 			android:label="@string/title_activity_alert_details" >
@@ -64,10 +56,6 @@
 		<activity
 			android:name="com.example.tritracker.activities.SettingsActivity"
 			android:label="@string/title_activity_settings" >
-		</activity>
-		<activity
-			android:name="com.example.tritracker.activities.TestActivity"
-			android:label="@string/title_activity_test" >
 		</activity>
 	</application>
 

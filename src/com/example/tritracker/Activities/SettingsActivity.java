@@ -48,6 +48,24 @@ public class SettingsActivity extends Activity {
             // We've bound to LocalService, cast the IBinder and get LocalService instance
             LocalBinder binder = (LocalBinder) service;
             theService = binder.getService();
+            
+
+    		EditText np = (EditText) findViewById(R.id.Delay);
+    		np.setText(String.valueOf(theService.getDelay()));
+
+    		np.setOnEditorActionListener(new OnEditorActionListener() {
+    			public boolean onEditorAction(TextView v, int actionId,
+    					KeyEvent event) {
+    				if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER))
+    						|| (actionId == EditorInfo.IME_ACTION_DONE)) {
+    					EditText edit = (EditText) findViewById(R.id.Delay);
+
+    					theService.setDelay(Integer.parseInt(edit.getText().toString()));
+    				}
+    				return false;
+    			}
+    		});
+            
             bound = true;
         }
 
@@ -68,21 +86,6 @@ public class SettingsActivity extends Activity {
 
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 
-		EditText np = (EditText) findViewById(R.id.Delay);
-		np.setText(String.valueOf(theService.getDelay()));
-
-		np.setOnEditorActionListener(new OnEditorActionListener() {
-			public boolean onEditorAction(TextView v, int actionId,
-					KeyEvent event) {
-				if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER))
-						|| (actionId == EditorInfo.IME_ACTION_DONE)) {
-					EditText edit = (EditText) findViewById(R.id.Delay);
-
-					theService.setDelay(Integer.parseInt(edit.getText().toString()));
-				}
-				return false;
-			}
-		});
 	}
 
 	public void helpRefresh(View view) {
