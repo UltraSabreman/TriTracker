@@ -16,7 +16,7 @@
 
 //Slightly Modified by Andrey Byelogurov
 
-package com.example.tritracker.NotMyCode;
+package com.example.tritracker.notmycode;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;

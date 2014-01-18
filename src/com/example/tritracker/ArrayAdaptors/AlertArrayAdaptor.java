@@ -1,4 +1,4 @@
-package com.example.tritracker.ArrayAdaptors;
+package com.example.tritracker.arrayadaptors;
 
 import java.util.ArrayList;
 

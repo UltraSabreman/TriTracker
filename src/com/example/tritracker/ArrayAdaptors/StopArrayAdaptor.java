@@ -1,8 +1,7 @@
-package com.example.tritracker.ArrayAdaptors;
+package com.example.tritracker.arrayadaptors;
 
 import java.util.ArrayList;
 
-import com.example.tritracker.GlobalData;
 import com.example.tritracker.R;
 import com.example.tritracker.Stop;
 import com.example.tritracker.Util;
@@ -31,7 +30,7 @@ public class StopArrayAdaptor extends ArrayAdapter<Stop> {
 
 	@Override
 	public void notifyDataSetChanged() {
-		Util.sortList(fav ? 0 : 1);
+		//Util.sortList(fav ? 0 : 1); //Sorting
 		super.notifyDataSetChanged();
 	}
 
@@ -51,7 +50,7 @@ public class StopArrayAdaptor extends ArrayAdapter<Stop> {
 		if (curStop != null) {
 			if (!fav) {
 				final ImageView pic = (ImageView) v.findViewById(R.id.FavIcon);
-				if (Util.favHasStop(curStop))
+				if (curStop.inFavorites)
 					pic.setImageDrawable(v.getResources().getDrawable(
 							R.drawable.ic_action_important_yellow));
 				else
@@ -61,15 +60,15 @@ public class StopArrayAdaptor extends ArrayAdapter<Stop> {
 				pic.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View v) {
-						if (Util.favHasStop(curStop)) {
+						if (curStop.inFavorites) {
 							pic.setImageDrawable(v.getResources().getDrawable(
 									R.drawable.ic_action_not_important_yellow));
 							// Util.removeStop(curStop, GlobalData.Favorites);
-							GlobalData.favAdaptor.remove(curStop);
+							curStop.inFavorites = false;
 						} else {
 							pic.setImageDrawable(v.getResources().getDrawable(
 									R.drawable.ic_action_important_yellow));
-							GlobalData.favAdaptor.add(curStop);
+							curStop.inFavorites = true;
 						}
 					}
 				});

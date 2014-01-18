@@ -1,4 +1,4 @@
-package com.example.tritracker.Activities;
+package com.example.tritracker.activities;
 
 import com.example.tritracker.R;
 import android.app.ActionBar;

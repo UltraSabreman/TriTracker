@@ -1,15 +1,7 @@
 package com.example.tritracker;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Locale;
@@ -19,28 +11,33 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.os.Handler;
-import android.view.KeyEvent;
-import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
-import com.example.tritracker.json.BackgroundJSONRequest;
-import com.example.tritracker.json.ForegroundJSONRequest.checkStops;
-import com.example.tritracker.json.JSONRequestManger;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonSyntaxException;
+import com.example.tritracker.activities.StopListFragment.checkStops;
+import com.example.tritracker.json.JSONResult;
 
 public class Util {
 	public static Stack<Class<?>> parents = new Stack<Class<?>>();
 	private static Toast msg;
 	private static Context c;
-	private static Handler timerHandler = new Handler();
-	private static Runnable timerRunnable = null;
 
+	public interface JSONcallback {
+		public void run(JSONResult r, int error);
+	}
+	
+	public static long getTimeFromDate(Date d, String type) {
+		if(type.toLowerCase(Locale.US).compareTo("s") == 0)
+			return d.getTime() / 1000;
+		else if(type.toLowerCase(Locale.US).compareTo("m") == 0)
+			return d.getTime() / (1000 / 60);
+		else if(type.toLowerCase(Locale.US).compareTo("h") == 0)
+			return d.getTime() / (1000 / 60 / 60);
+		else if(type.toLowerCase(Locale.US).compareTo("d") == 0)
+			return d.getTime() / (1000 / 60 / 60 / 24);
+		else
+			return d.getTime();
+	}
+	
 	public static Date dateFromString(String s) {
 		if (s == null)
 			return null;
@@ -69,55 +66,9 @@ public class Util {
 		return (int) (mill / 1000);
 	}
 
-	public static void refreshAdaptors() {
-		if (GlobalData.favAdaptor != null)
-			GlobalData.favAdaptor.notifyDataSetChanged();
-		if (GlobalData.histAdaptor != null)
-			GlobalData.histAdaptor.notifyDataSetChanged();
-		if (GlobalData.bussAdaptor != null)
-			GlobalData.bussAdaptor.notifyDataSetChanged();
-	}
-
-	public static void updateAllStops(Context c, Activity a) {
-		String stops = "";
-		for (Stop s : GlobalData.History)
-			stops += String.valueOf(s.StopID) + ",";
-
-		for (Stop s : GlobalData.Favorites)
-			if (!histHasStop(s))
-				stops += String.valueOf(s.StopID) + ",";
-
-		if (stops.compareTo("") != 0) {
-			stops = stops.substring(0, stops.length() - 1);
-
-			new BackgroundJSONRequest(c, a,
-					"http://developer.trimet.org/ws/V1/arrivals?locIDs="
-							+ stops + "&json=true&appID="
-							+ c.getString(R.string.appid)).start();
-		}
-
-		String busses = "";
-		for (Stop s : GlobalData.Favorites)
-			if (!histHasStop(s))
-				busses += Util.getListOfLines(s, false) + ",";
-
-		for (Stop s : GlobalData.History)
-			busses += Util.getListOfLines(s, false) + ",";
-
-		if (busses.compareTo("") != 0) {
-			busses = busses.substring(0, busses.length() - 1);
-
-			new BackgroundJSONRequest(c, a,
-					"http://developer.trimet.org/ws/V1/detours?routes="
-							+ busses + "&json=true&appID="
-							+ c.getString(R.string.appid)).start();
-		}
-		refreshAdaptors();
-		dumpData(c);
-	}
 
 	public static void buildSortDialog(final Activity a, final int whichList) {
-		AlertDialog.Builder builder = new AlertDialog.Builder(a);
+		/*AlertDialog.Builder builder = new AlertDialog.Builder(a);
 
 		builder.setTitle("Sort By");
 		String[] list = new String[] { "Stop name", "Stop ID", "Last Accesed" };
@@ -143,11 +94,13 @@ public class Util {
 
 		builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int id) {
-				Util.refreshAdaptors();
+				//TODO fixme
+				//Util.refreshAdaptors();
 			}
 		});
 
-		builder.create().show();
+		builder.create().show();*/
+		//TODO Sorting
 	}
 
 	public static String getListOfLines(Stop s, boolean test) {
@@ -194,7 +147,7 @@ public class Util {
 	}
 
 	public static boolean sortList(int Type) {
-		if (Type == 0) { // Favorites
+		/*if (Type == 0) { // Favorites
 			if (GlobalData.Favorites == null)
 				return false;
 			Collections.sort(GlobalData.Favorites, new StopSorter(
@@ -217,58 +170,9 @@ public class Util {
 			Collections.sort(GlobalData.CurrentStop.Busses, new BussSorter(
 					GlobalData.StopOrder));
 			return true;
-		}
+		}*/
+		//TODO Sorting
 		return false;
-	}
-
-	public static void subscribeToEdit(final Context c, final Activity a,
-			int name) {
-		EditText edit = (EditText) a.findViewById(name);
-
-		edit.setOnEditorActionListener(new OnEditorActionListener() {
-			public boolean onEditorAction(TextView v, int actionId,
-					KeyEvent event) {
-				if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER))
-						|| (actionId == EditorInfo.IME_ACTION_DONE)) {
-					EditText edit = (EditText) a.findViewById(R.id.UIStopIDBox);
-					String text = edit.getText().toString();
-					if (text != null && text.compareTo("") != 0)
-						new JSONRequestManger(c, a, Integer.parseInt(text))
-								.start();
-
-					edit.getText().clear();
-
-				}
-				return false;
-			}
-		});
-	}
-
-	public static boolean favHasStop(Stop s) {
-		return (listGetStop(s.StopID, GlobalData.Favorites) != null ? true
-				: false);
-	}
-
-	public static boolean histHasStop(Stop s) {
-		return (listGetStop(s.StopID, GlobalData.History) != null ? true
-				: false);
-	}
-
-	public static Stop listGetStop(int stopID, ArrayList<Stop> l) {
-		for (Stop s : l)
-			if (stopID == s.StopID)
-				return s;
-
-		return null;
-	}
-
-	public static void removeStop(Stop s, ArrayList<Stop> l) {
-		for (Stop stop : l) {
-			if (s.StopID == stop.StopID) {
-				l.remove(stop);
-				return;
-			}
-		}
 	}
 
 	public static void messageDiag(final Activity act, final checkStops myFunc,
@@ -295,90 +199,6 @@ public class Util {
 		});
 	}
 
-	
-	public static void dumpData(Context c) {
-		try {
-			String path = c.getString(R.string.data_path);
-
-			//BufferedWriter bw = new BufferedWriter(new FileWriter(new File(path)));
-			FileOutputStream outputStream = c.openFileOutput(path, Context.MODE_PRIVATE);
-	       // .write(outputString.getBytes());
-			
-			Gson gson = new GsonBuilder()
-					.excludeFieldsWithoutExposeAnnotation().create();
-			String data = gson.toJson(GlobalData.getJsonWrap());
-			outputStream.write(data.getBytes());
-			//bw.write(data);
-			//System.out.println(data);
-			outputStream.close();
-		} catch (JsonSyntaxException e) {
-			System.out.println("---Error: WRITE, json syntax");
-			e.printStackTrace();
-		} catch (FileNotFoundException e) {
-			System.out.println("---Error: WRITE, file not found");
-			e.printStackTrace();
-		} catch (IOException e) {
-			System.out.println("---Error: WRITE, IOexception");
-			e.printStackTrace();
-		}
-	}
-
-	public static void readData(Context c) {
-		try {
-			System.out.println(c.getFilesDir());
-			String path = c.getString(R.string.data_path); 
-		    FileInputStream inputStream = c.openFileInput(path);
-		    InputStreamReader re = new InputStreamReader(inputStream);
-		    BufferedReader r = new BufferedReader(re);
-
-			String fileContents = "";
-			String line;
-			while ((line = r.readLine()) != null) {
-				fileContents += line;
-			}
-			
-			//System.out.println((fileContents.compareTo("") == 0 || fileContents == null ? "NULL" : fileContents));
-			
-			Gson gson = new GsonBuilder()
-					.excludeFieldsWithoutExposeAnnotation().create();
-			GlobalData.JsonWrapper wrap = gson.fromJson(fileContents,
-					GlobalData.JsonWrapper.class);
-			if (wrap != null) {
-				if (wrap.stops != null) {
-					GlobalData.Favorites = new ArrayList<Stop>();
-					GlobalData.History = new ArrayList<Stop>();
-					
-					for (Stop s : wrap.stops) {
-						if (s.inFavorites)
-							GlobalData.Favorites.add(s);
-						if (s.inHistory)
-							GlobalData.History.add(s);
-						
-						s.inFavorites = false;
-						s.inHistory = false;
-					}
-				}
-				
-				GlobalData.StopOrder = wrap.stopOrder;
-				GlobalData.HistOrder = wrap.histOrder;
-				GlobalData.FavOrder = wrap.favOrder;
-				GlobalData.RefreshDelay = wrap.refreshDelay;
-			}
-			r.close();
-		} catch (JsonSyntaxException e) {
-			System.out.println("---Error: READ, json syntax");
-			e.printStackTrace();
-		} catch (FileNotFoundException e) {
-			System.out.println("---Error: READ, file not found");
-			e.printStackTrace();
-		} catch (IOException e) {
-			System.out.println("---Error: READ, IO eceptions");
-			e.printStackTrace();
-		} catch (Exception  e) {
-			System.out.println("---Error: READ, WTF");
-			e.printStackTrace();
-		}
-	}
 
 	private static class StopSorter implements Comparator<Stop> {
 		private int compareType = 0;
@@ -421,9 +241,10 @@ public class Util {
 		@Override
 		public int compare(Buss o1, Buss o2) {
 			if (compareType == 0)
-				if (GlobalData.Orientation == 2)
+				/*if (GlobalData.Orientation == 2)
 					return o1.SignLong.compareTo(o2.SignLong);
-				else
+				else*/
+				//TODO Sorting
 					return o1.SignShort.compareTo(o2.SignShort);
 			if (compareType == 1)
 				return (o1.Route < o2.Route ? -1
@@ -434,30 +255,4 @@ public class Util {
 				return o1.ScheduledTime.compareTo(o2.ScheduledTime); // fix me
 		}
 	}
-
-	public static void restartTimer(final Context c, final Activity a) {
-		if (timerRunnable != null)
-			timerHandler.removeCallbacks(timerRunnable);
-
-		timerRunnable = new Runnable() {
-			@Override
-			public void run() {
-				Util.updateAllStops(c, a);
-
-				if (GlobalData.RefreshDelay > 0)
-					timerHandler.postDelayed(this,
-							(int) (GlobalData.RefreshDelay * 1000));
-			}
-		};
-
-		if (GlobalData.RefreshDelay > 0)
-			timerHandler.postDelayed(timerRunnable,
-					(int) (GlobalData.RefreshDelay * 1000));
-	}
-
-	public static void stopTimer() {
-		if (timerRunnable != null)
-			timerHandler.removeCallbacks(timerRunnable);
-	}
-
 }

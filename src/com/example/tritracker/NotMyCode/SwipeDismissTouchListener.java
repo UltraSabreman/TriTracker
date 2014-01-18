@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.tritracker.NotMyCode;
+package com.example.tritracker.notmycode;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;

@@ -23,39 +23,50 @@
 		android:label="@string/app_name"
 		android:logo="@drawable/ic_buss_white"
 		android:theme="@style/AppTheme" >
+		
+		<service 
+			android:name="com.example.tritracker.activities.MainService"
+			android:label="Tritracker Update Service"/>
+			
+		<!-- <activity
+			android:name="com.example.tritracker.activities.FavoritesActivity"
+			android:windowSoftInputMode="stateHidden" />-->
+			
 		<activity
-			android:name="com.example.tritracker.Activities.MainView"
-			android:windowSoftInputMode="stateHidden" >
+			android:name="com.example.tritracker.activities.MainActivity"
+			>
+			
 			<intent-filter>
 				<action
 					android:name="android.intent.action.MAIN" />
-
+	
 				<category
 					android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
+		
 		<activity
-			android:name="com.example.tritracker.Activities.StopView"
+			android:name="com.example.tritracker.activities.BussListActivity"
 			android:windowSoftInputMode="stateHidden" >
 			<meta-data
 				android:name="android.support.PARENT_ACTIVITY"
 				android:value="com.example.tritracker.MainActivity" />
 		</activity>
-		<activity
-			android:name="com.example.tritracker.Activities.HistoryView"
+		<!-- <activity
+			android:name="com.example.tritracker.activities.HistoryActivity"
 			android:label="@string/title_activity_history_view"
 			android:windowSoftInputMode="stateHidden" >
-		</activity>
+		</activity> -->
 		<activity
-			android:name="com.example.tritracker.Activities.AlertListView"
+			android:name="com.example.tritracker.activities.AlertListActivity"
 			android:label="@string/title_activity_alert_details" >
 		</activity>
 		<activity
-			android:name="com.example.tritracker.Activities.SettingsView"
+			android:name="com.example.tritracker.activities.SettingsActivity"
 			android:label="@string/title_activity_settings" >
 		</activity>
 		<activity
-			android:name="com.example.tritracker.Activities.TestActivity"
+			android:name="com.example.tritracker.activities.TestActivity"
 			android:label="@string/title_activity_test" >
 		</activity>
 	</application>

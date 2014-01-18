@@ -1,4 +1,4 @@
-package com.example.tritracker.ArrayAdaptors;
+package com.example.tritracker.arrayadaptors;
 
 import java.text.Format;
 import java.text.SimpleDateFormat;
@@ -16,19 +16,23 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.tritracker.Buss;
-import com.example.tritracker.GlobalData;
 import com.example.tritracker.R;
+import com.example.tritracker.Stop;
 import com.example.tritracker.Stop.Alert;
 import com.example.tritracker.Util;
 
 public class BussArrayAdaptor extends ArrayAdapter<Buss> {
 	// private final Context context;
 	private final ArrayList<Buss> busses;
+	private Stop curStop;
+	private Context context;
 
-	public BussArrayAdaptor(Context context, ArrayList<Buss> busses) {
+	public BussArrayAdaptor(Context context, ArrayList<Buss> busses, Stop curStop) {
 		super(context, R.layout.buss_layout, busses);
 		// this.context = context;
+		this.curStop = curStop;
 		this.busses = busses;
+		this.context = context;
 	}
 
 	@Override
@@ -55,10 +59,9 @@ public class BussArrayAdaptor extends ArrayAdapter<Buss> {
 		Buss curBuss = busses.get(position);
 
 		if (curBuss != null) {
-			if (GlobalData.CurrentStop.Alerts != null
-					&& GlobalData.CurrentStop.Alerts.size() != 0) {
+			if (curStop.Alerts != null && curStop.Alerts.size() != 0) {
 				boolean affected = false;
-				for (Alert d : GlobalData.CurrentStop.Alerts) {
+				for (Alert d : curStop.Alerts) {
 					if (d.AffectedLine == curBuss.Route) {
 						affected = true;
 						break;
@@ -104,7 +107,7 @@ public class BussArrayAdaptor extends ArrayAdapter<Buss> {
 			LineNumber.setText(route);
 
 			String sign = "";
-			if (GlobalData.Orientation == 2) // ORIENTATION_LANDSCAPE
+			if (context.getResources().getConfiguration().orientation == 2) // ORIENTATION_LANDSCAPE
 				sign = curBuss.SignLong.replace(route + " ", "");
 			else
 				sign = curBuss.SignShort.replace(route + " ", "");

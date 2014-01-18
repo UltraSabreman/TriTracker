@@ -4,28 +4,25 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.example.tritracker.json.JSONResult;
 import com.google.gson.annotations.Expose;
 //make me more specific
 //import android.content.
 
-public class Stop {
-	@Expose
-	public String Name = "Invalid Street";
-	@Expose
-	public int StopID = -1;
-	@Expose
-	public String Direction = "Up Up and Away!";
-	@Expose
-	public Date LastAccesed = null;
+public class Stop implements Parcelable {
+	@Expose	public String Name = "Invalid Street";
+	@Expose	public int StopID = -1;
+	@Expose	public String Direction = "Up Up and Away!";
+	@Expose	public Date LastAccesed = null;
 	
-	@Expose 
-	public boolean inHistory = false;
-	@Expose 
-	public boolean inFavorites = false;
+	@Expose	public boolean inHistory = false;
+	@Expose	public boolean inFavorites = false;
 	
-	@Expose
-	public ArrayList<Buss> Busses = new ArrayList<Buss>();
+	@Expose	public ArrayList<Buss> Busses = new ArrayList<Buss>();
+	
 	public ArrayList<Alert> Alerts = new ArrayList<Alert>();
 
 	public Stop(JSONResult.ResultSet.Location l) {
@@ -34,6 +31,17 @@ public class Stop {
 		Direction = l.dir;
 	}
 
+	public Stop(int id) {
+		StopID = id;
+	}
+
+	public void resetAlerts() {
+		if (Alerts != null) {
+			Alerts.clear();
+			Alerts = new ArrayList<Alert>();
+		}
+	}
+	
 	public boolean hasNotifications() {
 		if (Busses != null && Busses.size() != 0)
 			for (Buss b : Busses)
@@ -80,4 +88,48 @@ public class Stop {
 			AffectedLine = a;
 		}
 	}
+
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel out, int flags) {	
+		out.writeString(Name);
+		out.writeInt(StopID);
+		out.writeString(Direction);
+		out.writeLong(LastAccesed.getTime());
+		out.writeInt(inHistory ? 1 : 0);
+		out.writeInt(inFavorites ? 1 : 0);
+		
+		out.writeList(Busses);
+		out.writeList(Alerts);
+	}
+	
+	public Stop(Parcel in) {
+		Name = in.readString();
+		StopID = in.readInt();
+		Direction = in.readString();
+		LastAccesed = new Date(in.readLong());
+		inHistory = in.readInt() == 1 ? true : false;
+		inFavorites = in.readInt() == 1 ? true : false;
+		
+		Busses = new ArrayList<Buss>();
+		in.readList(Busses, Buss.class.getClassLoader());
+
+		
+		Alerts = new ArrayList<Alert>();
+		in.readList(Alerts, Alert.class.getClassLoader());
+	}
+	
+	public static final Parcelable.Creator<Stop> CREATOR = new Parcelable.Creator<Stop>() {
+		public Stop createFromParcel(Parcel in) {
+		    return new Stop(in);
+		}
+		
+		public Stop[] newArray(int size) {
+		    return new Stop[size];
+		}
+	};
 }

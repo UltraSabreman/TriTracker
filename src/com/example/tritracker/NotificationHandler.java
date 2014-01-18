@@ -2,21 +2,19 @@ package com.example.tritracker;
 
 import java.util.Date;
 
-import com.example.tritracker.Activities.MainView;
-
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Handler;
 import android.support.v4.app.NotificationCompat;
+
+import com.example.tritracker.activities.StopListFragment;
 
 public class NotificationHandler {
 	private Context notContext;
-	private Handler notHandle = new Handler();
-	private Runnable notRun;
+	private Timer timer;
 	private NotificationManager not;
 	public Buss trackedBuss;
 	private Stop trackedStop;
@@ -28,8 +26,8 @@ public class NotificationHandler {
 		return timeToWait;
 	}
 
-	public NotificationHandler(final Context c, Intent i, Stop s, Buss b,
-			int time) {
+	public NotificationHandler(final Context c, Intent i, Stop s, Buss b, int time) {
+		timer = new Timer(time);
 		set(c, i, s, b, time);
 	}
 
@@ -39,12 +37,7 @@ public class NotificationHandler {
 		notContext = c;
 		timeToWait = time;
 
-		if (notRun != null && notHandle != null)
-			notHandle.removeCallbacks(notRun);
-
-		notRun = new Runnable() {
-			@SuppressWarnings("deprecation")
-			@Override
+		timer.addCallBack("main", new Timer.onUpdate() {
 			public void run() {
 				Date est = null;
 				if (trackedBuss.Status.compareTo("estimated") == 0)
@@ -54,29 +47,28 @@ public class NotificationHandler {
 					est = new Date(trackedBuss.ScheduledTime.getTime()
 							- new Date().getTime());
 
-				if (est.getMinutes() <= timeToWait)
+				if (Util.getTimeFromDate(est, "m") <= timeToWait)
 					doNotification();
 				else
-					notHandle.postDelayed(this,
-							(int) (GlobalData.RefreshDelay * 1000));
+					timer.stopTimer();
 			}
-		};
-		notHandle.post(notRun);
+		});
+		
+		timer.restartTimer();
 		IsSet = true;
 	}
 
 	public void cancelNotification() {
-		if (notHandle != null && notRun != null)
-			notHandle.removeCallbacks(notRun);
+		timer.stopTimer();
 		IsSet = false;
 		if (not != null)
 			not.cancel(0);
 	}
 
 	public void editNotification(int time) {
-		cancelNotification();
+		timer.stopTimer();
 		timeToWait = time;
-		notHandle.post(notRun);
+		timer.restartTimer(); //TODO is this needed?		
 	}
 
 	public boolean isBuss(Buss b) {
@@ -105,7 +97,7 @@ public class NotificationHandler {
 								| Notification.DEFAULT_SOUND)
 				.setAutoCancel(true).setLights(0xffFF8800, 1500, 1000);
 		// Creates an explicit intent for an Activity in your app
-		Intent resultIntent = new Intent(notContext, MainView.class);
+		Intent resultIntent = new Intent(notContext, StopListFragment.class);
 
 		// The stack builder object will contain an artificial back stack for
 		// the
@@ -114,7 +106,7 @@ public class NotificationHandler {
 		// your application to the Home screen.
 		TaskStackBuilder stackBuilder = TaskStackBuilder.create(notContext);
 		// Adds the back stack for the Intent (but not the Intent itself)
-		stackBuilder.addParentStack(MainView.class);
+		stackBuilder.addParentStack(StopListFragment.class);
 		// Adds the Intent that starts the Activity to the top of the stack
 		stackBuilder.addNextIntent(resultIntent);
 		PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0,
