@@ -31,17 +31,14 @@ public class SettingsActivity extends Activity {
 		super.onStart();
 		Intent intent = new Intent(this, MainService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-        bound = true;
 	}
 	
     @Override
     protected void onStop() {
         super.onStop();
         // Unbind from the service
-        if (bound) {
+        if (bound) 
             unbindService(mConnection);
-            bound = false;
-        }
     }
     
     private ServiceConnection mConnection = new ServiceConnection() {

@@ -2,10 +2,6 @@ package com.example.tritracker.arrayadaptors;
 
 import java.util.ArrayList;
 
-import com.example.tritracker.R;
-import com.example.tritracker.Stop;
-import com.example.tritracker.Util;
-
 import android.content.Context;
 import android.graphics.Color;
 import android.view.LayoutInflater;
@@ -16,15 +12,21 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.tritracker.R;
+import com.example.tritracker.Stop;
+import com.example.tritracker.Util;
+import com.example.tritracker.activities.MainService;
+
 public class StopArrayAdaptor extends ArrayAdapter<Stop> {
 	private final ArrayList<Stop> stops;
 	private boolean fav = false;
+	private MainService theService;
 
-	public StopArrayAdaptor(Context context, ArrayList<Stop> stops,
-			boolean favorites) {
+	public StopArrayAdaptor(MainService service, Context context, ArrayList<Stop> stops, boolean favorites) {
 		super(context, (favorites ? R.layout.fav_stop_layout
 				: R.layout.hist_stop_layout), stops);
 		fav = favorites;
+		theService = service;
 		this.stops = stops;
 	}
 
@@ -65,6 +67,9 @@ public class StopArrayAdaptor extends ArrayAdapter<Stop> {
 									R.drawable.ic_action_not_important_yellow));
 							// Util.removeStop(curStop, GlobalData.Favorites);
 							curStop.inFavorites = false;
+							if (!curStop.inHistory) {
+								theService.removeStop(curStop);
+							}
 						} else {
 							pic.setImageDrawable(v.getResources().getDrawable(
 									R.drawable.ic_action_important_yellow));

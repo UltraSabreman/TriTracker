@@ -226,12 +226,11 @@ public final class R {
         public static final int UIseperator=0x7f0a0005;
         public static final int UIseperator2=0x7f0a0024;
         public static final int UIseperator3=0x7f0a001c;
-        public static final int action_cancel_reminder=0x7f0a002f;
+        public static final int action_cancel_reminder=0x7f0a002e;
         public static final int action_clear=0x7f0a0029;
-        public static final int action_create_reminder=0x7f0a002d;
-        public static final int action_edit_reminder=0x7f0a002e;
-        public static final int action_favorite=0x7f0a002c;
-        public static final int action_history=0x7f0a002b;
+        public static final int action_create_reminder=0x7f0a002c;
+        public static final int action_edit_reminder=0x7f0a002d;
+        public static final int action_favorite=0x7f0a002b;
         public static final int action_settings=0x7f0a0028;
         public static final int action_sort=0x7f0a002a;
         public static final int alertBackground=0x7f0a0008;

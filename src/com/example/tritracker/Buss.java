@@ -75,8 +75,8 @@ public class Buss implements Parcelable {
 		out.writeString(SignShort);
 		out.writeString(SignLong);
 		
-		out.writeLong(EstimatedTime.getTime());
-		out.writeLong(ScheduledTime.getTime());
+		out.writeLong(EstimatedTime != null ? EstimatedTime.getTime() : -1);
+		out.writeLong(ScheduledTime != null ? ScheduledTime.getTime() : -1);
 	}
 	
 	public Buss(Parcel in) {
@@ -85,8 +85,18 @@ public class Buss implements Parcelable {
 		Status = in.readString();
 		SignShort = in.readString();
 		SignLong = in.readString();
-		EstimatedTime = new Date(in.readLong());
-		ScheduledTime = new Date(in.readLong());
+		
+		long est = in.readLong();
+		if (est == -1)
+			EstimatedTime = new Date();
+		else
+			EstimatedTime = new Date(est);
+		
+		est = in.readLong();
+		if (est == -1)
+			ScheduledTime = new Date();
+		else
+			ScheduledTime = new Date(est);
 	}
 	
 	public static final Parcelable.Creator<Buss> CREATOR = new Parcelable.Creator<Buss>() {

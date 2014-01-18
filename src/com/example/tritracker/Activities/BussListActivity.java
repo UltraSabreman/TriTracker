@@ -2,9 +2,13 @@ package com.example.tritracker.activities;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v4.app.NavUtils;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -28,6 +32,7 @@ import com.example.tritracker.R;
 import com.example.tritracker.Stop;
 import com.example.tritracker.Stop.Alert;
 import com.example.tritracker.Util;
+import com.example.tritracker.activities.MainService.LocalBinder;
 import com.example.tritracker.arrayadaptors.BussArrayAdaptor;
 
 public class BussListActivity extends Activity {
@@ -35,6 +40,44 @@ public class BussListActivity extends Activity {
 
 	private Stop curStop;
 	private BussArrayAdaptor adaptor;
+	
+
+	private MainService theService;
+	private boolean bound;
+	
+	@Override 
+	public void onStart() {
+		super.onStart();
+		Intent intent = new Intent(this, MainService.class);
+        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+	}
+	
+    @Override
+    protected void onStop() {
+        super.onStop();
+        // Unbind from the service
+        if (bound) 
+            unbindService(mConnection);
+    }
+    
+    private ServiceConnection mConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            // We've bound to LocalService, cast the IBinder and get LocalService instance
+            LocalBinder binder = (LocalBinder) service;
+            theService = binder.getService();
+            
+            curStop = theService.getStop(curStop);
+            
+            bound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            bound = false;
+        }
+    };
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 
 import com.example.tritracker.R;
+import com.example.tritracker.Timer;
 import com.example.tritracker.Util;
 import com.example.tritracker.activities.MainService.LocalBinder;
 
@@ -35,10 +36,6 @@ public class MainActivity extends FragmentActivity implements
 		setContentView(R.layout.activity_test);
 		
 		Util.initToast(getApplicationContext());
-		bound = false;
-		//service = 
-		/*((TextView) findViewById(R.id.NoMembers))
-				.setText("You have nothing in your favorites");*/
 
 		// Set up the action bar to show a dropdown list.
 		final ActionBar actionBar = getActionBar();
@@ -59,7 +56,6 @@ public class MainActivity extends FragmentActivity implements
 		super.onStart();
 		Intent intent = new Intent(this, MainService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-        bound = true;
 	}
 	
     @Override
@@ -80,6 +76,11 @@ public class MainActivity extends FragmentActivity implements
             LocalBinder binder = (LocalBinder) service;
             theService = binder.getService();
             bound = true;
+            
+            theService.sub("Main", new Timer.onUpdate() {
+            	public void run() {
+            	}
+            });
         }
 
         @Override
@@ -107,7 +108,7 @@ public class MainActivity extends FragmentActivity implements
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.test, menu);
+		getMenuInflater().inflate(R.menu.main_action_bar, menu);
 		return true;
 	}
 	@Override
@@ -121,9 +122,9 @@ public class MainActivity extends FragmentActivity implements
 
 			return true;
 		case R.id.action_settings:
-			//startActivity(new Intent(getActivity().getApplicationContext(), SettingsActivity.class));
+			startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
 			return true;
-		case R.id.action_history:
+		//case R.id.action_history:
 			//startActivity(new Intent(getActivity().getApplicationContext(), HistoryActivity.class));
 		default:
 			return super.onOptionsItemSelected(item);
@@ -133,11 +134,19 @@ public class MainActivity extends FragmentActivity implements
 	public boolean onNavigationItemSelected(int position, long id) {
 		// When the given dropdown item is selected, show its contents in the
 		// container view.
+		while(theService == null)
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		
 		if (position == 0) {
-			Fragment frag = new StopListFragment(true);
+			Fragment frag = new StopListFragment(theService, true);
 			getSupportFragmentManager().beginTransaction().replace(R.id.container, frag).commit();
 		} else {
-			Fragment frag = new StopListFragment(false);
+			Fragment frag = new StopListFragment(theService, false);
 			getSupportFragmentManager().beginTransaction().replace(R.id.container, frag).commit();
 		}
 		

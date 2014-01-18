@@ -35,6 +35,7 @@ import com.example.tritracker.activities.MainService.LocalBinder;
 import com.example.tritracker.arrayadaptors.StopArrayAdaptor;
 import com.example.tritracker.json.JSONRequestManger;
 import com.example.tritracker.json.JSONRequestManger.ResultCallback;
+import com.example.tritracker.notmycode.SwipeDismissListViewTouchListener;
 import com.example.tritracker.notmycode.UndoBarController;
 import com.example.tritracker.notmycode.UndoBarController.UndoListener;
 
@@ -42,6 +43,8 @@ public class StopListFragment extends Fragment implements UndoListener {
 	private UndoBarController mUndoBarController;
 	private View ourView;
 	private StopArrayAdaptor adaptor;
+	private ArrayList<Stop> undoList = new ArrayList<Stop>();
+	private ArrayList<Stop> stopList = new ArrayList<Stop>();
 	private boolean isFavorites;
 	
 	private MainService theService;
@@ -52,7 +55,18 @@ public class StopListFragment extends Fragment implements UndoListener {
 		super.onStart();
 		Intent intent = new Intent(getActivity(), MainService.class);
         getActivity().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-        bound = true;
+        
+        stopList = isFavorites ? theService.getFavorties() : theService.getHistory();
+		adaptor = new StopArrayAdaptor(theService, getActivity().getApplicationContext(), stopList, isFavorites);
+		initList();
+		adaptor.notifyDataSetChanged();
+		
+		theService.sub(isFavorites ? "Favorites" : "History", new Timer.onUpdate() {
+			public void run() {
+				update();
+			}
+		});
+
 	}
     private ServiceConnection mConnection = new ServiceConnection() {
 
@@ -64,6 +78,7 @@ public class StopListFragment extends Fragment implements UndoListener {
             bound = true;
         }
 
+        
         @Override
         public void onServiceDisconnected(ComponentName arg0) {
             bound = false;
@@ -74,21 +89,36 @@ public class StopListFragment extends Fragment implements UndoListener {
 		
 	}
 	
-	public StopListFragment(boolean t) {
+	public StopListFragment(MainService service, boolean t) {
 		isFavorites = t;
-	}
-	
-	public StopListFragment(ArrayList<Stop> stops, boolean fav) {
-		this.isFavorites = fav;
-		
+		theService = service;
 		theService.sub("Favorites", 
 				new Timer.onUpdate() {
 					public void run() {
 						update();
 					}
 			});
+	}
+	
+	private void getJson(int stop) {
+		((RelativeLayout) getActivity().findViewById(R.id.NoClickScreen)).setVisibility(View.VISIBLE);
+		getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 		
-		adaptor = new StopArrayAdaptor(getActivity().getApplicationContext(), stops, isFavorites);
+		ResultCallback call = new JSONRequestManger.ResultCallback() { 
+			public void run(Stop s, int e) {
+				getActivity().runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						((RelativeLayout) getActivity().findViewById(R.id.NoClickScreen)).setVisibility(View.INVISIBLE);
+						getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+					}
+				});
+				requsetCallback(s,e);
+			}
+		};
+		
+		new JSONRequestManger(theService, call, getActivity(), getActivity().getApplicationContext(), stop).start();
+		
 	}
 
 	@Override
@@ -109,19 +139,10 @@ public class StopListFragment extends Fragment implements UndoListener {
 						|| (actionId == EditorInfo.IME_ACTION_DONE)) {
 					EditText edit = (EditText) ourView.findViewById(R.id.UIStopIDBox);
 					String text = edit.getText().toString();
-					if (text != null && text.compareTo("") != 0) {
-						((RelativeLayout) getActivity().findViewById(R.id.NoClickScreen)).setVisibility(View.VISIBLE);
-						getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-						
-						ResultCallback call = new JSONRequestManger.ResultCallback() { 
-							public void run(Stop s, int e) {
-								requsetCallback(s,e);
-							}
-						};
-						
-						new JSONRequestManger(theService, call, getActivity(), getActivity().getApplicationContext(), Integer.parseInt(text)).start();
-					}
-
+					
+					if (text != null && text.compareTo("") != 0) 
+						getJson(Integer.parseInt(text));
+		
 					edit.getText().clear();
 
 				}
@@ -210,7 +231,7 @@ public class StopListFragment extends Fragment implements UndoListener {
 
 	}
 	
-	public void requsetCallback(Stop s, int error) {
+	public void requsetCallback(Stop s, int error) {		
 		if (s == null) return;
 		Activity a = getActivity();
 		Context c = a.getApplicationContext();
@@ -238,33 +259,39 @@ public class StopListFragment extends Fragment implements UndoListener {
 	}
 
 	public void update() {	
-		adaptor.notifyDataSetChanged();
-		
-		if (adaptor == null || adaptor.getCount() == 0)
-			((TextView) ourView.findViewById(R.id.NoMembers))
-					.setVisibility(View.VISIBLE);
-		else
-			((TextView) ourView.findViewById(R.id.NoMembers))
-					.setVisibility(View.INVISIBLE);
+		if (getActivity() != null)
+			getActivity().runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					adaptor.notifyDataSetChanged();
+					
+					if (adaptor == null || adaptor.getCount() == 0)
+						((TextView) ourView.findViewById(R.id.NoMembers)).setVisibility(View.VISIBLE);
+					else
+						((TextView) ourView.findViewById(R.id.NoMembers)).setVisibility(View.INVISIBLE);
+				}
+			});
 	}
 	
 	@Override
 	public void onResume() {
 		super.onResume();
 	}
+	
+	@Override
+	public void onStop() {
+
+		//theService.unsub("Favorites");
+		super.onStop();
+	}
 
 	@Override
 	public void onDestroy() {
 		if (adaptor != null)
-			adaptor.notifyDataSetInvalidated();
-		
-		if (bound)
-			theService.unsub("Favorites");
-		
-        if (bound) {
-            getActivity().unbindService(mConnection);
-            bound = false;
-        }
+			adaptor.notifyDataSetInvalidated();		
+		if (bound) {
+			getActivity().unbindService(mConnection);
+		}
 		super.onDestroy();
 	}
 
@@ -273,19 +300,10 @@ public class StopListFragment extends Fragment implements UndoListener {
 		view.setAdapter(adaptor);
 		
 		view.setOnItemClickListener(new OnItemClickListener() {
-			public void onItemClick(AdapterView<?> arg0, View arg1,
-					int position, long arg3) {
+			public void onItemClick(AdapterView<?> arg0, View arg1,	int position, long arg3) {
 				Stop temp = adaptor.getItem(position);
-				if (temp != null) {
-					
-					ResultCallback call = new JSONRequestManger.ResultCallback() { 
-						public void run(Stop s, int e) {
-							requsetCallback(s,e);
-						}
-					};
-					
-					new JSONRequestManger(theService, call, getActivity(), getActivity().getApplicationContext(), temp.StopID).start();
-				}
+				if (temp != null) 
+					getJson(temp.StopID);
 			}
 		});
 
@@ -295,7 +313,7 @@ public class StopListFragment extends Fragment implements UndoListener {
 		// in charge of drawing
 		// the pressed state (the list selector), handling list item clicks,
 		// etc.
-		/*SwipeDismissListViewTouchListener touchListener = new SwipeDismissListViewTouchListener(
+		SwipeDismissListViewTouchListener touchListener = new SwipeDismissListViewTouchListener(
 				view, new SwipeDismissListViewTouchListener.DismissCallbacks() {
 					@Override
 					public boolean canDismiss(int position) {
@@ -303,53 +321,52 @@ public class StopListFragment extends Fragment implements UndoListener {
 					}
 
 					@Override
-					public void onDismiss(ListView listView,
-							int[] reverseSortedPositions) {
+					public void onDismiss(ListView listView, int[] reverseSortedPositions) {
 						for (int position : reverseSortedPositions) {
 							Stop stop = adaptor.getItem(position);
 							if (stop != null) {
-								GlobalData.FUndos.add(stop);
-								GlobalData.favAdaptor.remove(stop);
+								undoList.add(stop);
+								stopList.remove(stop);
+								if (isFavorites)
+									stop.inFavorites = false;
+								else
+									stop.inHistory = false;
 
-								mUndoBarController.showUndoBar(
-										false,
+								mUndoBarController.showUndoBar(false,
 										"Removed "
-												+ GlobalData.FUndos.size()
-												+ " Stop"
-												+ (GlobalData.FUndos.size() > 1 ? "s"
-														: ""), null);
+										+ undoList.size()
+										+ " Stop"
+										+ (undoList.size() > 1 ? "s": ""), null);
 							}
 						}
-						onActivityChange();
+						StopListFragment.this.adaptor.notifyDataSetChanged();
 					}
 				});
 		view.setOnTouchListener(touchListener);
 		// Setting this scroll listener is required to ensure that during
 		// ListView scrolling,
 		// we don't look for swipes.
-		view.setOnScrollListener(touchListener.makeScrollListener());*/
+		view.setOnScrollListener(touchListener.makeScrollListener());
 	}
-
-	/*@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.main_action_bar, menu);
-		return super.onCreateOptionsMenu(menu);
-	}*/
 
 
 	@Override
 	public void onUndo(Parcelable token, boolean fail) {
 		if (!fail) {
-		/*	for (Stop s : GlobalData.FUndos) {
-				if (!Util.favHasStop(s))
-					GlobalData.favAdaptor.add(s);
+			for (Stop s : undoList) {
+				if (isFavorites)
+					s.inFavorites = true;
+				else
+					s.inHistory = true;
+				stopList.add(s);
 			}
-			GlobalData.FUndos.clear();
-			onActivityChange();*/
+			undoList.clear();
 		} else {
-			//GlobalData.FUndos.clear();
+			for (Stop s : undoList) {
+				if (!s.inFavorites && !s.inHistory)
+					theService.removeStop(s);
+			}
+			undoList.clear();
 		}
 	}
 

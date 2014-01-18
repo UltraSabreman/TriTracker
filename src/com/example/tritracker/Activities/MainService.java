@@ -1,7 +1,6 @@
 package com.example.tritracker.activities;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -23,6 +22,7 @@ import android.os.IBinder;
 import com.example.tritracker.Buss;
 import com.example.tritracker.R;
 import com.example.tritracker.Stop;
+import com.example.tritracker.Stop.Alert;
 import com.example.tritracker.Timer;
 import com.example.tritracker.Timer.onUpdate;
 import com.example.tritracker.Util;
@@ -30,7 +30,9 @@ import com.example.tritracker.Util.JSONcallback;
 import com.example.tritracker.json.JSONRequest;
 import com.example.tritracker.json.JSONResult;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
+import com.google.gson.annotations.Expose;
 
 public class MainService extends Service {
 	private Timer refreshTime;
@@ -85,6 +87,7 @@ public class MainService extends Service {
 	
 	public void setDelay(int i) {
 		stopData.RefreshDelay = i;
+		refreshTime.updateDelay(stopData.RefreshDelay);
 	}
 	
 	public int getDelay() {
@@ -138,6 +141,10 @@ public class MainService extends Service {
 		return temp;
 	}
 	
+	public void removeStop(Stop s) {
+		if (stopData.StopList.contains(s))
+			stopData.StopList.remove(s);
+	}
 	
 	public void doUpdate() {
 		updateAllStops();
@@ -173,8 +180,7 @@ public class MainService extends Service {
 				for (String si : stopIds) {
 					Stop hist = getStop(Integer.parseInt(si));
 					if (hist != null) {
-						hist.Alerts.add(new Stop.Alert(d.desc, Integer
-								.parseInt(d.route[0].route))); // Is this safe?
+						hist.Alerts.add(new Alert(d.desc, Integer.parseInt(d.route[0].route))); // Is this safe?
 					}
 				}
 			}
@@ -186,20 +192,22 @@ public class MainService extends Service {
 
 		JSONResult.ResultSet rs = r.resultSet;
 		ArrayList<Stop> stops = new ArrayList<Stop>();
-		for (JSONResult.ResultSet.Location l : rs.location) {
-			stops.add(new Stop(l));
-		}
-
-		for (Stop s : stops) {
-			if (rs.arrival != null)
-				for (JSONResult.ResultSet.Arrival a : rs.arrival) {
-					if (s.StopID == a.locid)
-						s.Busses.add(new Buss(a));
-				}
-
-			Stop tempStop = getStop(s);
-			if (tempStop != null)
-				tempStop.Update(s, false);
+		if (rs.location != null) {
+			for (JSONResult.ResultSet.Location l : rs.location) {
+				stops.add(new Stop(l));
+			}
+	
+			for (Stop s : stops) {
+				if (rs.arrival != null)
+					for (JSONResult.ResultSet.Arrival a : rs.arrival) {
+						if (s.StopID == a.locid)
+							s.Busses.add(new Buss(a));
+					}
+	
+				Stop tempStop = getStop(s);
+				if (tempStop != null)
+					tempStop.Update(s, false);
+			}
 		}
 	}
 
@@ -245,7 +253,7 @@ public class MainService extends Service {
 			String path = c.getString(R.string.data_path);
 			FileOutputStream outputStream = c.openFileOutput(path, Context.MODE_PRIVATE);
 			
-			Gson gson = new Gson();
+			Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
 			String data = gson.toJson(stopData);//new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
 			
 			outputStream.write(data.getBytes());
@@ -266,20 +274,19 @@ public class MainService extends Service {
 		try {
 			Context c = getApplicationContext();
 		    BufferedReader r = new BufferedReader(new InputStreamReader(c.openFileInput(c.getString(R.string.data_path))));
-		    
-		    
-		    String fileContents = "";
-			String line;
-			while ((line = r.readLine()) != null) {
-				fileContents += line;
-			}
-			
-			fileContents = null;
-			
-			Gson gson = new Gson();
-			stopData = gson.fromJson(fileContents, DataStore.class);
+		    			
+			Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+			stopData = gson.fromJson(r, DataStore.class);
+			//stopData = null;
 			if (stopData == null)
 				stopData = new DataStore();
+			
+			for(Stop s : stopData.StopList) {
+				s.inFavorites = true;
+				s.inHistory = true;
+				
+			}
+				
 			
 			r.close();
 		} catch (JsonSyntaxException e) {
@@ -300,11 +307,11 @@ public class MainService extends Service {
 	
 
 	private class DataStore {
-		public int FavOrder = 0;
-		public int HistOrder = 0;
-		public int StopOrder = 0;
-		public int RefreshDelay = 5;
-		public ArrayList<Stop> StopList = new ArrayList<Stop>();
+		@Expose public int FavOrder = 0;
+		@Expose public int HistOrder = 0;
+		@Expose public int StopOrder = 0;
+		@Expose public int RefreshDelay = 5;
+		@Expose public ArrayList<Stop> StopList = new ArrayList<Stop>();
 	}
 
 

@@ -36,10 +36,9 @@ public class Stop implements Parcelable {
 	}
 
 	public void resetAlerts() {
-		if (Alerts != null) {
+		if (Alerts != null) 
 			Alerts.clear();
-			Alerts = new ArrayList<Alert>();
-		}
+		Alerts = new ArrayList<Alert>();
 	}
 	
 	public boolean hasNotifications() {
@@ -54,6 +53,8 @@ public class Stop implements Parcelable {
 		Name = new String(s.Name);
 		StopID = s.StopID;
 		Direction = new String(s.Direction);
+		//inFavorites = s.inFavorites;
+		//inHistory = s.inHistory;
 		if (shouldUpdateDate && s.LastAccesed != null)
 			LastAccesed = s.LastAccesed;
 
@@ -79,7 +80,7 @@ public class Stop implements Parcelable {
 		return null;
 	}
 
-	public static class Alert {
+	public static class Alert implements Parcelable {
 		public String Discription = "";
 		public int AffectedLine = -1;
 
@@ -87,6 +88,32 @@ public class Stop implements Parcelable {
 			Discription = d;
 			AffectedLine = a;
 		}
+		
+		@Override
+		public int describeContents() {
+			return 0;
+		}
+
+		@Override
+		public void writeToParcel(Parcel out, int flags) {	
+			out.writeString(Discription);
+			out.writeInt(AffectedLine);
+		}
+		
+		public Alert(Parcel in) {
+			Discription = in.readString();
+			AffectedLine = in.readInt();
+		}
+		
+		public static final Parcelable.Creator<Alert> CREATOR = new Parcelable.Creator<Alert>() {
+			public Alert createFromParcel(Parcel in) {
+			    return new Alert(in);
+			}
+			
+			public Alert[] newArray(int size) {
+			    return new Alert[size];
+			}
+		};
 	}
 
 	@Override
