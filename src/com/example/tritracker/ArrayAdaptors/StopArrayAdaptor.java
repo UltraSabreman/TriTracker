@@ -18,30 +18,20 @@ import com.example.tritracker.Util;
 import com.example.tritracker.activities.MainService;
 
 public class StopArrayAdaptor extends ArrayAdapter<Stop> {
-	private ArrayList<Stop> stops;
 	private boolean fav = false;
 	private MainService theService;
 
 	public StopArrayAdaptor(MainService service, Context context, ArrayList<Stop> stops, boolean favorites) {
-		super(context, (favorites ? R.layout.fav_stop_layout
-				: R.layout.hist_stop_layout), stops);
+		super(context, (favorites ? R.layout.fav_stop_layout : R.layout.hist_stop_layout), stops);
 		fav = favorites;
 		theService = service;
-		this.stops = stops;
 	}
 
 	@Override
 	public void notifyDataSetChanged() {
-		//Util.sortList(fav ? 0 : 1); //Sorting
 		super.notifyDataSetChanged();
 	}
 	
-	
-	public void updateData(ArrayList<Stop> stops) {
-		this.stops = stops;
-		notifyDataSetChanged();
-	}
-
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		View v = convertView;
@@ -53,7 +43,7 @@ public class StopArrayAdaptor extends ArrayAdapter<Stop> {
 					: R.layout.hist_stop_layout), null);
 		}
 
-		final Stop curStop = stops.get(position);
+		final Stop curStop = getItem(position);
 
 		if (curStop != null) {
 			if (!fav) {

@@ -1,7 +1,5 @@
 package com.example.tritracker.activities;
 
-import java.util.ArrayList;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ComponentName;
@@ -34,9 +32,9 @@ import com.example.tritracker.R;
 import com.example.tritracker.Sorter;
 import com.example.tritracker.Stop;
 import com.example.tritracker.Stop.Alert;
-import com.example.tritracker.Util.ListType;
 import com.example.tritracker.Timer;
 import com.example.tritracker.Util;
+import com.example.tritracker.Util.ListType;
 import com.example.tritracker.activities.MainService.LocalBinder;
 import com.example.tritracker.arrayadaptors.BussArrayAdaptor;
 
@@ -93,8 +91,18 @@ public class BussListActivity extends Activity {
     
     public void onUpdate() {
     	curStop = theService.getStop(curStop);
-    	adaptor.updateStop(curStop);
-    	//adaptor.notifyDataSetChanged();
+    	
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {					
+				if (adaptor != null) {
+					adaptor.clear();
+					adaptor.addAll(curStop.Busses);
+					adaptor.updateStop(curStop);
+					adaptor.notifyDataSetChanged();
+				}
+			}
+		});
     }
 	
 	@Override
@@ -344,7 +352,7 @@ public class BussListActivity extends Activity {
 			return true;
 		case R.id.action_sort:
 			Stop stop = theService.getStop(curStop);
-			new Sorter<Buss>(Buss.class, theService).sort(this, ListType.Busses, stop.Busses,
+			new Sorter<Buss>(Buss.class, theService).sortUI(this, ListType.Busses, stop.Busses,
 					new Timer.onUpdate() {
 						public void run() {
 							adaptor.notifyDataSetChanged();

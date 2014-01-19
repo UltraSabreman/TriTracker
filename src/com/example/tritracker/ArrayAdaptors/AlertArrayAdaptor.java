@@ -10,7 +10,6 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.example.tritracker.R;
-import com.example.tritracker.Util;
 import com.example.tritracker.Stop.Alert;
 
 public class AlertArrayAdaptor extends ArrayAdapter<Alert> {

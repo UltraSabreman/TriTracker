@@ -26,6 +26,7 @@ import com.example.tritracker.activities.MainService.LocalBinder;
 public class MainActivity extends FragmentActivity implements ActionBar.OnNavigationListener {
 
 	private static final String STATE_SELECTED_NAVIGATION_ITEM = "selected_navigation_item";
+	private static boolean started = false;
 	
 	private StopListFragment favFrag;
 	private StopListFragment histFrag;
@@ -52,22 +53,24 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
 							new String[] {
 								"Favorites",
 								"History", }), this);
+		if (!started) {
+			startService(new Intent(this, MainService.class));
+			started = true;
+		}
 	}
 
 	@Override 
 	public void onStart() {
 		super.onStart();
-		Intent intent = new Intent(this, MainService.class);
-		startService(intent);
-        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+        bindService(new Intent(this, MainService.class), mConnection, Context.BIND_AUTO_CREATE);
 	}
 	
     @Override
     protected void onStop() {
         super.onStop();
         // Unbind from the service
-       // if (bound)
-        //    unbindService(mConnection);
+        if (bound)
+            unbindService(mConnection);
     }
     
     private ServiceConnection mConnection = new ServiceConnection() {
@@ -116,13 +119,12 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
 		//mUndoBarController.hideUndoBar(false);
 		switch (item.getItemId()) {
 		case R.id.action_sort:
-			final ArrayList<Stop> tempStops = theService.getFavorties();
-			new Sorter<Stop>(Stop.class, theService).sort(this, 
-					getActionBar().getSelectedNavigationIndex() == 0 ? ListType.Favorites : ListType.History, 
-					tempStops,
+			final int selction = getActionBar().getSelectedNavigationIndex();
+			final ArrayList<Stop> tempStops = selction == 0 ? theService.getFavorties() : theService.getHistory();
+			new Sorter<Stop>(Stop.class, theService).sortUI(this, selction == 0 ? ListType.Favorites : ListType.History,	tempStops,
 					new Timer.onUpdate() {
 						public void run() {
-							if (getActionBar().getSelectedNavigationIndex() == 0)
+							if (selction == 0)
 								favFrag.update(tempStops);
 							else
 								histFrag.update(tempStops);
@@ -133,8 +135,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
 		case R.id.action_settings:
 			startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
 			return true;
-		//case R.id.action_history:
-			//startActivity(new Intent(getActivity().getApplicationContext(), HistoryActivity.class));
 		default:
 			return super.onOptionsItemSelected(item);
 		}

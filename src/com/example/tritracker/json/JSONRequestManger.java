@@ -108,7 +108,7 @@ public class JSONRequestManger extends Thread {
 			readStop.inHistory = true;
 			service.addStop(readStop);
 		} else {
-			actualStop.Update(readStop, false);
+			actualStop.Update(readStop, true);
 			actualStop.inHistory = true;
 		}
 		

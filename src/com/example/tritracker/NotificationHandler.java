@@ -10,7 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 
-import com.example.tritracker.Util.TimeType;
+import com.example.tritracker.activities.MainActivity;
 import com.example.tritracker.activities.StopListFragment;
 
 public class NotificationHandler {
@@ -28,7 +28,7 @@ public class NotificationHandler {
 	}
 
 	public NotificationHandler(final Context c, Intent i, Stop s, Buss b, int time) {
-		timer = new Timer(time);
+		timer = new Timer(1);
 		set(c, i, s, b, time);
 	}
 
@@ -42,15 +42,16 @@ public class NotificationHandler {
 			public void run() {
 				Date est = null;
 				if (trackedBuss.Status.compareTo("estimated") == 0)
-					est = new Date(trackedBuss.EstimatedTime.getTime()
-							- new Date().getTime());
+					est = new Date(trackedBuss.EstimatedTime.getTime() - new Date().getTime());
 				else
-					est = new Date(trackedBuss.ScheduledTime.getTime()
-							- new Date().getTime());
+					est = new Date(trackedBuss.ScheduledTime.getTime() - new Date().getTime());
 				
-				if (Util.getTimeFromDate(est, TimeType.Minute) <= timeToWait) {
+				long test = est.getTime() / 1000 / 60; //Util.getTimeFromDate(est, TimeType.Minute);
+				if (test <= timeToWait) {
 					doNotification();
 					timer.stopTimer();
+					timer.removeCallBack("main");
+					IsSet = false;
 				}
 			}
 		});
@@ -103,7 +104,7 @@ public class NotificationHandler {
 		// your application to the Home screen.
 		TaskStackBuilder stackBuilder = TaskStackBuilder.create(notContext);
 		// Adds the back stack for the Intent (but not the Intent itself)
-		stackBuilder.addParentStack(StopListFragment.class);
+		stackBuilder.addParentStack(MainActivity.class);
 		// Adds the Intent that starts the Activity to the top of the stack
 		stackBuilder.addNextIntent(resultIntent);
 		PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);

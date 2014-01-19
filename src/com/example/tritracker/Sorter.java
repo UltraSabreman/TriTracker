@@ -22,14 +22,20 @@ public class Sorter <T> {
          this.theService = service;
     }
     
-	public void sort(Activity a, final ListType listtype, final ArrayList<T> listToSort, final Timer.onUpdate callback) {
+    public void sort(final ListType listtype, final ArrayList<T> listToSort, final Timer.onUpdate callback) {
+    	sortOrder = theService.getSort(listtype);
+    	sortList(listToSort, listtype);
+    }
+    
+	public void sortUI(Activity a, final ListType listtype, final ArrayList<T> listToSort, final Timer.onUpdate callback) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(a);
 
 		builder.setTitle("Sort By");
 		String[] list = new String[] { "Stop name", "Stop ID", "Last Accesed" };
 		if (type == Buss.class)
-			list = new String[] { "Buss name", "Buss Route", "Arrival Time" };
+			list = new String[] { "Route Name", "Route Number", "Arrival Time" };
 
+		sortOrder = theService.getSort(listtype);
 		builder.setSingleChoiceItems(list, theService.getSort(listtype),
 				new DialogInterface.OnClickListener() {
 					@Override
@@ -86,12 +92,11 @@ public class Sorter <T> {
 			if (compareType == 0)
 				return s.Name.compareTo(s2.Name);
 			if (compareType == 1)
-				return (s.StopID < s2.StopID ? -1 : (s.StopID > s2.StopID ? 1
-						: 0));
+				return (s.StopID < s2.StopID ? -1 : (s.StopID > s2.StopID ? 1 : 0));
 			else {
 				if (s.LastAccesed != null && s2.LastAccesed != null)
 					return s.LastAccesed.compareTo(s2.LastAccesed);
-				else
+				else 
 					return 0;
 			}
 		}

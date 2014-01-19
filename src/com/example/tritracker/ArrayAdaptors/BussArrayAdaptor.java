@@ -2,7 +2,6 @@ package com.example.tritracker.arrayadaptors;
 
 import java.text.Format;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
@@ -23,13 +22,11 @@ import com.example.tritracker.Util;
 
 public class BussArrayAdaptor extends ArrayAdapter<Buss> {
 	// private final Context context;
-	private ArrayList<Buss> busses;
 	private Stop curStop;
 	private Context context;
 
 	public BussArrayAdaptor(Context context, Stop curStop) {
 		super(context, R.layout.buss_layout, curStop.Busses);
-		busses = curStop.Busses;
 		// this.context = context;
 		this.curStop = curStop;
 		this.context = context;
@@ -43,7 +40,6 @@ public class BussArrayAdaptor extends ArrayAdapter<Buss> {
 	
 	public void updateStop(Stop s) {
 		curStop = s;
-		busses = curStop.Busses;
 		notifyDataSetChanged();
 	}
 
@@ -61,7 +57,7 @@ public class BussArrayAdaptor extends ArrayAdapter<Buss> {
 			v = inflater.inflate(R.layout.buss_layout, null);
 		}
 
-		Buss curBuss = busses.get(position);
+		Buss curBuss = getItem(position);
 
 		if (curBuss != null) {
 			if (curStop.Alerts != null && curStop.Alerts.size() != 0) {
@@ -117,12 +113,10 @@ public class BussArrayAdaptor extends ArrayAdapter<Buss> {
 			else
 				sign = curBuss.SignShort.replace(route + " ", "");
 
-			if (Character.isUpperCase(sign.charAt(0)))
-				LineName.setText(sign);
-			else
-				sign = sign.substring(0, 1).toUpperCase(Locale.US)
-						+ sign.substring(1);
+			if (!Character.isUpperCase(sign.charAt(0)))
+				sign = sign.substring(0, 1).toUpperCase(Locale.US) + sign.substring(1);
 
+			LineName.setText(sign);
 			LineName.setSelected(true);
 
 			Format formatter = new SimpleDateFormat("hh:mm a", Locale.US);

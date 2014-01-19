@@ -2,7 +2,6 @@ package com.example.tritracker;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Stack;
@@ -30,16 +29,21 @@ public class Util {
 	public static enum TimeType { Second, Minute, Hour, Day };
 	
 	public static long getTimeFromDate(Date d, TimeType type) {
-		if(type == TimeType.Second)
-			return (d.getTime() / 1000);
-		else if(type == TimeType.Minute)
-			return (d.getTime() / (1000 / 60));
-		else if(type == TimeType.Hour)
-			return (d.getTime() / (1000 / 60 / 60));
-		else if(type == TimeType.Day)
-			return (d.getTime() / (1000 / 60 / 60 / 24));
-		else
-			return d.getTime();
+		if(type == TimeType.Second) {
+			long time = (d.getTime() / 1000);
+			return time;
+		}else if(type == TimeType.Minute) {
+			long time = (d.getTime() / (1000 / 60));
+			return time;
+		}else if(type == TimeType.Hour) {
+			long time = (d.getTime() / (1000 / 60 / 60));
+			return time;
+		} else if(type == TimeType.Day) {
+			long time = (d.getTime() / (1000 / 60 / 60 / 24));
+			return time;
+		}
+		
+		return d.getTime();
 	}
 	
 	public static Date dateFromString(String s) {

@@ -59,6 +59,9 @@ public class Buss implements Parcelable {
 			EstimatedTime = new Date(b.EstimatedTime.getTime());
 		if (b.ScheduledTime != null)
 			ScheduledTime = new Date(b.ScheduledTime.getTime());
+		
+		if (b.notification != null)
+			notification = b.notification;
 	}
 
 	@Override
