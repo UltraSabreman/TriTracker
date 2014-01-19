@@ -64,9 +64,9 @@ public class StopListFragment extends Fragment implements UndoListener {
 
 		adaptor = new StopArrayAdaptor(theService, getActivity().getApplicationContext(), stopList, isFavorites);
 		initList();
-		adaptor.notifyDataSetChanged();
 		
-
+		update(null);
+		
 		theService.sub(isFavorites ? "Favorites" : "History", new Timer.onUpdate() {
 			public void run() {
 				update(null);
@@ -147,6 +147,8 @@ public class StopListFragment extends Fragment implements UndoListener {
 
 		mUndoBarController = new UndoBarController(ourView.findViewById(R.id.undobar), this);
 		EditText edit = (EditText)  getActivity().findViewById(R.id.UIStopIDBox);
+		
+		((TextView) ourView.findViewById(R.id.NoMembers)).setText("Your " + (isFavorites ? "Favorites List" : "History") + " is Empty.");
 
 		edit.setOnEditorActionListener(new OnEditorActionListener() {
 			public boolean onEditorAction(TextView v, int actionId,
@@ -314,7 +316,7 @@ public class StopListFragment extends Fragment implements UndoListener {
 										+ (undoList.size() > 1 ? "s": ""), null);
 							}
 						}
-						StopListFragment.this.adaptor.notifyDataSetChanged();
+						update(null);
 					}
 				});
 		view.setOnTouchListener(touchListener);
@@ -343,8 +345,7 @@ public class StopListFragment extends Fragment implements UndoListener {
 			}
 			undoList.clear();
 		}
-		if(adaptor != null)
-			adaptor.notifyDataSetChanged();
+		update(null);
 	}
 
 }
