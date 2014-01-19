@@ -63,7 +63,7 @@ public class StopListFragment extends Fragment implements UndoListener {
 		
 		theService.sub(isFavorites ? "Favorites" : "History", new Timer.onUpdate() {
 			public void run() {
-				update();
+				update(null);
 			}
 		});
 
@@ -91,7 +91,7 @@ public class StopListFragment extends Fragment implements UndoListener {
 		theService.sub("Favorites", 
 				new Timer.onUpdate() {
 					public void run() {
-						update();
+						update(null);
 					}
 			});
 	}
@@ -132,7 +132,7 @@ public class StopListFragment extends Fragment implements UndoListener {
 					KeyEvent event) {
 				if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER))
 						|| (actionId == EditorInfo.IME_ACTION_DONE)) {
-					EditText edit = (EditText) ourView.findViewById(R.id.UIStopIDBox);
+					EditText edit = (EditText) getActivity().findViewById(R.id.UIStopIDBox);
 					String text = edit.getText().toString();
 					
 					if (text != null && text.compareTo("") != 0) 
@@ -225,7 +225,12 @@ public class StopListFragment extends Fragment implements UndoListener {
 		
 	}
 
-	public void update() {	
+	public void update(ArrayList<Stop> newStops) {
+		if (newStops != null) {
+			stopList = newStops;
+			if (adaptor != null)
+				adaptor.notifyDataSetChanged();
+		}
 		if (getActivity() != null)
 			getActivity().runOnUiThread(new Runnable() {
 				@Override

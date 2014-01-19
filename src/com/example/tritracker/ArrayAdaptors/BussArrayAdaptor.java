@@ -37,7 +37,6 @@ public class BussArrayAdaptor extends ArrayAdapter<Buss> {
 
 	@Override
 	public void notifyDataSetChanged() {
-		Util.sortList(2);
 		super.notifyDataSetChanged();
 
 	}

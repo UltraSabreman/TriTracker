@@ -1,5 +1,7 @@
 package com.example.tritracker.activities;
 
+import java.util.ArrayList;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ComponentName;
@@ -29,8 +31,10 @@ import android.widget.Toast;
 import com.example.tritracker.Buss;
 import com.example.tritracker.NotificationHandler;
 import com.example.tritracker.R;
+import com.example.tritracker.Sorter;
 import com.example.tritracker.Stop;
 import com.example.tritracker.Stop.Alert;
+import com.example.tritracker.Util.ListType;
 import com.example.tritracker.Timer;
 import com.example.tritracker.Util;
 import com.example.tritracker.activities.MainService.LocalBinder;
@@ -339,10 +343,14 @@ public class BussListActivity extends Activity {
 			startActivity(new Intent(this, SettingsActivity.class));
 			return true;
 		case R.id.action_sort:
-			Util.buildSortDialog((Activity) this, 2);
-			
-			theService.doUpdate(false);
-			adaptor.notifyDataSetChanged();
+			Stop stop = theService.getStop(curStop);
+			new Sorter<Buss>(Buss.class, theService).sort(this, ListType.Busses, stop.Busses,
+					new Timer.onUpdate() {
+						public void run() {
+							adaptor.notifyDataSetChanged();
+							theService.doUpdate(false);
+						}
+					});		
 			return true;
 		case R.id.action_favorite:
 			if (curStop.inFavorites) {

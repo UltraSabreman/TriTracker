@@ -1,5 +1,7 @@
 package com.example.tritracker.activities;
 
+import java.util.ArrayList;
+
 import android.app.ActionBar;
 import android.content.ComponentName;
 import android.content.Context;
@@ -14,13 +16,19 @@ import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 
 import com.example.tritracker.R;
+import com.example.tritracker.Sorter;
+import com.example.tritracker.Stop;
 import com.example.tritracker.Timer;
 import com.example.tritracker.Util;
+import com.example.tritracker.Util.ListType;
 import com.example.tritracker.activities.MainService.LocalBinder;
 
 public class MainActivity extends FragmentActivity implements ActionBar.OnNavigationListener {
 
 	private static final String STATE_SELECTED_NAVIGATION_ITEM = "selected_navigation_item";
+	
+	private StopListFragment favFrag;
+	private StopListFragment histFrag;
 	
 	private MainService theService;
 	private boolean bound;
@@ -108,9 +116,19 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
 		//mUndoBarController.hideUndoBar(false);
 		switch (item.getItemId()) {
 		case R.id.action_sort:
-			Util.buildSortDialog(this, 0);
-			//startActivity(new Intent(this, TestActivity.class));
-
+			final ArrayList<Stop> tempStops = theService.getFavorties();
+			new Sorter<Stop>(Stop.class, theService).sort(this, 
+					getActionBar().getSelectedNavigationIndex() == 0 ? ListType.Favorites : ListType.History, 
+					tempStops,
+					new Timer.onUpdate() {
+						public void run() {
+							if (getActionBar().getSelectedNavigationIndex() == 0)
+								favFrag.update(tempStops);
+							else
+								histFrag.update(tempStops);
+							theService.doUpdate(false);
+						}
+					});
 			return true;
 		case R.id.action_settings:
 			startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
@@ -121,6 +139,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
 			return super.onOptionsItemSelected(item);
 		}
 	}
+	
 	@Override
 	public boolean onNavigationItemSelected(int position, long id) {
 		// When the given dropdown item is selected, show its contents in the
@@ -129,16 +148,15 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
 			try {
 				Thread.sleep(10);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		
 		if (position == 0) {
-			Fragment frag = new StopListFragment(theService, true);
-			getSupportFragmentManager().beginTransaction().replace(R.id.container, frag).commit();
+			favFrag = new StopListFragment(theService, true);
+			getSupportFragmentManager().beginTransaction().replace(R.id.container, (Fragment)favFrag).commit();
 		} else {
-			Fragment frag = new StopListFragment(theService, false);
-			getSupportFragmentManager().beginTransaction().replace(R.id.container, frag).commit();
+			histFrag = new StopListFragment(theService, false);
+			getSupportFragmentManager().beginTransaction().replace(R.id.container, (Fragment)histFrag).commit();
 		}
 		
 		return true;

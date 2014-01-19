@@ -25,7 +25,6 @@ public class AlertArrayAdaptor extends ArrayAdapter<Alert> {
 
 	@Override
 	public void notifyDataSetChanged() {
-		Util.sortList(2);
 		super.notifyDataSetChanged();
 
 	}

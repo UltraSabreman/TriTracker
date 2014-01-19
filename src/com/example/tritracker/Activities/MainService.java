@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
@@ -27,6 +28,7 @@ import com.example.tritracker.Timer;
 import com.example.tritracker.Timer.onUpdate;
 import com.example.tritracker.Util;
 import com.example.tritracker.Util.JSONcallback;
+import com.example.tritracker.Util.ListType;
 import com.example.tritracker.json.JSONRequest;
 import com.example.tritracker.json.JSONResult;
 import com.google.gson.Gson;
@@ -69,12 +71,34 @@ public class MainService extends Service {
 		System.out.println("Command start");
 		return START_STICKY;
 	}
+
 	
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
+	/* Accesors and Setters */
+	/**
+	 * @param list 
+	 * The list order we need, 0 is favorites, 1 is history, and 2 is stop.
+	 * @return
+	 * the order
+	 */
+	public int getSort(ListType list) {
+		if (list == ListType.Favorites)
+			return stopData.FavOrder;
+		else if(list == ListType.History)
+			return stopData.HistOrder;
+		else if (list == ListType.Busses)
+			return stopData.StopOrder;
+		else
+			return -1;
 	}
 	
+	public void setSort(ListType list, int order) {
+		if (list == ListType.Favorites)
+			stopData.FavOrder = order;
+		else if(list == ListType.History)
+			stopData.HistOrder = order;
+		else if (list == ListType.Busses)
+			stopData.StopOrder = order;
+	}
 	
 	public void setDelay(int i) {
 		stopData.RefreshDelay = i;
@@ -137,6 +161,8 @@ public class MainService extends Service {
 			stopData.StopList.remove(s);
 	}
 	
+	
+	/* Update Tick */
 	public void doUpdate(boolean fetch) {
 		if (fetch)
 			updateAllStops();
@@ -149,6 +175,42 @@ public class MainService extends Service {
 		        if(pairs != null && pairs.getValue() != null)
 		        	((onUpdate)pairs.getValue()).run();
 		    }
+		}
+	}
+	
+	private void updateAllStops() {
+		Context c = getApplicationContext();
+		
+		String busses = "";
+		String stops = "";
+		
+		for (Stop s : stopData.StopList) {
+			stops += String.valueOf(s.StopID) + ",";
+			busses += Util.getListOfLines(s, false) + ",";
+		}
+
+		JSONcallback tempCall = new JSONcallback() {
+			public void run(JSONResult r, int error) {
+				if (error == 0)
+					proccesBackground(r);
+			}
+		};
+		
+		if (stops.compareTo("") != 0) {
+			stops = stops.substring(0, stops.length() - 1);
+			
+			new JSONRequest(tempCall,
+					"http://developer.trimet.org/ws/V1/arrivals?locIDs="
+							+ stops + "&json=true&appID="
+							+ c.getString(R.string.appid)).start();
+		}
+		if (busses.compareTo("") != 0) {
+			busses = busses.substring(0, busses.length() - 1);
+
+			new JSONRequest(tempCall,
+					"http://developer.trimet.org/ws/V1/detours?routes="
+							+ busses + "&json=true&appID="
+							+ c.getString(R.string.appid)).start();
 		}
 	}
 	
@@ -202,42 +264,6 @@ public class MainService extends Service {
 			}
 		}
 	}
-
-	private void updateAllStops() {
-		Context c = getApplicationContext();
-		
-		String busses = "";
-		String stops = "";
-		
-		for (Stop s : stopData.StopList) {
-			stops += String.valueOf(s.StopID) + ",";
-			busses += Util.getListOfLines(s, false) + ",";
-		}
-
-		JSONcallback tempCall = new JSONcallback() {
-			public void run(JSONResult r, int error) {
-				if (error == 0)
-					proccesBackground(r);
-			}
-		};
-		
-		if (stops.compareTo("") != 0) {
-			stops = stops.substring(0, stops.length() - 1);
-			
-			new JSONRequest(tempCall,
-					"http://developer.trimet.org/ws/V1/arrivals?locIDs="
-							+ stops + "&json=true&appID="
-							+ c.getString(R.string.appid)).start();
-		}
-		if (busses.compareTo("") != 0) {
-			busses = busses.substring(0, busses.length() - 1);
-
-			new JSONRequest(tempCall,
-					"http://developer.trimet.org/ws/V1/detours?routes="
-							+ busses + "&json=true&appID="
-							+ c.getString(R.string.appid)).start();
-		}
-	}
 	
 	private void dumpData() {
 		try {
@@ -269,9 +295,6 @@ public class MainService extends Service {
 		    			
 			Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
 			stopData = gson.fromJson(r, DataStore.class);
-
-			if (stopData == null)
-				stopData = new DataStore();		
 			
 			r.close();
 		} catch (JsonSyntaxException e) {
@@ -286,10 +309,11 @@ public class MainService extends Service {
 		} catch (Exception  e) {
 			System.out.println("---Error: READ, WTF");
 			e.printStackTrace();
+		} finally {
+			if (stopData == null)
+				stopData = new DataStore();	
 		}
-	}
-
-	
+	}	
 
 	private class DataStore {
 		@Expose public int FavOrder = 0;

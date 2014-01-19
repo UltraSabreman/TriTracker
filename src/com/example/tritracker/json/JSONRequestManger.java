@@ -2,7 +2,6 @@ package com.example.tritracker.json;
 
 import java.util.Date;
 
-import android.app.Activity;
 import android.content.Context;
 
 import com.example.tritracker.Buss;
