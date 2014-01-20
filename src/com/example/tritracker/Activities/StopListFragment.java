@@ -2,11 +2,8 @@ package com.example.tritracker.activities;
 
 import java.util.ArrayList;
 
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
@@ -17,13 +14,11 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
@@ -117,26 +112,27 @@ public class StopListFragment extends Fragment implements UndoListener {
 	}
 	
 	private void getJson(int stop) {
-		((RelativeLayout) getActivity().findViewById(R.id.NoClickScreen)).setVisibility(View.VISIBLE);
-		((RelativeLayout) getActivity().findViewById(R.id.NoClickScreen2)).setVisibility(View.VISIBLE);
-		getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-		
+		Util.creatDiag(getActivity());
 		ResultCallback call = new JSONRequestManger.ResultCallback() { 
-			public void run(Stop s, int e) {
+			public void run(Stop s) {
 				getActivity().runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
-						((RelativeLayout) getActivity().findViewById(R.id.NoClickScreen)).setVisibility(View.INVISIBLE);
-						((RelativeLayout) getActivity().findViewById(R.id.NoClickScreen2)).setVisibility(View.INVISIBLE);
-						getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+						Util.hideDiag();
 					}
 				});
-				requsetCallback(s,e);
+				
+				Context c = getActivity().getApplicationContext();
+				
+				Intent tempIntent = new Intent(c, BussListActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+				tempIntent.putExtra("stop", s);
+				
+				c.startActivity(tempIntent);
 				theService.doUpdate(false);
 			}
 		};
 		
-		new JSONRequestManger(theService, call, getActivity().getApplicationContext(), stop).start();
+		new JSONRequestManger(theService, call, getActivity(), getActivity().getApplicationContext(), stop).start();
 		
 	}
 
@@ -172,81 +168,6 @@ public class StopListFragment extends Fragment implements UndoListener {
 		return ourView;
 	}
 
-	public void showStop(Stop s) {
-		Context c = getActivity().getApplicationContext();
-		
-		Intent tempIntent = new Intent(c, BussListActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		tempIntent.putExtra("stop", s);
-		
-		c.startActivity(tempIntent);
-	}
-	
-	public interface checkStops {
-		public void doStops();
-	}
-	
-	
-	private void hanldeHTTPErrors(int error, final int id) {
-		Activity a = getActivity();
-		checkStops newCallback = new checkStops() {
-									public void doStops() {
-										Stop s = theService.getStop(id);
-										if (s != null)
-											showStop(s);
-										return;
-									}
-								};
-		
-		if (error == 1)
-			Util.messageDiag(a,	newCallback,
-					"Connection Timed-Out",
-					"The connection timed-out (Trimet's servers might be busy, or you could have a poor connection)."
-							+ "\n\nIf you've visited this stop before, and you want to see the cached times, click ok.");
-		else if (error == 2)
-			Util.messageDiag(a,	newCallback,
-					"Malformed reponce",
-					"Trimet didn't respond correctly (their servers may be under heavy load)"
-							+ "\n\nIf you've visited this stop before, and you want to see the cached times, click ok.");
-		else if (error == 3)
-			Util.messageDiag(a,	newCallback,
-					"Error Connecting",
-					"It looks like Trimet changed their API. Please contact the developer ASAP and this will be fixed."
-							+ "\n\nIf you've visited this stop before, and you want to see the cached times, click ok.");
-		else if (error == 4)
-			Util.messageDiag(a,	newCallback,
-					"Are you connected?",
-					"Can't reach the Trimet servers right now, are you connected to the internet?"
-							+ "\n\nIf you've visited this stop before, and you want to see the cached times, click ok.");
-		
-
-	}
-	
-	public void requsetCallback(Stop s, int error) {		
-		if (s == null) return;
-		Activity a = getActivity();
-		//Context c = a.getApplicationContext();
-		
-		if (error > 0) {
-			hanldeHTTPErrors(error, s.StopID);
-		} else if (error == -1) {
-			AlertDialog.Builder builder = new AlertDialog.Builder(a);
-
-			builder.setMessage(
-					"A stop with the ID \"" + s.StopID + "\" doesn't exist.")
-					.setTitle(R.string.no_stop);
-
-			builder.setPositiveButton("Ok",
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog,	int id) {
-						}
-					});
-
-			builder.create().show();
-		} else {
-			showStop(s);
-		}
-		
-	}
 
 	public void update(final ArrayList<Stop> newStops) {
 		if (newStops != null) {

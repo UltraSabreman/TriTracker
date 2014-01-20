@@ -39,6 +39,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
+		Util.parents.push(getClass());
+		
 		Util.initToast(getApplicationContext());
 
 		// Set up the action bar to show a dropdown list.
@@ -133,7 +135,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
 					});
 			return true;
 		case R.id.action_settings:
-			startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
+			//startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
+			startActivity(new Intent(getApplicationContext(), MapActivity.class));
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);

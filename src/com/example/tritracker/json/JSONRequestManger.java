@@ -2,7 +2,10 @@ package com.example.tritracker.json;
 
 import java.util.Date;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 
 import com.example.tritracker.Buss;
 import com.example.tritracker.R;
@@ -16,12 +19,13 @@ public class JSONRequestManger extends Thread {
 	private MainService service = null;
 	private ResultCallback testBack = null;
 	private Context context = null;
+	private Activity activity = null;
 	
 	private int returnError = 0;
 	private Stop returnStop = null;
 	
 	public interface ResultCallback {
-		public void run(Stop theStop, int error);
+		public void run(Stop theStop);
 	}
 
 	public void run() {
@@ -65,16 +69,81 @@ public class JSONRequestManger extends Thread {
 			e.printStackTrace();
 		}
 		
-		
-		if (testBack != null)
-			testBack.run(returnStop, returnError);
+		grabStopOrErrors(returnStop, returnError);
 	}
 
-	public JSONRequestManger(MainService service, ResultCallback func, Context c, int stop) {
+	public interface checkStops {
+		public void doStops();
+	}
+	
+	public void grabStopOrErrors(Stop s, int error) {		
+		if (s == null) return;
+
+			if (error > 0) {
+			hanldeHTTPErrors(error, s.StopID);
+		} else if (error == -1) {
+			AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+
+			builder.setMessage(
+					"A stop with the ID \"" + s.StopID + "\" doesn't exist.")
+					.setTitle(R.string.no_stop);
+
+			builder.setPositiveButton("Ok",
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog,	int id) {
+						}
+					});
+
+			builder.create().show();
+		} else {
+			if (testBack != null)
+				testBack.run(s);
+		}
+		
+	}
+	
+	private void hanldeHTTPErrors(int error, final int id) {
+		checkStops newCallback = new checkStops() {
+									public void doStops() {
+										Stop s = service.getStop(id);
+										if (s != null)
+											if (testBack != null)
+												testBack.run(s);
+										return;
+									}
+								};
+		
+		if (error == 1)
+			Util.messageDiag(activity, newCallback,
+					"Connection Timed-Out",
+					"The connection timed-out (Trimet's servers might be busy, or you could have a poor connection)."
+							+ "\n\nIf you've visited this stop before, and you want to see the cached times, click ok.");
+		else if (error == 2)
+			Util.messageDiag(activity,	newCallback,
+					"Malformed reponce",
+					"Trimet didn't respond correctly (their servers may be under heavy load)"
+							+ "\n\nIf you've visited this stop before, and you want to see the cached times, click ok.");
+		else if (error == 3)
+			Util.messageDiag(activity,	newCallback,
+					"Error Connecting",
+					"It looks like Trimet changed their API. Please contact the developer ASAP and this will be fixed."
+							+ "\n\nIf you've visited this stop before, and you want to see the cached times, click ok.");
+		else if (error == 4)
+			Util.messageDiag(activity,	newCallback,
+					"Are you connected?",
+					"Can't reach the Trimet servers right now, are you connected to the internet?"
+							+ "\n\nIf you've visited this stop before, and you want to see the cached times, click ok.");
+		
+
+	}
+	
+	
+	public JSONRequestManger(MainService service, ResultCallback func, Activity a, Context c, int stop) {
 		this.theStop = stop;
 		this.service = service;
 		this.testBack = func;
 		this.context = c;
+		this.activity = a;
 		this.setName("JSON Request Manager");
 	}
 	

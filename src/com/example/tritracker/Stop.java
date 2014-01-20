@@ -8,6 +8,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.example.tritracker.json.JSONResult;
+import com.example.tritracker.json.JSONResult.ResultSet.Location.Route;
 import com.google.gson.annotations.Expose;
 //make me more specific
 //import android.content.
@@ -23,18 +24,46 @@ public class Stop implements Parcelable {
 	
 	@Expose	public ArrayList<Buss> Busses = new ArrayList<Buss>();
 	
+	public double Latitude = 0;
+	public double Longitude = 0; 
+	public ArrayList<String> Routes = new ArrayList<String>();
 	public ArrayList<Alert> Alerts = new ArrayList<Alert>();
 
 	public Stop(JSONResult.ResultSet.Location l) {
 		Name = l.desc;
 		StopID = l.locid;
 		Direction = l.dir;
+		Latitude = l.lat;
+		Longitude = l.lng;
+		if (l.route != null) {
+			for (Route r : l.route) {
+				if (r.type.compareTo("R") == 0){
+					Routes.add(r.desc);//.substring(0, r.desc.indexOf(" ")));
+				} else 
+					Routes.add(String.valueOf(r.route));
+			}
+					
+		}
 	}
 
 	public Stop(int id) {
 		StopID = id;
 	}
 
+	public String getService() {
+		if (Routes != null) {
+			String s = "";
+			for (String ss : Routes)
+				s += ss + ", ";
+			
+			if (s.compareTo("") != 0) {
+				s = s.substring(0, s.length() - 2);
+			}
+			return s;
+		}
+		return "";
+	}
+	
 	public void resetAlerts() {
 		if (Alerts != null) 
 			Alerts.clear();

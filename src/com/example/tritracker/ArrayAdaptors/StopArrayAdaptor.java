@@ -37,10 +37,8 @@ public class StopArrayAdaptor extends ArrayAdapter<Stop> {
 		View v = convertView;
 
 		if (v == null) {
-			LayoutInflater inflater = (LayoutInflater) getContext()
-					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			v = inflater.inflate((fav ? R.layout.fav_stop_layout
-					: R.layout.hist_stop_layout), null);
+			LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			v = inflater.inflate((fav ? R.layout.fav_stop_layout : R.layout.hist_stop_layout), null);
 		}
 
 		final Stop curStop = getItem(position);

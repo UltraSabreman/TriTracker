@@ -10,15 +10,17 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.widget.Toast;
 
-import com.example.tritracker.activities.StopListFragment.checkStops;
+import com.example.tritracker.json.JSONRequestManger.checkStops;
 import com.example.tritracker.json.JSONResult;
 
 public class Util {
 	public static Stack<Class<?>> parents = new Stack<Class<?>>();
 	private static Toast msg;
 	private static Context c;
+	public static PopUp wait;
 	
 	public static enum ListType {Favorites, History, Busses};
 
@@ -121,6 +123,21 @@ public class Util {
 	}
 
 	
+	public static void creatDiag(final Activity act) {
+		act.runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				act.startActivity(new Intent(act, PopUp.class));
+			}
+		});
+	}
+	
+	public static void hideDiag() {
+		if (wait != null) {
+			wait.finish();
+			wait = null;
+		}
+	}
 
 	public static void messageDiag(final Activity act, final checkStops myFunc,
 			final String title, final String msg) {
@@ -128,7 +145,7 @@ public class Util {
 			@Override
 			public void run() {
 				AlertDialog.Builder builder = new AlertDialog.Builder(act);
-		
+				
 				builder.setTitle(title).setMessage(msg);
 				builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int id) {

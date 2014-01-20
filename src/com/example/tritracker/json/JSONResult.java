@@ -34,6 +34,15 @@ public class JSONResult {
 			public String dir;
 			public String desc;
 			public int locid;
+			public Route[] route;
+			public double lng;
+			public double lat;
+			
+			public class Route {
+				public String desc;
+				public int route;
+				public String type;
+			}
 		}
 
 		public class Arrival {
