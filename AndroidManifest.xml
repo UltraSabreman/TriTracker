@@ -52,7 +52,8 @@
 
 		<activity
 			android:name="com.example.tritracker.activities.MainActivity"
-			android:windowSoftInputMode="stateHidden" >
+			android:windowSoftInputMode="stateHidden" 
+			android:launchMode= "singleInstance">
 			<intent-filter>
 				<action
 					android:name="android.intent.action.MAIN" />
@@ -82,7 +83,6 @@
 		</activity>
 		<activity
 			android:name="com.example.tritracker.PopUp"
-			android:label="@string/title_activity_pop_up" 
 			android:theme="@android:style/Theme.Holo.Light.Dialog.NoActionBar" 
 			android:excludeFromRecents="true">
 		</activity>

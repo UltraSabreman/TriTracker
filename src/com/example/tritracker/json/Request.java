@@ -16,13 +16,17 @@ import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 
-import com.example.tritracker.Util.JSONcallback;
 import com.google.gson.Gson;
 
-public class JSONRequest extends Thread {
+public class Request <T> extends Thread {
 	private int error = 0;
 	private String url = "";
-	private JSONcallback callback;
+	private JSONcallback<T> callback;
+	private final Class<T> type;
+
+	public interface JSONcallback <T> {
+		public void run(T r, int error);
+	}
 	
 	public void run() {
 		final HttpParams httpParams = new BasicHttpParams();
@@ -54,19 +58,20 @@ public class JSONRequest extends Thread {
 		}
 
 		if (callback != null) {
-			JSONResult result = null;
+			T result = null;
 			
 			if (responseString != null)
-				result = new Gson().fromJson(responseString, JSONResult.class);		
+				result = new Gson().fromJson(responseString, type);		
 			
 			callback.run(result, error);
 		}
 	}
 
-	public JSONRequest(JSONcallback call, String url) {
+	public Request(Class<T> type, JSONcallback<T> call, String url) {
 		this.url = url;
 		this.callback = call;
-		this.setName("JSON Request");
+		this.type = type;
+		this.setName("JSON Request - " + type.toString());
 	}
 	
 	public boolean hasFailed() {

@@ -13,8 +13,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.widget.Toast;
 
-import com.example.tritracker.json.JSONRequestManger.checkStops;
-import com.example.tritracker.json.JSONResult;
+import com.example.tritracker.json.ForgroundRequestManager.checkStops;
 
 public class Util {
 	public static Stack<Class<?>> parents = new Stack<Class<?>>();
@@ -22,12 +21,7 @@ public class Util {
 	private static Context c;
 	public static PopUp wait;
 	
-	public static enum ListType {Favorites, History, Busses};
-
-	public interface JSONcallback {
-		public void run(JSONResult r, int error);
-	}
-	
+	public static enum ListType {Favorites, History, Busses};	
 	public static enum TimeType { Second, Minute, Hour, Day };
 	
 	public static long getTimeFromDate(Date d, TimeType type) {

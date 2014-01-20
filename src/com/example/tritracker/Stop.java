@@ -7,8 +7,9 @@ import java.util.Iterator;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.example.tritracker.json.JSONResult;
-import com.example.tritracker.json.JSONResult.ResultSet.Location.Route;
+import com.example.tritracker.json.ResultArrival;
+import com.example.tritracker.json.ResultMap;
+import com.example.tritracker.json.ResultMap.ResultSet.Location.Route;
 import com.google.gson.annotations.Expose;
 //make me more specific
 //import android.content.
@@ -29,7 +30,15 @@ public class Stop implements Parcelable {
 	public ArrayList<String> Routes = new ArrayList<String>();
 	public ArrayList<Alert> Alerts = new ArrayList<Alert>();
 
-	public Stop(JSONResult.ResultSet.Location l) {
+	public Stop(ResultArrival.ResultSet.Location l) {
+		Name = l.desc;
+		StopID = l.locid;
+		Direction = l.dir;
+		Latitude = l.lat;
+		Longitude = l.lng;
+	}
+	
+	public Stop(ResultMap.ResultSet.Location l) {
 		Name = l.desc;
 		StopID = l.locid;
 		Direction = l.dir;

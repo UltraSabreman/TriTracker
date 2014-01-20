@@ -30,8 +30,8 @@ import com.example.tritracker.Util;
 import com.example.tritracker.Util.ListType;
 import com.example.tritracker.activities.MainService.LocalBinder;
 import com.example.tritracker.arrayadaptors.StopArrayAdaptor;
-import com.example.tritracker.json.JSONRequestManger;
-import com.example.tritracker.json.JSONRequestManger.ResultCallback;
+import com.example.tritracker.json.ForgroundRequestManager;
+import com.example.tritracker.json.ForgroundRequestManager.ResultCallback;
 import com.example.tritracker.notmycode.SwipeDismissListViewTouchListener;
 import com.example.tritracker.notmycode.UndoBarController;
 import com.example.tritracker.notmycode.UndoBarController.UndoListener;
@@ -113,7 +113,7 @@ public class StopListFragment extends Fragment implements UndoListener {
 	
 	private void getJson(int stop) {
 		Util.creatDiag(getActivity());
-		ResultCallback call = new JSONRequestManger.ResultCallback() { 
+		ResultCallback call = new ForgroundRequestManager.ResultCallback() { 
 			public void run(Stop s) {
 				getActivity().runOnUiThread(new Runnable() {
 					@Override
@@ -132,7 +132,7 @@ public class StopListFragment extends Fragment implements UndoListener {
 			}
 		};
 		
-		new JSONRequestManger(theService, call, getActivity(), getActivity().getApplicationContext(), stop).start();
+		new ForgroundRequestManager(theService, call, getActivity(), getActivity().getApplicationContext(), stop).start();
 		
 	}
 

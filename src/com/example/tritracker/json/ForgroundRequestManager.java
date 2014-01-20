@@ -11,10 +11,9 @@ import com.example.tritracker.Buss;
 import com.example.tritracker.R;
 import com.example.tritracker.Stop;
 import com.example.tritracker.Util;
-import com.example.tritracker.Util.JSONcallback;
 import com.example.tritracker.activities.MainService;
 
-public class JSONRequestManger extends Thread {
+public class ForgroundRequestManager extends Thread {
 	private int theStop = 0;
 	private MainService service = null;
 	private ResultCallback testBack = null;
@@ -28,22 +27,15 @@ public class JSONRequestManger extends Thread {
 		public void run(Stop theStop);
 	}
 
-	public void run() {
-
-		JSONcallback fCall = new JSONcallback() {
-			public void run(JSONResult r, int error) {
-					parse(r, error);
-			}
-		};
-		JSONcallback bCall = new JSONcallback() {
-			public void run(JSONResult r, int error) {
-					service.proccesBackground(r);
-			}
-		};
-		
+	public void run() {		
 		boolean shouldNotViewStop = false;
 		try {
-			JSONRequest tempF = new JSONRequest(fCall,
+			Request<ResultArrival> tempF = new Request<ResultArrival>(ResultArrival.class,
+					new Request.JSONcallback<ResultArrival>() {
+						public void run(ResultArrival r, int error) {
+								parse(r, error);
+						}
+					},
 					"http://developer.trimet.org/ws/V1/arrivals?locIDs="
 							+ String.valueOf(theStop) + "&json=true&appID="
 							+ context.getString(R.string.appid));
@@ -55,8 +47,13 @@ public class JSONRequestManger extends Thread {
 			shouldNotViewStop = tempF.hasFailed();
 
 			if (!shouldNotViewStop) {
-				JSONRequest test = new JSONRequest(bCall,
-								"http://developer.trimet.org/ws/V1/detours?routes="
+				Request<ResultDetour> test = new Request<ResultDetour>(ResultDetour.class,
+						new Request.JSONcallback<ResultDetour>() {
+							public void run(ResultDetour r, int error) {
+								service.proccessDetours(r);
+							}
+						},
+						"http://developer.trimet.org/ws/V1/detours?routes="
 								+ Util.getListOfLines(service.getStop(theStop), false) + "&json=true&appID="
 								+ context.getString(R.string.appid));
 
@@ -138,7 +135,7 @@ public class JSONRequestManger extends Thread {
 	}
 	
 	
-	public JSONRequestManger(MainService service, ResultCallback func, Activity a, Context c, int stop) {
+	public ForgroundRequestManager(MainService service, ResultCallback func, Activity a, Context c, int stop) {
 		this.theStop = stop;
 		this.service = service;
 		this.testBack = func;
@@ -147,14 +144,14 @@ public class JSONRequestManger extends Thread {
 		this.setName("JSON Request Manager");
 	}
 	
-	public void parse(JSONResult r, int error) {
+	public void parse(ResultArrival r, int error) {
 		if (r == null) {
 			returnError = error;
 			returnStop = new Stop(theStop);
 			return;
 		}
 		
-		JSONResult.ResultSet rs = r.resultSet;
+		ResultArrival.ResultSet rs = r.resultSet;
 		
 		if (rs.errorMessage != null) {
 			returnError = -1;
@@ -166,7 +163,7 @@ public class JSONRequestManger extends Thread {
 		readStop.LastAccesed = new Date();
 
 		if (rs.arrival != null)
-			for (JSONResult.ResultSet.Arrival a : rs.arrival)
+			for (ResultArrival.ResultSet.Arrival a : rs.arrival)
 				readStop.Busses.add(new Buss(a));
 		else
 			readStop.Busses = null;

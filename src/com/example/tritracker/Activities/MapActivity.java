@@ -17,14 +17,13 @@ import android.view.MenuItem;
 import com.example.tritracker.R;
 import com.example.tritracker.Stop;
 import com.example.tritracker.Util;
-import com.example.tritracker.Util.JSONcallback;
 import com.example.tritracker.activities.MainService.LocalBinder;
 import com.example.tritracker.arrayadaptors.MarkerPopupAdaptor;
-import com.example.tritracker.json.JSONRequest;
-import com.example.tritracker.json.JSONRequestManger;
-import com.example.tritracker.json.JSONRequestManger.ResultCallback;
-import com.example.tritracker.json.JSONResult;
-import com.example.tritracker.json.JSONResult.ResultSet;
+import com.example.tritracker.json.ForgroundRequestManager;
+import com.example.tritracker.json.ForgroundRequestManager.ResultCallback;
+import com.example.tritracker.json.Request;
+import com.example.tritracker.json.ResultMap;
+import com.example.tritracker.json.ResultMap.ResultSet;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.location.LocationClient;
@@ -53,12 +52,13 @@ public class MapActivity extends Activity implements GooglePlayServicesClient.Co
 	final double radius = 2640 * 0.3408;// 1/2 mile in meeters.
 	private ArrayList<Marker> stops = new ArrayList<Marker>();
 	
+	private static LatLng oldPos = null;
+	
 	@Override 
 	public void onStart() {
 		super.onStart();
 		Intent intent = new Intent(this, MainService.class);
-        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-        
+        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);     
 	}
 	
     @Override
@@ -67,6 +67,16 @@ public class MapActivity extends Activity implements GooglePlayServicesClient.Co
         mLocationClient.disconnect();
         if (bound) 
             unbindService(mConnection);
+                
+        if (searchMarker != null) {
+        	oldPos = searchMarker.getPosition();
+        	searchMarker.remove();
+        } else
+        	oldPos = null;
+        if (searchCircle != null)
+        	searchCircle.remove();
+        
+       
     }
     
     private ServiceConnection mConnection = new ServiceConnection() {
@@ -140,9 +150,16 @@ public class MapActivity extends Activity implements GooglePlayServicesClient.Co
 	@Override
 	public void onConnected(Bundle arg0) {		
 		GoogleMap map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
-		
-        Location test = mLocationClient.getLastLocation();
-        LatLng myPos = new LatLng(test.getLatitude(), test.getLongitude());//-33.867, 151.206);
+	
+        LatLng myPos;//
+        if (oldPos != null) {
+        	myPos = oldPos;
+        	oldPos = null;
+        } else {
+            Location test = mLocationClient.getLastLocation();
+        	myPos = new LatLng(test.getLatitude(), test.getLongitude());//-33.867, 151.206);
+        }
+        
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(myPos, 15));
         
         
@@ -226,7 +243,7 @@ public class MapActivity extends Activity implements GooglePlayServicesClient.Co
 	
 	private void getJson(int stop) {
 		Util.creatDiag(this);
-		ResultCallback call = new JSONRequestManger.ResultCallback() { 
+		ResultCallback call = new ForgroundRequestManager.ResultCallback() { 
 			public void run(Stop s) {
 				runOnUiThread(new Runnable() {
 					@Override
@@ -245,7 +262,7 @@ public class MapActivity extends Activity implements GooglePlayServicesClient.Co
 			}
 		};
 		
-		new JSONRequestManger(theService, call, this, getApplicationContext(), stop).start();
+		new ForgroundRequestManager(theService, call, this, getApplicationContext(), stop).start();
 		
 	}
 	
@@ -256,17 +273,20 @@ public class MapActivity extends Activity implements GooglePlayServicesClient.Co
 		stops.clear();
 		
 		System.out.println(searchMarker.getPosition().toString());
-		new JSONRequest(new JSONcallback() {
-			@Override
-			public void run(final JSONResult r, final int error) {
-				runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						proccesLocations(r, error);
-					}
-				});
-			}
-		}, "http://developer.trimet.org/ws/V1/stops?ll="
+		
+		new Request<ResultMap>(ResultMap.class, 
+			new Request.JSONcallback<ResultMap>() {
+				@Override
+				public void run(final ResultMap r, final int error) {
+					runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							proccesLocations(r, error);
+						}
+					});
+				}
+			}, 
+			"http://developer.trimet.org/ws/V1/stops?ll="
 			+ searchMarker.getPosition().longitude + "," + searchMarker.getPosition().latitude
 			+ "&meters=" + radius
 			+ "&showRoutes=true"
@@ -275,12 +295,12 @@ public class MapActivity extends Activity implements GooglePlayServicesClient.Co
 		
 	}
 	
-	public void proccesLocations(JSONResult r, int error){
+	public void proccesLocations(ResultMap r, int error){
 		if (r == null) 
 			return;
 		
 		
-		JSONResult.ResultSet rs = r.resultSet;
+		ResultMap.ResultSet rs = r.resultSet;
 		
 		if (rs.errorMessage != null) //TODO: handle me
 			return;
@@ -292,6 +312,7 @@ public class MapActivity extends Activity implements GooglePlayServicesClient.Co
 
 		if (toAdd.size() != 0) {
 			GoogleMap map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
+			if (map == null) return;
 			BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.ic_pin_blue);
 			for (Stop s : toAdd) {
 				stops.add(map.addMarker(new MarkerOptions()

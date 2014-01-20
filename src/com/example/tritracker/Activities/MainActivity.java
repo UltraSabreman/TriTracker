@@ -135,7 +135,9 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
 					});
 			return true;
 		case R.id.action_settings:
-			//startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
+			startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
+			return true;
+		case R.id.action_map:
 			startActivity(new Intent(getApplicationContext(), MapActivity.class));
 			return true;
 		default:

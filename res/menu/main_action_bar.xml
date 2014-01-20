@@ -12,11 +12,11 @@
 		android:showAsAction="always"
 		android:title="@string/action_order_stop"/>
 	
-	<!-- <item
-		android:id="@+id/action_search"
+	 <item
+		android:id="@+id/action_map"
 		android:icon="@drawable/ic_action_locate"
-		android:showAsAction="ifRoom"
-		android:title="@string/action_search"/>-->
+		android:showAsAction="always"
+		android:title="@string/action_map"/>
 
 	<item
 		android:id="@+id/action_settings"

@@ -5,7 +5,7 @@ import java.util.Date;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.example.tritracker.json.JSONResult;
+import com.example.tritracker.json.ResultArrival;
 import com.google.gson.annotations.Expose;
 
 //import java.util.Vector;
@@ -20,7 +20,7 @@ public class Buss implements Parcelable {
 	@Expose	public Date ScheduledTime;
 	public NotificationHandler notification = null;
 
-	public Buss(JSONResult.ResultSet.Arrival a) {
+	public Buss(ResultArrival.ResultSet.Arrival a) {
 		Route = a.route;
 		Detouring = a.detour;
 		Status = a.status;

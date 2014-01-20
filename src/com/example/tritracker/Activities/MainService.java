@@ -26,10 +26,10 @@ import com.example.tritracker.Stop.Alert;
 import com.example.tritracker.Timer;
 import com.example.tritracker.Timer.onUpdate;
 import com.example.tritracker.Util;
-import com.example.tritracker.Util.JSONcallback;
 import com.example.tritracker.Util.ListType;
-import com.example.tritracker.json.JSONRequest;
-import com.example.tritracker.json.JSONResult;
+import com.example.tritracker.json.Request;
+import com.example.tritracker.json.ResultArrival;
+import com.example.tritracker.json.ResultDetour;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
@@ -187,18 +187,18 @@ public class MainService extends Service {
 			stops += String.valueOf(s.StopID) + ",";
 			busses += Util.getListOfLines(s, false) + ",";
 		}
-
-		JSONcallback tempCall = new JSONcallback() {
-			public void run(JSONResult r, int error) {
-				if (error == 0)
-					proccesBackground(r);
-			}
-		};
+		
 		
 		if (stops.compareTo("") != 0) {
 			stops = stops.substring(0, stops.length() - 1);
 			
-			new JSONRequest(tempCall,
+			new Request<ResultArrival>(ResultArrival.class, 
+					new Request.JSONcallback<ResultArrival>() {
+						public void run(ResultArrival r, int error) {
+							if (error == 0)
+								proccessArrivals(r);
+						}
+					},
 					"http://developer.trimet.org/ws/V1/arrivals?locIDs="
 							+ stops + "&json=true&appID="
 							+ c.getString(R.string.appid)).start();
@@ -206,7 +206,13 @@ public class MainService extends Service {
 		if (busses.compareTo("") != 0) {
 			busses = busses.substring(0, busses.length() - 1);
 
-			new JSONRequest(tempCall,
+			new Request<ResultDetour>(ResultDetour.class, 
+					new Request.JSONcallback<ResultDetour>() {
+						public void run(ResultDetour r, int error) {
+							if (error == 0)
+								proccessDetours(r);
+						}
+					},
 					"http://developer.trimet.org/ws/V1/detours?routes="
 							+ busses + "&json=true&appID="
 							+ c.getString(R.string.appid)).start();
@@ -214,7 +220,7 @@ public class MainService extends Service {
 	}
 	
 	
-	public void proccesBackground(JSONResult r) {
+	public void proccessDetours(ResultDetour r) {
 		if (r == null || r.resultSet == null)
 			return;
 
@@ -222,7 +228,7 @@ public class MainService extends Service {
 			for (Stop s : stopData.StopList)
 				s.resetAlerts();
 
-			for (JSONResult.ResultSet.Detour d : r.resultSet.detour) {
+			for (ResultDetour.ResultSet.Detour d : r.resultSet.detour) {
 
 				ArrayList<String> stopIds = new ArrayList<String>();
 				Matcher m = Pattern.compile("Stop ID ([0-9]+)").matcher(d.desc);
@@ -233,26 +239,27 @@ public class MainService extends Service {
 				for (String si : stopIds) {
 					Stop hist = getStop(Integer.parseInt(si));
 					if (hist != null) {
-						hist.Alerts.add(new Alert(d.desc, Integer.parseInt(d.route[0].route))); // Is this safe?
+						hist.Alerts.add(new Alert(d.desc, d.route[0].route));
 					}
 				}
 			}
 			return;
 		}
-
+	}
+	public void proccessArrivals(ResultArrival r) {
 		if (r == null || r.resultSet == null || r.resultSet.errorMessage != null)
 			return;
 
-		JSONResult.ResultSet rs = r.resultSet;
+		ResultArrival.ResultSet rs = r.resultSet;
 		ArrayList<Stop> stops = new ArrayList<Stop>();
 		if (rs.location != null) {
-			for (JSONResult.ResultSet.Location l : rs.location) {
+			for (ResultArrival.ResultSet.Location l : rs.location) {
 				stops.add(new Stop(l));
 			}
 	
 			for (Stop s : stops) {
 				if (rs.arrival != null)
-					for (JSONResult.ResultSet.Arrival a : rs.arrival) {
+					for (ResultArrival.ResultSet.Arrival a : rs.arrival) {
 						if (s.StopID == a.locid)
 							s.Busses.add(new Buss(a));
 					}
