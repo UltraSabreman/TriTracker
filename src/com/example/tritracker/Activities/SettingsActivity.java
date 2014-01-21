@@ -65,7 +65,23 @@ public class SettingsActivity extends Activity {
     				return false;
     			}
     		});
-            
+    		
+    		np = (EditText) findViewById(R.id.Radius);
+    		np.setText(String.valueOf(Math.round(theService.getMapRadius() / 0.3408)));
+
+    		np.setOnEditorActionListener(new OnEditorActionListener() {
+    			public boolean onEditorAction(TextView v, int actionId,
+    					KeyEvent event) {
+    				if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER))
+    						|| (actionId == EditorInfo.IME_ACTION_DONE)) {
+    					EditText edit = (EditText) findViewById(R.id.Radius);
+
+    					theService.setMapRadius(Double.parseDouble(edit.getText().toString()) * 0.3408);
+    				}
+    				return false;
+    			}
+    		});
+    		 
             bound = true;
         }
 
@@ -80,7 +96,7 @@ public class SettingsActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		// setTheme(android.R.style.Theme_Holo_);
-		setContentView(R.layout.activity_settings);
+		setContentView(R.layout.settings_layout);
 
 		Util.parents.push(getClass());
 
@@ -93,13 +109,21 @@ public class SettingsActivity extends Activity {
 				this,
 				null,
 				"Auto-refresh delay",
-				"The delay (in seconds) at witch the app will refresh all stops. The higher the number, the less data-hungry it will be. Set to 0 to dissable");
+				"The delay (in seconds) at witch the app will refresh all stops. The higher the number, the less data-hungry it will be. Set to 0 to dissable.");
+	}
+	
+	public void helpRadius(View view) {
+		Util.messageDiag(
+				this,
+				null,
+				"Map Search Radius",
+				"When searching for nearby stops, the map will use this value to determine how far to look. 2048 feet is equal to a half a mile.");
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.settings, menu);
+		getMenuInflater().inflate(R.menu.settings_action_bar, menu);
 		return true;
 	}
 

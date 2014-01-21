@@ -7,9 +7,9 @@ import java.util.Iterator;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.example.tritracker.json.ResultArrival;
-import com.example.tritracker.json.ResultMap;
-import com.example.tritracker.json.ResultMap.ResultSet.Location.Route;
+import com.example.tritracker.json.ArrivalJSONResult;
+import com.example.tritracker.json.MapJSONResult;
+import com.example.tritracker.json.MapJSONResult.ResultSet.Location.Route;
 import com.google.gson.annotations.Expose;
 //make me more specific
 //import android.content.
@@ -25,12 +25,12 @@ public class Stop implements Parcelable {
 	
 	@Expose	public ArrayList<Buss> Busses = new ArrayList<Buss>();
 	
-	public double Latitude = 0;
-	public double Longitude = 0; 
+	@Expose public double Latitude = 0;
+	@Expose public double Longitude = 0; 
 	public ArrayList<String> Routes = new ArrayList<String>();
 	public ArrayList<Alert> Alerts = new ArrayList<Alert>();
 
-	public Stop(ResultArrival.ResultSet.Location l) {
+	public Stop(ArrivalJSONResult.ResultSet.Location l) {
 		Name = l.desc;
 		StopID = l.locid;
 		Direction = l.dir;
@@ -38,7 +38,7 @@ public class Stop implements Parcelable {
 		Longitude = l.lng;
 	}
 	
-	public Stop(ResultMap.ResultSet.Location l) {
+	public Stop(MapJSONResult.ResultSet.Location l) {
 		Name = l.desc;
 		StopID = l.locid;
 		Direction = l.dir;
@@ -167,6 +167,8 @@ public class Stop implements Parcelable {
 		out.writeLong(LastAccesed.getTime());
 		out.writeInt(inHistory ? 1 : 0);
 		out.writeInt(inFavorites ? 1 : 0);
+		out.writeDouble(Latitude);
+		out.writeDouble(Longitude);
 		
 		out.writeList(Busses);
 		out.writeList(Alerts);
@@ -179,6 +181,8 @@ public class Stop implements Parcelable {
 		LastAccesed = new Date(in.readLong());
 		inHistory = in.readInt() == 1 ? true : false;
 		inFavorites = in.readInt() == 1 ? true : false;
+		Latitude = in.readDouble();
+		Longitude = in.readDouble();
 		
 		Busses = new ArrayList<Buss>();
 		in.readList(Busses, Buss.class.getClassLoader());

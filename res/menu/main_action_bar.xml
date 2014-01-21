@@ -1,16 +1,4 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
-
-	<!--  <item
-		android:id="@+id/action_history"
-		android:icon="@drawable/ic_action_reply"
-		android:showAsAction="always"
-		android:title="@string/action_history"/>-->
-	
-	<item
-		android:id="@+id/action_sort"
-		android:icon="@drawable/ic_action_sort_by_size"
-		android:showAsAction="always"
-		android:title="@string/action_order_stop"/>
 	
 	 <item
 		android:id="@+id/action_map"

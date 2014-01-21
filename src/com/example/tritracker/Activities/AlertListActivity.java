@@ -11,17 +11,17 @@ import android.widget.ListView;
 import com.example.tritracker.R;
 import com.example.tritracker.Stop;
 import com.example.tritracker.Util;
-import com.example.tritracker.arrayadaptors.AlertArrayAdaptor;
+import com.example.tritracker.arrayadaptors.AlertListArrayAdaptor;
 
 public class AlertListActivity extends Activity {
-	AlertArrayAdaptor ar;
+	AlertListArrayAdaptor ar;
 	
 	private Stop curStop;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_alert_list);
+		setContentView(R.layout.alert_list_layout);
 		Util.parents.push(getClass());
 
 		getActionBar().setDisplayHomeAsUpEnabled(true);
@@ -29,7 +29,7 @@ public class AlertListActivity extends Activity {
 		Bundle extras = getIntent().getExtras();
 		curStop = extras.getParcelable("stop");
 
-		ar = new AlertArrayAdaptor(getApplicationContext(),	curStop.Alerts);
+		ar = new AlertListArrayAdaptor(getApplicationContext(),	curStop.Alerts);
 
 		((ListView) findViewById(R.id.AlertList)).setAdapter(ar);
 	}
@@ -37,7 +37,7 @@ public class AlertListActivity extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.activity_alert_list, menu);
+		getMenuInflater().inflate(R.menu.alert_list_action_bar, menu);
 		return true;
 	}
 

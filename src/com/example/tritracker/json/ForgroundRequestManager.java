@@ -30,9 +30,9 @@ public class ForgroundRequestManager extends Thread {
 	public void run() {		
 		boolean shouldNotViewStop = false;
 		try {
-			Request<ResultArrival> tempF = new Request<ResultArrival>(ResultArrival.class,
-					new Request.JSONcallback<ResultArrival>() {
-						public void run(ResultArrival r, int error) {
+			Request<ArrivalJSONResult> tempF = new Request<ArrivalJSONResult>(ArrivalJSONResult.class,
+					new Request.JSONcallback<ArrivalJSONResult>() {
+						public void run(ArrivalJSONResult r, int error) {
 								parse(r, error);
 						}
 					},
@@ -47,9 +47,9 @@ public class ForgroundRequestManager extends Thread {
 			shouldNotViewStop = tempF.hasFailed();
 
 			if (!shouldNotViewStop) {
-				Request<ResultDetour> test = new Request<ResultDetour>(ResultDetour.class,
-						new Request.JSONcallback<ResultDetour>() {
-							public void run(ResultDetour r, int error) {
+				Request<DetourJSONResult> test = new Request<DetourJSONResult>(DetourJSONResult.class,
+						new Request.JSONcallback<DetourJSONResult>() {
+							public void run(DetourJSONResult r, int error) {
 								service.proccessDetours(r);
 							}
 						},
@@ -144,14 +144,14 @@ public class ForgroundRequestManager extends Thread {
 		this.setName("JSON Request Manager");
 	}
 	
-	public void parse(ResultArrival r, int error) {
+	public void parse(ArrivalJSONResult r, int error) {
 		if (r == null) {
 			returnError = error;
 			returnStop = new Stop(theStop);
 			return;
 		}
 		
-		ResultArrival.ResultSet rs = r.resultSet;
+		ArrivalJSONResult.ResultSet rs = r.resultSet;
 		
 		if (rs.errorMessage != null) {
 			returnError = -1;
@@ -163,7 +163,7 @@ public class ForgroundRequestManager extends Thread {
 		readStop.LastAccesed = new Date();
 
 		if (rs.arrival != null)
-			for (ResultArrival.ResultSet.Arrival a : rs.arrival)
+			for (ArrivalJSONResult.ResultSet.Arrival a : rs.arrival)
 				readStop.Busses.add(new Buss(a));
 		else
 			readStop.Busses = null;

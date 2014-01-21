@@ -1,7 +1,5 @@
 package com.example.tritracker.activities;
 
-import java.util.ArrayList;
-
 import android.app.ActionBar;
 import android.content.ComponentName;
 import android.content.Context;
@@ -11,16 +9,20 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.view.ContextMenu;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ContextMenu.ContextMenuInfo;
+import android.view.View.OnCreateContextMenuListener;
+import android.view.View.OnLongClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.RelativeLayout;
 
 import com.example.tritracker.R;
-import com.example.tritracker.Sorter;
-import com.example.tritracker.Stop;
 import com.example.tritracker.Timer;
 import com.example.tritracker.Util;
-import com.example.tritracker.Util.ListType;
 import com.example.tritracker.activities.MainService.LocalBinder;
 
 public class MainActivity extends FragmentActivity implements ActionBar.OnNavigationListener {
@@ -28,8 +30,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
 	private static final String STATE_SELECTED_NAVIGATION_ITEM = "selected_navigation_item";
 	private static boolean started = false;
 	
-	private StopListFragment favFrag;
-	private StopListFragment histFrag;
+	private StopListActivity favFrag;
+	private StopListActivity histFrag;
 	
 	private MainService theService;
 	private boolean bound;
@@ -37,12 +39,11 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+		setContentView(R.layout.main_layout);
 		
 		Util.parents.push(getClass());
-		
 		Util.initToast(getApplicationContext());
-
+		
 		// Set up the action bar to show a dropdown list.
 		final ActionBar actionBar = getActionBar();
 		actionBar.setDisplayShowTitleEnabled(false);
@@ -120,20 +121,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
 		// Handle presses on the action bar items
 		//mUndoBarController.hideUndoBar(false);
 		switch (item.getItemId()) {
-		case R.id.action_sort:
-			final int selction = getActionBar().getSelectedNavigationIndex();
-			final ArrayList<Stop> tempStops = selction == 0 ? theService.getFavorties() : theService.getHistory();
-			new Sorter<Stop>(Stop.class, theService).sortUI(this, selction == 0 ? ListType.Favorites : ListType.History,	tempStops,
-					new Timer.onUpdate() {
-						public void run() {
-							if (selction == 0)
-								favFrag.update(tempStops);
-							else
-								histFrag.update(tempStops);
-							theService.doUpdate(false);
-						}
-					});
-			return true;
 		case R.id.action_settings:
 			startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
 			return true;
@@ -157,10 +144,10 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
 			}
 		
 		if (position == 0) {
-			favFrag = new StopListFragment(theService, true);
+			favFrag = new StopListActivity(theService, true);
 			getSupportFragmentManager().beginTransaction().replace(R.id.container, (Fragment)favFrag).commit();
 		} else {
-			histFrag = new StopListFragment(theService, false);
+			histFrag = new StopListActivity(theService, false);
 			getSupportFragmentManager().beginTransaction().replace(R.id.container, (Fragment)histFrag).commit();
 		}
 		

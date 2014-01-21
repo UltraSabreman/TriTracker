@@ -23,9 +23,15 @@
 	<string name="title_activity_loading_overlay">LoadingOverlay</string>
 	<string name="fav_desc">Add/Remove from favorites</string>
 	<string name="action_create_reminder">Set Arrival Reminder</string>
+	<string name="action_reminder">Set/Edit Reminder</string>
+	<string name="action_view_alerts">View Relevant Alerts</string>
 	<string name="action_edit_reminder">Edit Arrival Reminder</string>
 	<string name="action_cancel_reminder">Cancel Arrival Reminder</string>
+	<string name="action_sort_list">Sort this list</string>
+	<string name="action_cancel_reminder">Cancel Arrival Reminder</string>
+	<string name="action_cancel_reminder">Cancel Arrival Reminder</string>
 	<string name="action_map">Find Nearby Stops</string>
+	<string name="action_find_stops">Show This Stop on the map</string>
 	<string name="content">A Picture</string>
 	<string name="no_arrivals">No arrival information available.</string>
 	<string name="title_activity_alert_details">Alert Details</string>
@@ -33,6 +39,8 @@
 	<string name="title_activity_settings">Settings</string>
 	<string name="refresh_label">Auto-refresh delay: </string>
 	<string name="refresh_hint">Delay in Seconds</string>
+	<string name="radius_label">Map Search Radius: </string>
+	<string name="radius_hint">Radius in Feet</string>
 	<string name="title_activity_favorites">Favorites</string>
 	<string name="title_activity_undo_popup">UndoPopup</string>
 	<string name="title_activity_test">TestActivity</string>

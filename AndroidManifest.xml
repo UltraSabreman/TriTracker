@@ -52,8 +52,7 @@
 
 		<activity
 			android:name="com.example.tritracker.activities.MainActivity"
-			android:windowSoftInputMode="stateHidden" 
-			android:launchMode= "singleInstance">
+			android:windowSoftInputMode="stateHidden" >
 			<intent-filter>
 				<action
 					android:name="android.intent.action.MAIN" />
@@ -63,7 +62,7 @@
 			</intent-filter>
 		</activity>
 		<activity
-			android:name="com.example.tritracker.activities.BussListActivity"
+			android:name="com.example.tritracker.activities.StopDetailsActivity"
 			android:windowSoftInputMode="stateHidden" >
 			<meta-data
 				android:name="android.support.PARENT_ACTIVITY"
@@ -71,20 +70,24 @@
 		</activity>
 		<activity
 			android:name="com.example.tritracker.activities.AlertListActivity"
-			android:label="@string/title_activity_alert_details" >
+			android:label="@string/title_activity_alert_details" 
+			android:windowSoftInputMode="stateHidden" >
 		</activity>
 		<activity
 			android:name="com.example.tritracker.activities.SettingsActivity"
-			android:label="@string/title_activity_settings" >
+			android:label="@string/title_activity_settings" 
+			android:windowSoftInputMode="stateHidden" >
 		</activity>
 		<activity
 			android:name="com.example.tritracker.activities.MapActivity"
-			android:label="@string/title_activity_map" >
+			android:label="@string/title_activity_map" 
+			android:windowSoftInputMode="stateHidden" >
 		</activity>
 		<activity
-			android:name="com.example.tritracker.PopUp"
+			android:name="com.example.tritracker.activities.SpinnerPopupActivity"
 			android:theme="@android:style/Theme.Holo.Light.Dialog.NoActionBar" 
-			android:excludeFromRecents="true">
+			android:excludeFromRecents="true"
+			android:windowSoftInputMode="stateHidden" >
 		</activity>
 	</application>
 

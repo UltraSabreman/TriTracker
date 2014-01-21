@@ -28,8 +28,8 @@ import com.example.tritracker.Timer.onUpdate;
 import com.example.tritracker.Util;
 import com.example.tritracker.Util.ListType;
 import com.example.tritracker.json.Request;
-import com.example.tritracker.json.ResultArrival;
-import com.example.tritracker.json.ResultDetour;
+import com.example.tritracker.json.ArrivalJSONResult;
+import com.example.tritracker.json.DetourJSONResult;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
@@ -97,6 +97,14 @@ public class MainService extends Service {
 			stopData.HistOrder = order;
 		else if (list == ListType.Busses)
 			stopData.StopOrder = order;
+	}
+	
+	public double getMapRadius(){
+		return stopData.Radius;
+	}
+	
+	public void setMapRadius(double r) {
+		stopData.Radius = r;
 	}
 	
 	public void setDelay(int i) {
@@ -192,9 +200,9 @@ public class MainService extends Service {
 		if (stops.compareTo("") != 0) {
 			stops = stops.substring(0, stops.length() - 1);
 			
-			new Request<ResultArrival>(ResultArrival.class, 
-					new Request.JSONcallback<ResultArrival>() {
-						public void run(ResultArrival r, int error) {
+			new Request<ArrivalJSONResult>(ArrivalJSONResult.class, 
+					new Request.JSONcallback<ArrivalJSONResult>() {
+						public void run(ArrivalJSONResult r, int error) {
 							if (error == 0)
 								proccessArrivals(r);
 						}
@@ -206,9 +214,9 @@ public class MainService extends Service {
 		if (busses.compareTo("") != 0) {
 			busses = busses.substring(0, busses.length() - 1);
 
-			new Request<ResultDetour>(ResultDetour.class, 
-					new Request.JSONcallback<ResultDetour>() {
-						public void run(ResultDetour r, int error) {
+			new Request<DetourJSONResult>(DetourJSONResult.class, 
+					new Request.JSONcallback<DetourJSONResult>() {
+						public void run(DetourJSONResult r, int error) {
 							if (error == 0)
 								proccessDetours(r);
 						}
@@ -220,7 +228,7 @@ public class MainService extends Service {
 	}
 	
 	
-	public void proccessDetours(ResultDetour r) {
+	public void proccessDetours(DetourJSONResult r) {
 		if (r == null || r.resultSet == null)
 			return;
 
@@ -228,7 +236,7 @@ public class MainService extends Service {
 			for (Stop s : stopData.StopList)
 				s.resetAlerts();
 
-			for (ResultDetour.ResultSet.Detour d : r.resultSet.detour) {
+			for (DetourJSONResult.ResultSet.Detour d : r.resultSet.detour) {
 
 				ArrayList<String> stopIds = new ArrayList<String>();
 				Matcher m = Pattern.compile("Stop ID ([0-9]+)").matcher(d.desc);
@@ -246,20 +254,20 @@ public class MainService extends Service {
 			return;
 		}
 	}
-	public void proccessArrivals(ResultArrival r) {
+	public void proccessArrivals(ArrivalJSONResult r) {
 		if (r == null || r.resultSet == null || r.resultSet.errorMessage != null)
 			return;
 
-		ResultArrival.ResultSet rs = r.resultSet;
+		ArrivalJSONResult.ResultSet rs = r.resultSet;
 		ArrayList<Stop> stops = new ArrayList<Stop>();
 		if (rs.location != null) {
-			for (ResultArrival.ResultSet.Location l : rs.location) {
+			for (ArrivalJSONResult.ResultSet.Location l : rs.location) {
 				stops.add(new Stop(l));
 			}
 	
 			for (Stop s : stops) {
 				if (rs.arrival != null)
-					for (ResultArrival.ResultSet.Arrival a : rs.arrival) {
+					for (ArrivalJSONResult.ResultSet.Arrival a : rs.arrival) {
 						if (s.StopID == a.locid)
 							s.Busses.add(new Buss(a));
 					}
@@ -327,6 +335,7 @@ public class MainService extends Service {
 		@Expose public int StopOrder = 0;
 		@Expose public int RefreshDelay = 5;
 		@Expose public ArrayList<Stop> StopList = new ArrayList<Stop>();
+		@Expose public double Radius = 900;// 1/2 mile in meters.
 	}
 
 

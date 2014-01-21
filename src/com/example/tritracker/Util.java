@@ -13,13 +13,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.widget.Toast;
 
+import com.example.tritracker.activities.SpinnerPopupActivity;
 import com.example.tritracker.json.ForgroundRequestManager.checkStops;
 
 public class Util {
 	public static Stack<Class<?>> parents = new Stack<Class<?>>();
 	private static Toast msg;
 	private static Context c;
-	public static PopUp wait;
+	public static SpinnerPopupActivity wait;
 	
 	public static enum ListType {Favorites, History, Busses};	
 	public static enum TimeType { Second, Minute, Hour, Day };
@@ -121,7 +122,7 @@ public class Util {
 		act.runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				act.startActivity(new Intent(act, PopUp.class));
+				act.startActivity(new Intent(act, SpinnerPopupActivity.class));
 			}
 		});
 	}
