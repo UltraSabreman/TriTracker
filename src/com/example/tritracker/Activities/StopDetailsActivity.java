@@ -182,6 +182,7 @@ public class StopDetailsActivity extends Activity {
 			view.setOnLongClickListener(longc);
 			//layout.setOnLongClickListener(longc);
 			
+			
 			layout.setOnCreateContextMenuListener(new OnCreateContextMenuListener() {
 				@Override
 				public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
