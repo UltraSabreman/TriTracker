@@ -23,13 +23,13 @@
 		android:background="@color/TestColor"
 		android:layout_width="match_parent"
 		android:layout_height="1dp"
-		android:layout_above="@+id/UIStopInfo"/>
+		android:layout_above="@id/UIStopInfo"/>
 	
 	<TextView 
 		android:id="@+id/NoArrivals"
 		android:layout_width="fill_parent"
 		android:layout_height="fill_parent"
-		android:layout_above="@+id/UIStopInfo"
+		android:layout_above="@id/UIStopInfo"
 		android:text="@string/no_arrivals"
 		android:textSize="26sp"
 		android:textColor="@color/Red"
@@ -67,7 +67,7 @@
 			android:id="@+id/UIStopInfoDirection"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_below="@+id/UIStopInfoName" 
+			android:layout_below="@id/UIStopInfoName" 
 			android:textSize="16sp"
 			android:layout_centerHorizontal="true"
 			android:textColor="@android:color/darker_gray"/>

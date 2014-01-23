@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="fill_parent"
@@ -35,7 +34,7 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_alignParentLeft="true"
-			android:layout_toLeftOf="@+id/StopID"
+			android:layout_toLeftOf="@id/StopID"
 			android:ellipsize="marquee"
 			android:scrollHorizontally="true"
 	       	android:marqueeRepeatLimit ="marquee_forever" 
@@ -58,7 +57,7 @@
 			android:id="@+id/LineNames"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_below="@+id/StopName"
+			android:layout_below="@id/StopName"
 			android:maxLines="1"
 			android:textSize="12sp" 
 			android:layout_marginLeft="@dimen/activity_horizontal_margin"

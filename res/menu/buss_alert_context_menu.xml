@@ -2,7 +2,7 @@
 
 	<item
 		android:id="@+id/action_reminder"
-		android:title="@string/action_reminder">
+		android:title="@string/action_reminder"/>
 		
 		<item
 			android:id="@+id/action_create_reminder"
@@ -17,7 +17,6 @@
 			android:id="@+id/action_cancel_reminder"
 			android:title="@string/action_cancel_reminder"
 			android:visible="false"/>
-	</item>
 	
 	<item
 		android:id="@+id/action_view_alerts"

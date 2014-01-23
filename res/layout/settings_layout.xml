@@ -23,17 +23,16 @@
 		android:layout_height="20dp"
 		android:onClick="helpRefresh"
 		android:layout_alignParentRight="true"
-		android:layout_alignBottom="@+id/Label1"
+		android:layout_alignBottom="@+d/Label1"
 		android:src="@drawable/ic_action_help2"
-		android:contentDescription="@string/content"
-		/>
+		android:contentDescription="@string/content" />
 
 	<EditText
 		android:id="@+id/Delay"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:layout_centerHorizontal="true"
-		android:layout_below="@+id/Label1"
+		android:layout_below="@id/Label1"
 		android:hint="@string/refresh_hint"
 		android:inputType="number"/>
 	
@@ -52,17 +51,16 @@
 		android:layout_height="20dp"
 		android:onClick="helpRadius"
 		android:layout_alignParentRight="true"
-		android:layout_alignBottom="@+id/Label2"
+		android:layout_alignBottom="@id/Label2"
 		android:src="@drawable/ic_action_help2"
-		android:contentDescription="@string/content"
-		/>
+		android:contentDescription="@string/content" />
 
 	<EditText
 		android:id="@+id/Radius"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:layout_centerHorizontal="true"
-		android:layout_below="@+id/Label2"
+		android:layout_below="@id/Label2"
 		android:hint="@string/radius_hint"
 		android:inputType="number"/>
 
