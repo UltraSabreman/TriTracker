@@ -9,16 +9,9 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.view.ContextMenu;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ContextMenu.ContextMenuInfo;
-import android.view.View.OnCreateContextMenuListener;
-import android.view.View.OnLongClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.RelativeLayout;
 
 import com.example.tritracker.R;
 import com.example.tritracker.Timer;

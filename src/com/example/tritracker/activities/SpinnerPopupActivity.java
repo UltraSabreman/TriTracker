@@ -1,13 +1,12 @@
 package com.example.tritracker.activities;
 
-import com.example.tritracker.R;
-import com.example.tritracker.Util;
-import com.example.tritracker.R.layout;
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.WindowManager.LayoutParams;
+
+import com.example.tritracker.R;
+import com.example.tritracker.Util;
 
 public class SpinnerPopupActivity extends Activity {
 

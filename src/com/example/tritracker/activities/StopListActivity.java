@@ -2,7 +2,6 @@ package com.example.tritracker.activities;
 
 import java.util.ArrayList;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
@@ -20,7 +19,6 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnCreateContextMenuListener;
 import android.view.View.OnLongClickListener;
@@ -58,6 +56,7 @@ public class StopListActivity extends Fragment implements UndoListener {
 	
 	private MainService theService;
 	private boolean bound;
+	
 	
 	@Override 
 	public void onStart() {
