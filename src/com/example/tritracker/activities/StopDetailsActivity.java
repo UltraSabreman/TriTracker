@@ -2,6 +2,7 @@ package com.example.tritracker.activities;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Fragment;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -167,12 +168,14 @@ public class StopDetailsActivity extends Activity {
 			final Activity act = this;
 			final ListView listView = (ListView) findViewById(R.id.UIBussList);
 			RelativeLayout layout = (RelativeLayout) findViewById(R.id.mainDetailsView);
+			RelativeLayout frag = (RelativeLayout)findViewById(R.id.test);
 			adaptor = new BussListArrayAdaptor(this, curStop);
 			
 			listView.setAdapter(adaptor);
 			adaptor.notifyDataSetChanged();
 			registerForContextMenu(layout);
 			registerForContextMenu(listView);
+			registerForContextMenu(frag);
 			
 			listView.addFooterView(new View(getApplicationContext()), null, true);
 			
@@ -184,6 +187,7 @@ public class StopDetailsActivity extends Activity {
 			};
 			
 			listView.setOnLongClickListener(longc);		
+			frag.setOnLongClickListener(longc);
 			
 			layout.setOnCreateContextMenuListener(new OnCreateContextMenuListener() {
 				@Override

@@ -46,14 +46,19 @@
 			android:textColor="@android:color/darker_gray"/>
 	</RelativeLayout>
 	
-	<ListView
-		android:id="@+id/UIBussList"
+	<RelativeLayout 
+		android:id="@+id/test"
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
+		android:layout_height="match_parent"
 		android:layout_alignParentTop="true"
-		android:divider="?android:attr/listDivider" 
-		android:footerDividersEnabled="true" 
-		android:layout_above="@id/UIStopInfo"/>
+		android:layout_above="@id/UIStopInfo">
+		<ListView
+			android:id="@+id/UIBussList"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:divider="?android:attr/listDivider" 
+			android:footerDividersEnabled="true" />
+	</RelativeLayout>
 
 	<RelativeLayout
 		android:id="@+id/UIseperator"
