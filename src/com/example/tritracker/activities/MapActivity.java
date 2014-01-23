@@ -275,7 +275,7 @@ public class MapActivity extends Activity implements GooglePlayServicesClient.Co
 				
 				Context c = getApplicationContext();
 				
-				Intent tempIntent = new Intent(c, StopDetailsActivity.class);//.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+				Intent tempIntent = new Intent(c, StopDetailsActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 				tempIntent.putExtra("stop", s);
 				
 				c.startActivity(tempIntent);
@@ -377,7 +377,7 @@ public class MapActivity extends Activity implements GooglePlayServicesClient.Co
 
 	    int meterConversion = 1609;
 
-	    return new Float(dist * meterConversion).floatValue();
+	    return (float)(dist * (float)meterConversion);
 	}
 
 }

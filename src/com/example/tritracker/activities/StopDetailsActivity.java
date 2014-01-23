@@ -80,6 +80,8 @@ public class StopDetailsActivity extends Activity {
             });
             
             bound = true;
+            
+            theService.doUpdate(true);
         }
 
         
@@ -172,6 +174,8 @@ public class StopDetailsActivity extends Activity {
 			registerForContextMenu(layout);
 			registerForContextMenu(view);
 			
+			view.addFooterView(new View(getApplicationContext()), null, true);
+			
 			OnLongClickListener longc = new OnLongClickListener() {
 				public boolean onLongClick(View view) {
 					act.openContextMenu(view);
@@ -179,9 +183,7 @@ public class StopDetailsActivity extends Activity {
 				}
 			};
 			
-			view.setOnLongClickListener(longc);
-			//layout.setOnLongClickListener(longc);
-			
+			view.setOnLongClickListener(longc);		
 			
 			layout.setOnCreateContextMenuListener(new OnCreateContextMenuListener() {
 				@Override
@@ -201,7 +203,11 @@ public class StopDetailsActivity extends Activity {
 						inflater.inflate(R.menu.buss_alert_context_menu, menu);
 					else
 						inflater.inflate(R.menu.buss_context_menu, menu);
-
+					
+					if (menuBuss == null) 
+						((MenuItem) menu.findItem(R.id.action_create_reminder)).setVisible(false);
+					
+					
 					if (menuBuss != null && menuBuss.notification != null && menuBuss.notification.IsSet) {
 						((MenuItem) menu.findItem(R.id.action_create_reminder)).setVisible(false);
 						((MenuItem) menu.findItem(R.id.action_edit_reminder)).setVisible(true);

@@ -34,7 +34,8 @@
 		android:layout_centerHorizontal="true"
 		android:layout_below="@id/Label1"
 		android:hint="@string/refresh_hint"
-		android:inputType="number"/>
+		android:inputType="number"
+		android:imeOptions="actionDone"/>
 	
 	<TextView
 		android:id="@+id/Label2"
@@ -62,6 +63,7 @@
 		android:layout_centerHorizontal="true"
 		android:layout_below="@id/Label2"
 		android:hint="@string/radius_hint"
-		android:inputType="number"/>
+		android:inputType="number"
+		android:imeOptions="actionDone"/>
 
 </RelativeLayout>

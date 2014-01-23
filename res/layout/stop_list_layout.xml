@@ -14,7 +14,8 @@
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:layout_above="@id/UIseperator"
-		android:divider="?android:attr/listDivider"/>
+		android:divider="?android:attr/listDivider"
+		android:footerDividersEnabled="true" />
 
 	<TextView
 		android:id="@+id/NoMembers"

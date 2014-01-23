@@ -81,6 +81,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
             	public void run() {
             	}
             });
+            
+            theService.doUpdate(true);
         }
 
         @Override

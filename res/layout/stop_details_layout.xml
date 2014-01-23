@@ -15,8 +15,8 @@
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:layout_alignParentTop="true"
-		android:layout_above="@id/UIseperator"
-		android:divider="?android:attr/listDivider" />
+		android:divider="?android:attr/listDivider" 
+		android:footerDividersEnabled="true" />
 	
 	<RelativeLayout
 		android:id="@+id/UIStopInfo"

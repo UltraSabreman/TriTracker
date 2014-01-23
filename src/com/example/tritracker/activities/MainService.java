@@ -99,6 +99,14 @@ public class MainService extends Service {
 			stopData.StopOrder = order;
 	}
 	
+	public int getMenu() {
+		return stopData.menu;
+	}
+	
+	public void setMenu(int i) {
+		stopData.menu = i;
+	}
+	
 	public double getMapRadius(){
 		return stopData.Radius;
 	}
@@ -336,6 +344,7 @@ public class MainService extends Service {
 		@Expose public int RefreshDelay = 5;
 		@Expose public ArrayList<Stop> StopList = new ArrayList<Stop>();
 		@Expose public double Radius = 900;// 1/2 mile in meters.
+		@Expose public int menu = 0;
 	}
 
 
