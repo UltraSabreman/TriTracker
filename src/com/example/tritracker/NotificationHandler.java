@@ -5,10 +5,10 @@ import java.util.Date;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 
 import com.example.tritracker.activities.MainActivity;
 import com.example.tritracker.activities.StopListActivity;
@@ -89,7 +89,7 @@ public class NotificationHandler {
 				.setContentTitle(trackedBuss.SignShort)
 				.setContentText(trackedStop.Name)
 				.setTicker("Buss Arrival Alert")
-				.setPriority(Notification.PRIORITY_HIGH)
+				//.setPriority(Notification.PRIORITY_HIGH)
 				.setWhen(trackedBuss.EstimatedTime != null ? trackedBuss.EstimatedTime.getTime() 
 						: trackedBuss.ScheduledTime.getTime())
 				.setDefaults(Notification.DEFAULT_VIBRATE | Notification.DEFAULT_SOUND)
