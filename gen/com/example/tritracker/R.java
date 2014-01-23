@@ -418,11 +418,11 @@ containing a value of this type.
         public static final int StopID=0x7f050011;
         public static final int StopName=0x7f050012;
         public static final int Time=0x7f05000e;
-        public static final int UIBussList=0x7f050029;
+        public static final int UIBussList=0x7f05002d;
         public static final int UIStopIDBox=0x7f050016;
-        public static final int UIStopInfo=0x7f05002a;
-        public static final int UIStopInfoDirection=0x7f05002d;
-        public static final int UIStopInfoName=0x7f05002c;
+        public static final int UIStopInfo=0x7f050029;
+        public static final int UIStopInfoDirection=0x7f05002c;
+        public static final int UIStopInfoName=0x7f05002b;
         public static final int UIStopList=0x7f050030;
         public static final int UIseperator=0x7f050017;
         public static final int UIseperator2=0x7f050015;
@@ -437,7 +437,7 @@ containing a value of this type.
         public static final int action_settings=0x7f050035;
         public static final int action_sort_list=0x7f05003b;
         public static final int action_view_alerts=0x7f05003a;
-        public static final int alertBackground=0x7f05002b;
+        public static final int alertBackground=0x7f05002a;
         public static final int container=0x7f050018;
         public static final int help1=0x7f050022;
         public static final int help2=0x7f050025;
@@ -474,11 +474,12 @@ containing a value of this type.
         public static final int main_layout=0x7f030005;
         public static final int map_layout=0x7f030006;
         public static final int marker_info_window_layout=0x7f030007;
-        public static final int set_reminder=0x7f030008;
-        public static final int settings_layout=0x7f030009;
-        public static final int spinner_popup_layout=0x7f03000a;
-        public static final int stop_details_layout=0x7f03000b;
-        public static final int stop_list_layout=0x7f03000c;
+        public static final int seperator=0x7f030008;
+        public static final int set_reminder=0x7f030009;
+        public static final int settings_layout=0x7f03000a;
+        public static final int spinner_popup_layout=0x7f03000b;
+        public static final int stop_details_layout=0x7f03000c;
+        public static final int stop_list_layout=0x7f03000d;
     }
     public static final class menu {
         public static final int alert_list_action_bar=0x7f0a0000;

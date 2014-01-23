@@ -165,16 +165,16 @@ public class StopDetailsActivity extends Activity {
 			arrival.setVisibility(View.VISIBLE);
 		} else {
 			final Activity act = this;
-			final ListView view = (ListView) findViewById(R.id.UIBussList);
+			final ListView listView = (ListView) findViewById(R.id.UIBussList);
 			RelativeLayout layout = (RelativeLayout) findViewById(R.id.mainDetailsView);
 			adaptor = new BussListArrayAdaptor(this, curStop);
 			
-			view.setAdapter(adaptor);
+			listView.setAdapter(adaptor);
 			adaptor.notifyDataSetChanged();
 			registerForContextMenu(layout);
-			registerForContextMenu(view);
+			registerForContextMenu(listView);
 			
-			view.addFooterView(new View(getApplicationContext()), null, true);
+			listView.addFooterView(new View(getApplicationContext()), null, true);
 			
 			OnLongClickListener longc = new OnLongClickListener() {
 				public boolean onLongClick(View view) {
@@ -183,7 +183,7 @@ public class StopDetailsActivity extends Activity {
 				}
 			};
 			
-			view.setOnLongClickListener(longc);		
+			listView.setOnLongClickListener(longc);		
 			
 			layout.setOnCreateContextMenuListener(new OnCreateContextMenuListener() {
 				@Override
@@ -195,7 +195,7 @@ public class StopDetailsActivity extends Activity {
 				}
 			});
 			
-			view.setOnCreateContextMenuListener(new OnCreateContextMenuListener() {
+			listView.setOnCreateContextMenuListener(new OnCreateContextMenuListener() {
 				@Override
 				public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 					MenuInflater inflater = getMenuInflater();
@@ -215,11 +215,11 @@ public class StopDetailsActivity extends Activity {
 					}
 				}
 			});
-			view.setOnItemClickListener(new OnItemClickListener() {
+			listView.setOnItemClickListener(new OnItemClickListener() {
 				public void onItemClick(AdapterView<?> arg0, View arg1,	int pos, long id) {
 					menuBuss = curStop.Busses.get(pos);
 					if (menuBuss != null)
-						act.openContextMenu(view);	
+						act.openContextMenu(listView);	
 				}
 			});
 
