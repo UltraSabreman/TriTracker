@@ -31,7 +31,7 @@
 	<string name="action_cancel_reminder">Cancel Arrival Reminder</string>
 	<string name="action_cancel_reminder">Cancel Arrival Reminder</string>
 	<string name="action_map">Find Nearby Stops</string>
-	<string name="action_find_stops">Show This Stop on the map</string>
+	<string name="action_find_stop">Show This Stop on the map</string>
 	<string name="content">A Picture</string>
 	<string name="no_arrivals">No arrival information available.</string>
 	<string name="title_activity_alert_details">Alert Details</string>

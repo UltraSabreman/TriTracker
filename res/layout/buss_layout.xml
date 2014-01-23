@@ -62,19 +62,6 @@
 			android:background="@color/TestColor" />
 
 		<TextView
-			android:id="@+id/Schedule"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_below="@id/LineName"
-			android:layout_toRightOf="@id/UIseperator3"
-			android:ellipsize="end"
-			android:maxLines="1"
-			android:paddingLeft="@dimen/activity_horizontal_margin"
-			android:text="Scheduled at: 07:15 PM "
-			android:textColor="@android:color/darker_gray"
-			android:textSize="12sp" />
-
-		<TextView
 			android:id="@+id/Time"
 			android:layout_width="wrap_content"
 			android:layout_height="match_parent"
@@ -86,12 +73,10 @@
 			android:textColor="@android:color/holo_green_dark"
 			android:textSize="16sp" />
 		
-		
 		<TextView
 			android:id="@+id/LineName"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_alignLeft="@id/Schedule"
 			android:layout_alignTop="@id/LineNumber"
 			android:layout_toRightOf="@id/UIseperator3"
 			android:ellipsize="marquee"
@@ -100,6 +85,21 @@
 			android:singleLine="true"
 			android:text="To Clackamas CC"
 			android:textColor="@android:color/holo_blue_dark"
-			android:textSize="16sp" />
+			android:textSize="16sp" />			
+		<TextView
+			android:id="@+id/Schedule"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_below="@id/LineName"
+			android:layout_toRightOf="@id/UIseperator3"
+			android:ellipsize="end"
+			android:maxLines="1"
+			android:paddingLeft="@dimen/activity_horizontal_margin"
+			android:text="Scheduled at: 07:15 PM "
+			android:textColor="@android:color/darker_gray"
+			android:textSize="12sp" />
+		
+
+
 	</RelativeLayout>	
 </LinearLayout>

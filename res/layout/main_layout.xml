@@ -5,19 +5,7 @@
 	tools:context=".TestActivity"
 	tools:ignore="MergeRootFrame" >
 
-    <RelativeLayout
-        android:id="@+id/container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@id/UIseperator" />
-    
-	<RelativeLayout
-		android:id="@+id/UIseperator"
-		android:background="@color/TestColor"
-		android:layout_width="match_parent"
-		android:layout_height="1dp"
-		android:layout_above="@id/UIStopIDBox"/>
-	
+
 	<EditText
 		android:id="@+id/UIStopIDBox"
 		android:layout_width="match_parent"
@@ -27,5 +15,17 @@
 		android:singleLine="true"
 		android:layout_alignParentBottom="true"
 		android:selectAllOnFocus="true"/>
+	<RelativeLayout
+		android:id="@+id/UIseperator"
+		android:background="@color/TestColor"
+		android:layout_width="match_parent"
+		android:layout_height="1dp"
+		android:layout_above="@id/UIStopIDBox"/>
+	
+    <RelativeLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/UIseperator" />
 
 </RelativeLayout>

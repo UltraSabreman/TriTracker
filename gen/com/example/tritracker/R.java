@@ -321,6 +321,9 @@ containing a value of this type.
         public static final int common_signin_btn_text_dark=0x7f040098;
         public static final int common_signin_btn_text_light=0x7f040099;
     }
+    public static final class d {
+        public static final int Label1=0x7f0b0000;
+    }
     public static final class dimen {
         /**  Default screen margins, per the Android Design guidelines. 
 
@@ -400,29 +403,29 @@ containing a value of this type.
         public static final int AlertLines=0x7f050006;
         public static final int AlertList=0x7f050008;
         public static final int Delay=0x7f050023;
-        public static final int FavIcon=0x7f050015;
+        public static final int FavIcon=0x7f050014;
         public static final int Label1=0x7f050021;
         public static final int Label2=0x7f050024;
         public static final int LineName=0x7f05000f;
         public static final int LineNames=0x7f050013;
         public static final int LineNumber=0x7f05000c;
-        public static final int NoArrivals=0x7f05002b;
+        public static final int NoArrivals=0x7f05002e;
         public static final int NoMembers=0x7f050031;
         public static final int Radius=0x7f050026;
         public static final int ReminderIcon=0x7f05000a;
         public static final int ReminderTime=0x7f05000b;
-        public static final int Schedule=0x7f05000e;
-        public static final int StopID=0x7f050012;
-        public static final int StopName=0x7f050011;
-        public static final int Time=0x7f050010;
+        public static final int Schedule=0x7f050010;
+        public static final int StopID=0x7f050011;
+        public static final int StopName=0x7f050012;
+        public static final int Time=0x7f05000e;
         public static final int UIBussList=0x7f050029;
-        public static final int UIStopIDBox=0x7f050018;
+        public static final int UIStopIDBox=0x7f050016;
         public static final int UIStopInfo=0x7f05002a;
-        public static final int UIStopInfoDirection=0x7f05002e;
-        public static final int UIStopInfoName=0x7f05002d;
+        public static final int UIStopInfoDirection=0x7f05002d;
+        public static final int UIStopInfoName=0x7f05002c;
         public static final int UIStopList=0x7f050030;
         public static final int UIseperator=0x7f050017;
-        public static final int UIseperator2=0x7f050014;
+        public static final int UIseperator2=0x7f050015;
         public static final int UIseperator3=0x7f05000d;
         public static final int action_cancel_reminder=0x7f050039;
         public static final int action_clear_list=0x7f05003e;
@@ -434,8 +437,8 @@ containing a value of this type.
         public static final int action_settings=0x7f050035;
         public static final int action_sort_list=0x7f05003b;
         public static final int action_view_alerts=0x7f05003a;
-        public static final int alertBackground=0x7f05002c;
-        public static final int container=0x7f050016;
+        public static final int alertBackground=0x7f05002b;
+        public static final int container=0x7f050018;
         public static final int help1=0x7f050022;
         public static final int help2=0x7f050025;
         public static final int hybrid=0x7f050004;
@@ -483,9 +486,8 @@ containing a value of this type.
         public static final int buss_context_menu=0x7f0a0002;
         public static final int main_action_bar=0x7f0a0003;
         public static final int map_action_bar=0x7f0a0004;
-        public static final int settings_action_bar=0x7f0a0005;
-        public static final int stop_details_action_bar=0x7f0a0006;
-        public static final int stop_list_context_menu=0x7f0a0007;
+        public static final int stop_details_action_bar=0x7f0a0005;
+        public static final int stop_list_context_menu=0x7f0a0006;
     }
     public static final class string {
         public static final int action_cancel_reminder=0x7f060033;
@@ -493,6 +495,7 @@ containing a value of this type.
         public static final int action_create_reminder=0x7f06002f;
         public static final int action_edit_reminder=0x7f060032;
         public static final int action_favorite=0x7f060020;
+        public static final int action_find_stop=0x7f060036;
         public static final int action_history=0x7f06001f;
         public static final int action_map=0x7f060035;
         public static final int action_order_buss=0x7f060023;
@@ -502,7 +505,7 @@ containing a value of this type.
         public static final int action_settings=0x7f06001b;
         public static final int action_sort_list=0x7f060034;
         public static final int action_view_alerts=0x7f060031;
-        public static final int affected_line=0x7f060039;
+        public static final int affected_line=0x7f06003a;
         public static final int app_name=0x7f06001a;
         public static final int appid=0x7f060027;
         /**   Title for notification shown when GooglePlayServices needs to be
@@ -599,29 +602,29 @@ containing a value of this type.
         /**  Long form sign-in button text [CHAR LIMIT=30] 
          */
         public static final int common_signin_button_text_long=0x7f060013;
-        public static final int content=0x7f060036;
+        public static final int content=0x7f060037;
         public static final int data_path=0x7f060026;
         public static final int fav_desc=0x7f06002e;
         public static final int fav_empty=0x7f060024;
         public static final int hist_emtpy=0x7f060025;
-        public static final int no_arrivals=0x7f060037;
+        public static final int no_arrivals=0x7f060038;
         public static final int no_stop=0x7f06002b;
         public static final int no_stop_m=0x7f06002c;
-        public static final int radius_hint=0x7f06003e;
-        public static final int radius_label=0x7f06003d;
-        public static final int refresh_hint=0x7f06003c;
-        public static final int refresh_label=0x7f06003b;
+        public static final int radius_hint=0x7f06003f;
+        public static final int radius_label=0x7f06003e;
+        public static final int refresh_hint=0x7f06003d;
+        public static final int refresh_label=0x7f06003c;
         public static final int stopid=0x7f06001c;
-        public static final int title_activity_alert_details=0x7f060038;
+        public static final int title_activity_alert_details=0x7f060039;
         public static final int title_activity_display_message=0x7f06001e;
-        public static final int title_activity_favorites=0x7f06003f;
+        public static final int title_activity_favorites=0x7f060040;
         public static final int title_activity_favorites_view=0x7f06002a;
         public static final int title_activity_history_view=0x7f060029;
         public static final int title_activity_loading_overlay=0x7f06002d;
-        public static final int title_activity_map=0x7f060042;
-        public static final int title_activity_settings=0x7f06003a;
-        public static final int title_activity_test=0x7f060041;
-        public static final int title_activity_undo_popup=0x7f060040;
+        public static final int title_activity_map=0x7f060043;
+        public static final int title_activity_settings=0x7f06003b;
+        public static final int title_activity_test=0x7f060042;
+        public static final int title_activity_undo_popup=0x7f060041;
         public static final int undo=0x7f060028;
     }
     public static final class style {

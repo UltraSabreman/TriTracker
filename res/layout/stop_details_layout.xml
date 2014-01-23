@@ -17,25 +17,6 @@
 		android:layout_alignParentTop="true"
 		android:layout_above="@id/UIseperator"
 		android:divider="?android:attr/listDivider" />
-
-	<RelativeLayout
-		android:id="@+id/UIseperator"
-		android:background="@color/TestColor"
-		android:layout_width="match_parent"
-		android:layout_height="1dp"
-		android:layout_above="@id/UIStopInfo"/>
-	
-	<TextView 
-		android:id="@+id/NoArrivals"
-		android:layout_width="fill_parent"
-		android:layout_height="fill_parent"
-		android:layout_above="@id/UIStopInfo"
-		android:text="@string/no_arrivals"
-		android:textSize="26sp"
-		android:textColor="@color/Red"
-		android:visibility="invisible"
-		android:gravity="center" />
-
 	
 	<RelativeLayout
 		android:id="@+id/UIStopInfo"
@@ -72,5 +53,26 @@
 			android:layout_centerHorizontal="true"
 			android:textColor="@android:color/darker_gray"/>
 	</RelativeLayout>
+	
+	<RelativeLayout
+		android:id="@+id/UIseperator"
+		android:background="@color/TestColor"
+		android:layout_width="match_parent"
+		android:layout_height="1dp"
+		android:layout_above="@id/UIStopInfo"/>
+	
+	<TextView 
+		android:id="@+id/NoArrivals"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:layout_above="@id/UIStopInfo"
+		android:text="@string/no_arrivals"
+		android:textSize="26sp"
+		android:textColor="@color/Red"
+		android:visibility="invisible"
+		android:gravity="center" />
+
+	
+	
 
 </RelativeLayout>

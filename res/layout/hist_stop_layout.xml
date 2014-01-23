@@ -28,21 +28,7 @@
 			android:layout_alignParentBottom="true"
 			android:src="@drawable/ic_action_time"
 			android:visibility="invisible"
-			android:contentDescription="@string/content"/>
-		<TextView
-			android:id="@+id/StopName"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_toLeftOf="@id/StopID"
-			android:layout_toRightOf="@id/UIseperator2"
-			android:ellipsize="marquee"
-			android:scrollHorizontally="true"
-	       	android:marqueeRepeatLimit ="marquee_forever" 
-	       	android:singleLine="true" 
-			android:textSize="16sp"
-			android:layout_marginRight="6dp"
-			android:textColor="@android:color/holo_blue_dark"/>
-		
+			android:contentDescription="@string/content"/>		
 		<ImageView
 			android:id="@+id/FavIcon"
 			android:layout_width="wrap_content"
@@ -60,7 +46,19 @@
 			android:layout_marginLeft="3dp"
 			android:layout_marginRight="3dp"
 			android:layout_toRightOf="@+id/FavIcon"/>
-		
+		<TextView
+			android:id="@+id/StopName"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_toLeftOf="@id/StopID"
+			android:layout_toRightOf="@id/UIseperator2"
+			android:ellipsize="marquee"
+			android:scrollHorizontally="true"
+	       	android:marqueeRepeatLimit ="marquee_forever" 
+	       	android:singleLine="true" 
+			android:textSize="16sp"
+			android:layout_marginRight="6dp"
+			android:textColor="@android:color/holo_blue_dark"/>
 	
 		<TextView
 			android:id="@+id/StopID"
