@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<item name="menu_action_sort_list" type="id"/>
+	<item name="menu_action_clear_list" type="id"/>
+	<item name="menu_action_add_reminder" type="id"/>
+	<item name="menu_action_remove_reminder" type="id"/>
+	<item name="menu_action_edit_reminder" type="id"/>
+	<item name="menu_action_view_alerts" type="id"/>
+</resources>

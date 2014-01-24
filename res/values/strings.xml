@@ -22,14 +22,6 @@
 	<string name="no_stop_m">There is no stop with the id: </string>
 	<string name="title_activity_loading_overlay">LoadingOverlay</string>
 	<string name="fav_desc">Add/Remove from favorites</string>
-	<string name="action_create_reminder">Set Arrival Reminder</string>
-	<string name="action_reminder">Set/Edit Reminder</string>
-	<string name="action_view_alerts">View Relevant Alerts</string>
-	<string name="action_edit_reminder">Edit Arrival Reminder</string>
-	<string name="action_cancel_reminder">Cancel Arrival Reminder</string>
-	<string name="action_sort_list">Sort this list</string>
-	<string name="action_cancel_reminder">Cancel Arrival Reminder</string>
-	<string name="action_cancel_reminder">Cancel Arrival Reminder</string>
 	<string name="action_map">Find Nearby Stops</string>
 	<string name="action_find_stop">Show This Stop on the map</string>
 	<string name="content">A Picture</string>

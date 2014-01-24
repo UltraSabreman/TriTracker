@@ -4,11 +4,6 @@
 	android:layout_height="fill_parent"
 	android:showDividers="middle"
 	tools:context=".StopDetailsActivity">
-
-	<RelativeLayout 
-		android:id="@+id/mainDetailsView" 
-		android:layout_width="match_parent"
-		android:layout_height="match_parent"/>
 	
 	<RelativeLayout
 		android:id="@+id/UIStopInfo"
@@ -47,7 +42,7 @@
 	</RelativeLayout>
 	
 	<RelativeLayout 
-		android:id="@+id/test"
+		android:id="@+id/longClickCatcher"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		android:layout_alignParentTop="true"

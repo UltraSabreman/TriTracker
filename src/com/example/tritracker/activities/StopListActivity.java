@@ -17,7 +17,6 @@ import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnCreateContextMenuListener;
@@ -83,7 +82,7 @@ public class StopListActivity extends Fragment implements UndoListener {
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-			case R.id.action_sort_list:
+			case R.id.menu_action_sort_list:
 				final ArrayList<Stop> tempStops = isFavorites ? theService.getFavorties() : theService.getHistory();
 				new Sorter<Stop>(Stop.class, theService).sortUI(getActivity(), isFavorites ? ListType.Favorites : ListType.History,	tempStops,
 						new Timer.onUpdate() {
@@ -93,7 +92,7 @@ public class StopListActivity extends Fragment implements UndoListener {
 							}
 						});
 				return true;
-			case R.id.action_clear_list:
+			case R.id.menu_action_clear_list:
 				AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 				builder.setMessage("Are you sure you want to clear your " + (isFavorites ? "Favorites" : "History") + "?");
 
@@ -211,9 +210,8 @@ public class StopListActivity extends Fragment implements UndoListener {
 	private void setListeners() {
 		EditText edit = (EditText)  getActivity().findViewById(R.id.UIStopIDBox);
 		ListView view = (ListView) ourView.findViewById(R.id.UIStopList);
-		RelativeLayout layout = (RelativeLayout) ourView.findViewById(R.id.mainView);
+		RelativeLayout layout = (RelativeLayout) ourView.findViewById(R.id.longClickCatcher);
 		
-		registerForContextMenu(view);
 		registerForContextMenu(layout);
 		view.setAdapter(adaptor);
 		
@@ -236,8 +234,8 @@ public class StopListActivity extends Fragment implements UndoListener {
 				return false;
 			}
 		});	
-				
-		OnLongClickListener lc = new OnLongClickListener() {
+						
+		OnLongClickListener longClick = new OnLongClickListener() {
 			@Override
 			public boolean onLongClick(View v) {
 				getActivity().openContextMenu(v);
@@ -245,22 +243,16 @@ public class StopListActivity extends Fragment implements UndoListener {
 			}
 		};
 		
-		view.setOnLongClickListener(lc);
-		layout.setOnLongClickListener(lc);
-		
-		OnCreateContextMenuListener cl = new OnCreateContextMenuListener() {
+		layout.setOnLongClickListener(longClick);
+		view.setOnLongClickListener(longClick);
+				
+		layout.setOnCreateContextMenuListener(new OnCreateContextMenuListener() {
 			@Override
 			public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-				MenuInflater inflater = getActivity().getMenuInflater();
-				inflater.inflate(R.menu.stop_list_context_menu, menu);
-				
-				((MenuItem) menu.findItem(R.id.action_sort_list)).setTitle("Sort " + (isFavorites ? "Favorites" : "History"));
-				((MenuItem) menu.findItem(R.id.action_clear_list)).setTitle("Clear " + (isFavorites ? "Favorites" : "History"));
+				menu.add(0, R.id.menu_action_sort_list, ContextMenu.NONE, "Sort " + (isFavorites ? "Favorites" : "History"));
+				menu.add(0, R.id.menu_action_clear_list, ContextMenu.NONE, "Clear " + (isFavorites ? "Favorites" : "History"));	
 			}
-		};
-		
-		view.setOnCreateContextMenuListener(cl);  
-		layout.setOnCreateContextMenuListener(cl);  
+		});  
 		
 		view.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> arg0, View arg1,	int position, long arg3) {

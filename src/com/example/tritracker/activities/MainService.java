@@ -27,9 +27,9 @@ import com.example.tritracker.Timer;
 import com.example.tritracker.Timer.onUpdate;
 import com.example.tritracker.Util;
 import com.example.tritracker.Util.ListType;
-import com.example.tritracker.json.Request;
 import com.example.tritracker.json.ArrivalJSONResult;
 import com.example.tritracker.json.DetourJSONResult;
+import com.example.tritracker.json.Request;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
@@ -67,6 +67,7 @@ public class MainService extends Service {
 			);
 			refreshTime.restartTimer();
 			doUpdate(true);
+			
 		}
 		return START_STICKY;
 	}
