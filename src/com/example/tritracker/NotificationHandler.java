@@ -73,25 +73,24 @@ public class NotificationHandler {
 		timer.restartTimer(); //TODO is this needed?		
 	}
 
-	public boolean isBuss(Buss b) {
-		if (b == null)
-			return false;
-		return b.ScheduledTime.compareTo(trackedBuss.ScheduledTime) == 0;
+	public Buss getBuss() {
+		return trackedBuss;
+	}
+	
+	public Stop	getStop() {
+		return trackedStop;
 	}
 
 	private void doNotification() {
 		IsSet = false;
 		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
 				notContext)
-				// .setDeleteIntent(PendingIntent.getActivity(notContext, 0,
-				// notIntent, 0))
+				// .setDeleteIntent(PendingIntent.getActivity(notContext, 0, notIntent, 0))
 				.setSmallIcon(R.drawable.ic_buss_white)
 				.setContentTitle(trackedBuss.SignShort)
 				.setContentText(trackedStop.Name)
 				.setTicker("Buss Arrival Alert")
-				//.setPriority(Notification.PRIORITY_HIGH)
-				.setWhen(trackedBuss.EstimatedTime != null ? trackedBuss.EstimatedTime.getTime() 
-						: trackedBuss.ScheduledTime.getTime())
+				.setWhen(trackedBuss.EstimatedTime != null ? trackedBuss.EstimatedTime.getTime() : trackedBuss.ScheduledTime.getTime())
 				.setDefaults(Notification.DEFAULT_VIBRATE | Notification.DEFAULT_SOUND)
 				.setAutoCancel(true).setLights(0xffFF8800, 1500, 1000);
 		// Creates an explicit intent for an Activity in your app

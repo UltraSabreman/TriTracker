@@ -17,9 +17,9 @@ public class Sorter <T> {
     private final Class<T> type;
     private MainService theService;
 
-    public Sorter(Class<T> type, MainService service) {
+    public Sorter(Class<T> type) {
          this.type = type;
-         this.theService = service;
+         this.theService = MainService.getService();;
     }
     
     public void sort(final ListType listtype, final ArrayList<T> listToSort, final Timer.onUpdate callback) {

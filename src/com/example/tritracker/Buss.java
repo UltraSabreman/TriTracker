@@ -18,7 +18,6 @@ public class Buss implements Parcelable {
 	@Expose	public String SignLong;
 	@Expose	public Date EstimatedTime;
 	@Expose	public Date ScheduledTime;
-	public NotificationHandler notification = null;
 
 	public Buss(ArrivalJSONResult.ResultSet.Arrival a) {
 		Route = a.route;
@@ -34,12 +33,6 @@ public class Buss implements Parcelable {
 
 	public Buss(Buss b) {
 		update(b);
-	}
-
-	public void setNotification(NotificationHandler n) {
-		if (notification != null)
-			notification.cancelNotification();
-		notification = n;
 	}
 
 	public boolean compareTo(Buss b) {
@@ -62,11 +55,6 @@ public class Buss implements Parcelable {
 		if (b.ScheduledTime != null)
 			ScheduledTime = new Date(b.ScheduledTime.getTime());
 		
-		if (b.notification != null){
-			if (notification != null)
-				notification.cancelNotification();
-			notification = b.notification;
-		}
 	}
 
 	@Override

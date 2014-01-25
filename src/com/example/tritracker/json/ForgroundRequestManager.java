@@ -135,9 +135,9 @@ public class ForgroundRequestManager extends Thread {
 	}
 	
 	
-	public ForgroundRequestManager(MainService service, ResultCallback func, Activity a, Context c, int stop) {
+	public ForgroundRequestManager(ResultCallback func, Activity a, Context c, int stop) {
 		this.theStop = stop;
-		this.service = service;
+		this.service = MainService.getService();;
 		this.testBack = func;
 		this.context = c;
 		this.activity = a;

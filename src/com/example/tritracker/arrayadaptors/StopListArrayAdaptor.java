@@ -21,10 +21,10 @@ public class StopListArrayAdaptor extends ArrayAdapter<Stop> {
 	private boolean fav = false;
 	private MainService theService;
 
-	public StopListArrayAdaptor(MainService service, Context context, ArrayList<Stop> stops, boolean favorites) {
+	public StopListArrayAdaptor(Context context, ArrayList<Stop> stops, boolean favorites) {
 		super(context, (favorites ? R.layout.fav_stop_layout : R.layout.hist_stop_layout), stops);
 		fav = favorites;
-		theService = service;
+		theService = MainService.getService();;
 	}
 
 	@Override
@@ -41,7 +41,7 @@ public class StopListArrayAdaptor extends ArrayAdapter<Stop> {
 			v = inflater.inflate((fav ? R.layout.fav_stop_layout : R.layout.hist_stop_layout), null);
 		}
 
-		final Stop curStop = getItem(position);
+		final Stop curStop = theService.getStop(getItem(position));
 
 		if (curStop != null) {
 			if (!fav) {
@@ -80,7 +80,8 @@ public class StopListArrayAdaptor extends ArrayAdapter<Stop> {
 				((ImageView) v.findViewById(R.id.AlertIcon))
 						.setVisibility(View.INVISIBLE);
 
-			if (curStop.hasNotifications())
+			
+			if (theService.stopHasReminders(curStop))
 				((ImageView) v.findViewById(R.id.ReminderIcon))
 						.setVisibility(View.VISIBLE);
 			else

@@ -2,6 +2,7 @@ package com.example.tritracker.arrayadaptors;
 
 import java.text.Format;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
@@ -15,21 +16,23 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.tritracker.Buss;
+import com.example.tritracker.NotificationHandler;
 import com.example.tritracker.R;
 import com.example.tritracker.Stop;
 import com.example.tritracker.Stop.Alert;
 import com.example.tritracker.Util;
+import com.example.tritracker.activities.MainService;
 
 public class BussListArrayAdaptor extends ArrayAdapter<Buss> {
 	// private final Context context;
 	private Stop curStop;
 	private Context context;
+	private MainService theService;
 
-	public BussListArrayAdaptor(Context context, Stop curStop) {
-		super(context, R.layout.buss_layout, curStop.Busses);
-		// this.context = context;
-		this.curStop = curStop;
+	public BussListArrayAdaptor(Context context, ArrayList<Buss> l) {
+		super(context, R.layout.buss_layout, l);
 		this.context = context;
+		this.theService = MainService.getService();
 	}
 
 	@Override
@@ -83,13 +86,14 @@ public class BussListArrayAdaptor extends ArrayAdapter<Buss> {
 			TextView LineName = (TextView) v.findViewById(R.id.LineName);
 			TextView Shedule = (TextView) v.findViewById(R.id.Schedule);
 			TextView Time = (TextView) v.findViewById(R.id.Time);
-
-			if (curBuss.notification != null && curBuss.notification.IsSet) {
+			
+			NotificationHandler n = theService.getReminder(curBuss);
+			if (n != null && n.IsSet) {
 				((ImageView) v.findViewById(R.id.ReminderIcon))
 						.setVisibility(View.VISIBLE);
 				TextView t = (TextView) v.findViewById(R.id.ReminderTime);
 				t.setVisibility(View.VISIBLE);
-				t.setText(curBuss.notification.getTime() + " Min");
+				t.setText(n.getTime() + " Min");
 			} else {
 				((ImageView) v.findViewById(R.id.ReminderIcon))
 						.setVisibility(View.INVISIBLE);
@@ -125,8 +129,7 @@ public class BussListArrayAdaptor extends ArrayAdapter<Buss> {
 			Shedule.setText("Scheduled at: " + s);
 
 			if (curBuss.Status.compareTo("estimated") == 0) {
-				Date est = new Date(curBuss.EstimatedTime.getTime()
-						- new Date().getTime());
+				Date est = new Date(curBuss.EstimatedTime.getTime()	- new Date().getTime());
 				int min = Util.mToS(est.getTime()) / 60;
 
 				if (min < 30) {

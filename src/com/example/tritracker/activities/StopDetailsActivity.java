@@ -2,13 +2,9 @@ package com.example.tritracker.activities;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.v4.app.NavUtils;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -34,7 +30,6 @@ import com.example.tritracker.Stop;
 import com.example.tritracker.Timer;
 import com.example.tritracker.Util;
 import com.example.tritracker.Util.ListType;
-import com.example.tritracker.activities.MainService.LocalBinder;
 import com.example.tritracker.arrayadaptors.BussListArrayAdaptor;
 
 public class StopDetailsActivity extends Activity {
@@ -42,69 +37,9 @@ public class StopDetailsActivity extends Activity {
 
 	private Stop curStop;
 	private BussListArrayAdaptor adaptor;
-	
 
 	private MainService theService;
-	private boolean bound;
 	
-	@Override 
-	public void onStart() {
-		super.onStart();
-		Intent intent = new Intent(this, MainService.class);
-        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-	}
-	
-    @Override
-    protected void onStop() {
-        super.onStop();
-        theService.unsub("BussList");
-        if (bound) 
-            unbindService(mConnection);
-    }
-    
-    private ServiceConnection mConnection = new ServiceConnection() {
-
-        @Override
-        public void onServiceConnected(ComponentName className, IBinder service) {
-            // We've bound to LocalService, cast the IBinder and get LocalService instance
-            LocalBinder binder = (LocalBinder) service;
-            theService = binder.getService();
-            
-            curStop = theService.getStop(curStop);
-            
-            theService.sub("BussList", new Timer.onUpdate() {
-            	public void run() {
-            		StopDetailsActivity.this.onUpdate();
-            	}
-            });
-            
-            bound = true;
-            
-            theService.doUpdate(true);
-        }
-
-        
-        @Override
-        public void onServiceDisconnected(ComponentName arg0) {
-            bound = false;
-        }
-    };
-    
-    public void onUpdate() {
-    	curStop = theService.getStop(curStop);
-    	
-		runOnUiThread(new Runnable() {
-			@Override
-			public void run() {					
-				if (adaptor != null) {
-					adaptor.clear();
-					adaptor.addAll(curStop.Busses);
-					adaptor.updateStop(curStop);
-					adaptor.notifyDataSetChanged();
-				}
-			}
-		});
-    }
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -112,10 +47,13 @@ public class StopDetailsActivity extends Activity {
 		setContentView(R.layout.stop_details_layout);
 		Util.parents.push(getClass());
 
+		theService = MainService.getService();
+		
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		
 		Bundle extras = getIntent().getExtras();
-		curStop = extras.getParcelable("stop");
+		int id = extras.getInt("stop");
+		curStop = theService.getStop(id);
 		
 		setTitle("Stop ID: " + curStop.StopID);
 
@@ -125,10 +63,10 @@ public class StopDetailsActivity extends Activity {
 		StopName.setText(curStop.Name);
 		StopName.setSelected(true);
 		StopDir.setText(curStop.Direction);
+	
 
 		final Activity act = this;
-		if (curStop.Alerts != null
-				&& curStop.Alerts.size() != 0) {
+		if (curStop.Alerts != null && curStop.Alerts.size() != 0) {
 			View alert = (View) findViewById(R.id.alertBackground);
 			alert.setVisibility(View.VISIBLE);
 
@@ -143,20 +81,40 @@ public class StopDetailsActivity extends Activity {
 
 		} else
 			((View) findViewById(R.id.alertBackground)).setVisibility(View.INVISIBLE);	
-
+		
 		initList();
-		invalidateOptionsMenu();
 	}
 
-	@Override
-	public void onRestart() {
-		super.onRestart();
-	}
+  
+    public void onUpdate() {
+    	curStop = theService.getStop(curStop);
+    	
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {					
+				if (adaptor != null) {
+					Stop s = StopDetailsActivity.this.curStop;
+					adaptor.updateStop(s);
+				}
+			}
+		});
+    }
 
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-	}
+    @Override
+    protected void onStop() {
+        super.onStop();
+        theService.unsub("BussList");
+    }
+    
+    @Override
+    protected void onStart() {
+    	super.onStart();
+		theService.sub("BussList", new Timer.onUpdate() {
+			public void run() {
+				onUpdate();
+			}
+		});
+    }
 
 	void initList() {
 		if (curStop.Busses == null || curStop.Busses.size() == 0) {
@@ -166,7 +124,8 @@ public class StopDetailsActivity extends Activity {
 			final Activity act = this;
 			final ListView listView = (ListView) findViewById(R.id.UIBussList);
 			final RelativeLayout layout = (RelativeLayout) findViewById(R.id.longClickCatcher);
-			adaptor = new BussListArrayAdaptor(this, curStop);
+			adaptor = new BussListArrayAdaptor(this, curStop.Busses);
+			adaptor.updateStop(curStop);
 			
 			listView.setAdapter(adaptor);
 			adaptor.notifyDataSetChanged();
@@ -184,7 +143,8 @@ public class StopDetailsActivity extends Activity {
 					}
 					
 					if (menuBuss != null) {
-						if (menuBuss.notification != null && menuBuss.notification.IsSet) {
+						NotificationHandler n = theService.getReminder(menuBuss);
+						if (n != null && n.IsSet) {
 							menu.add(0, R.id.menu_action_edit_reminder, ContextMenu.NONE, "Edit Reminder");
 							menu.add(0, R.id.menu_action_remove_reminder, ContextMenu.NONE, "Remove Reminder");
 						} else 
@@ -239,22 +199,22 @@ public class StopDetailsActivity extends Activity {
 		builder.setTitle("Set a Reminder").setView(ourView);
 		if (!add) {
 			Buss buss = curStop.getBuss(theBuss);
-			if (buss.notification.getTime() > b.getMaxValue())
+			NotificationHandler n = theService.getReminder(buss);
+			if (n.getTime() > b.getMaxValue())
 				b.setValue(b.getMaxValue());
 			else
-				b.setValue(buss.notification.getTime());
+				b.setValue(n.getTime());
 		}
 
 		builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int id) {
 				Buss buss = curStop.getBuss(theBuss);
-				if (buss.notification != null && buss.notification.IsSet && add) {
-					buss.notification.editNotification(b.getValue());
+				NotificationHandler n = theService.getReminder(buss);
+				if (n != null && n.IsSet && add) {
+					n.editNotification(b.getValue());
 					Util.showToast("Reminder Updated", Toast.LENGTH_SHORT);
 				} else {
-					buss.setNotification(new NotificationHandler(
-							getApplicationContext(), getIntent(),
-							curStop, theBuss, b.getValue()));
+					theService.addReminder(new NotificationHandler(getApplicationContext(), getIntent(), curStop, theBuss, b.getValue()));
 					Util.showToast("Reminder Set", Toast.LENGTH_SHORT);
 				}
 				adaptor.notifyDataSetChanged();
@@ -289,14 +249,15 @@ public class StopDetailsActivity extends Activity {
 				return true;
 			case R.id.menu_action_remove_reminder:
 				Buss buss = curStop.getBuss(menuBuss);
-				if (buss.notification != null && buss.notification.IsSet)
-					buss.notification.cancelNotification();
+				NotificationHandler n = theService.getReminder(buss);
+				if (n != null && n.IsSet)
+					n.cancelNotification();
 				Util.showToast("Reminder Canceled", Toast.LENGTH_SHORT);
 				adaptor.notifyDataSetChanged();
 				return true;
 			case R.id.menu_action_sort_list:
 				Stop stop = theService.getStop(curStop);
-				new Sorter<Buss>(Buss.class, theService).sortUI(this, ListType.Busses, stop.Busses,
+				new Sorter<Buss>(Buss.class).sortUI(this, ListType.Busses, stop.Busses,
 						new Timer.onUpdate() {
 							public void run() {
 								adaptor.notifyDataSetChanged();
@@ -309,7 +270,6 @@ public class StopDetailsActivity extends Activity {
 				temp.putExtra("stop", curStop);
 				startActivity(temp);
 				return true;
-			default:
 				
 		}
 		menuBuss = null;

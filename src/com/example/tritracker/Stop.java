@@ -79,13 +79,6 @@ public class Stop implements Parcelable {
 		Alerts = new ArrayList<Alert>();
 	}
 	
-	public boolean hasNotifications() {
-		if (Busses != null && Busses.size() != 0)
-			for (Buss b : Busses)
-				if (b.notification != null && b.notification.IsSet)
-					return true;
-		return false;
-	}
 
 	public void Update(Stop s, boolean shouldUpdateDate) {
 		Name = new String(s.Name);

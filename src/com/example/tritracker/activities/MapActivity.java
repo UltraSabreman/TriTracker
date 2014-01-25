@@ -3,13 +3,10 @@ package com.example.tritracker.activities;
 import java.util.ArrayList;
 
 import android.app.Activity;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.location.Location;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.v4.app.NavUtils;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,13 +14,12 @@ import android.view.MenuItem;
 import com.example.tritracker.R;
 import com.example.tritracker.Stop;
 import com.example.tritracker.Util;
-import com.example.tritracker.activities.MainService.LocalBinder;
 import com.example.tritracker.arrayadaptors.MarkerInfoWindowArrayAdaptor;
 import com.example.tritracker.json.ForgroundRequestManager;
 import com.example.tritracker.json.ForgroundRequestManager.ResultCallback;
-import com.example.tritracker.json.Request;
 import com.example.tritracker.json.MapJSONResult;
 import com.example.tritracker.json.MapJSONResult.ResultSet;
+import com.example.tritracker.json.Request;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.location.LocationClient;
@@ -48,26 +44,17 @@ public class MapActivity extends Activity implements GooglePlayServicesClient.Co
 	private Circle searchCircle = null;
 	private Marker searchMarker = null;
 	private MainService theService;
-	private boolean bound;
+
 	private LatLng targetPos = null;
 	private ArrayList<Marker> stops = new ArrayList<Marker>();
 	
 	private static LatLng oldPos = null;
-	
-	@Override 
-	public void onStart() {
-		super.onStart();
-		Intent intent = new Intent(this, MainService.class);
-        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);     
-	}
-	
+		
     @Override
     protected void onStop() {
         super.onStop();
         mLocationClient.disconnect();
-        if (bound) 
-            unbindService(mConnection);
-                
+                       
         if (searchMarker != null) {
         	oldPos = searchMarker.getPosition();
            	searchMarker.remove();
@@ -78,25 +65,7 @@ public class MapActivity extends Activity implements GooglePlayServicesClient.Co
         	searchCircle.remove();  
         
         targetPos = null;
-    }
-    
-    private ServiceConnection mConnection = new ServiceConnection() {
-
-        @Override
-        public void onServiceConnected(ComponentName className, IBinder service) {
-            // We've bound to LocalService, cast the IBinder and get LocalService instance
-            LocalBinder binder = (LocalBinder) service;
-            theService = binder.getService();
-            mLocationClient.connect();
-            bound = true;
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName arg0) {
-            bound = false;
-        }
-    };
-	
+    }	
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,6 +87,7 @@ public class MapActivity extends Activity implements GooglePlayServicesClient.Co
         if (extras != null)
         	targetPos = new LatLng(extras.getDouble("lat"), extras.getDouble("lng"));
 
+        theService = MainService.getService();
     }
     
     
@@ -283,7 +253,7 @@ public class MapActivity extends Activity implements GooglePlayServicesClient.Co
 			}
 		};
 		
-		new ForgroundRequestManager(theService, call, this, getApplicationContext(), stop).start();
+		new ForgroundRequestManager(call, this, getApplicationContext(), stop).start();
 		
 	}
 	

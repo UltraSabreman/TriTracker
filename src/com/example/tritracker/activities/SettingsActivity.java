@@ -1,12 +1,8 @@
 package com.example.tritracker.activities;
 
 import android.app.Activity;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.v4.app.NavUtils;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -19,89 +15,56 @@ import android.widget.TextView.OnEditorActionListener;
 
 import com.example.tritracker.R;
 import com.example.tritracker.Util;
-import com.example.tritracker.activities.MainService.LocalBinder;
 
 public class SettingsActivity extends Activity {
 
 	private MainService theService;
-	private boolean bound;
 	
-	@Override 
-	public void onStart() {
-		super.onStart();
-		Intent intent = new Intent(this, MainService.class);
-        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-	}
-	
-    @Override
-    protected void onStop() {
-        super.onStop();
-        // Unbind from the service
-        if (bound) 
-            unbindService(mConnection);
-    }
-    
-    private ServiceConnection mConnection = new ServiceConnection() {
-
-        @Override
-        public void onServiceConnected(ComponentName className, IBinder service) {
-            // We've bound to LocalService, cast the IBinder and get LocalService instance
-            LocalBinder binder = (LocalBinder) service;
-            theService = binder.getService();
-            
-
-    		EditText np = (EditText) findViewById(R.id.Delay);
-    		np.setText(String.valueOf(theService.getDelay()));
-
-    		np.setOnEditorActionListener(new OnEditorActionListener() {
-    			public boolean onEditorAction(TextView v, int actionId,
-    					KeyEvent event) {
-    				if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER))
-    						|| (actionId == EditorInfo.IME_ACTION_DONE)) {
-    					EditText edit = (EditText) findViewById(R.id.Delay);
-
-    					theService.setDelay(Integer.parseInt(edit.getText().toString()));
-    				}
-    				return false;
-    			}
-    		});
-    		
-    		np = (EditText) findViewById(R.id.Radius);
-    		np.setText(String.valueOf(Math.round(theService.getMapRadius() / 0.3408)));
-
-    		np.setOnEditorActionListener(new OnEditorActionListener() {
-    			public boolean onEditorAction(TextView v, int actionId,
-    					KeyEvent event) {
-    				if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER))
-    						|| (actionId == EditorInfo.IME_ACTION_DONE)) {
-    					EditText edit = (EditText) findViewById(R.id.Radius);
-
-    					theService.setMapRadius(Double.parseDouble(edit.getText().toString()) * 0.3408);
-    				}
-    				return false;
-    			}
-    		});
-    		 
-            bound = true;
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName arg0) {
-            bound = false;
-        }
-    };
 
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		// setTheme(android.R.style.Theme_Holo_);
 		setContentView(R.layout.settings_layout);
 
 		Util.parents.push(getClass());
 
 		getActionBar().setDisplayHomeAsUpEnabled(true);
+		
+		theService = MainService.getService();
 
+		
+		EditText np = (EditText) findViewById(R.id.Delay);
+		np.setText(String.valueOf(theService.getDelay()));
+
+		np.setOnEditorActionListener(new OnEditorActionListener() {
+			public boolean onEditorAction(TextView v, int actionId,
+					KeyEvent event) {
+				if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER))
+						|| (actionId == EditorInfo.IME_ACTION_DONE)) {
+					EditText edit = (EditText) findViewById(R.id.Delay);
+
+					theService.setDelay(Integer.parseInt(edit.getText().toString()));
+				}
+				return false;
+			}
+		});
+		
+		np = (EditText) findViewById(R.id.Radius);
+		np.setText(String.valueOf(Math.round(theService.getMapRadius() / 0.3408)));
+
+		np.setOnEditorActionListener(new OnEditorActionListener() {
+			public boolean onEditorAction(TextView v, int actionId,
+					KeyEvent event) {
+				if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER))
+						|| (actionId == EditorInfo.IME_ACTION_DONE)) {
+					EditText edit = (EditText) findViewById(R.id.Radius);
+
+					theService.setMapRadius(Double.parseDouble(edit.getText().toString()) * 0.3408);
+				}
+				return false;
+			}
+		});
 	}
 
 	public void helpRefresh(View view) {

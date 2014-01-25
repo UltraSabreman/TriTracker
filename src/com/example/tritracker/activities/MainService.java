@@ -20,6 +20,7 @@ import android.os.Binder;
 import android.os.IBinder;
 
 import com.example.tritracker.Buss;
+import com.example.tritracker.NotificationHandler;
 import com.example.tritracker.R;
 import com.example.tritracker.Stop;
 import com.example.tritracker.Stop.Alert;
@@ -40,6 +41,12 @@ public class MainService extends Service {
 	private DataStore stopData;
 	private Map<String, onUpdate> refreshList = new HashMap<String, onUpdate>();
 	private final IBinder mBinder = new LocalBinder();
+	private ArrayList<NotificationHandler> reminders = new ArrayList<NotificationHandler>();
+	
+	private static MainService theService;
+	public static MainService getService() {
+		return theService;
+	}	
 	
 	public class LocalBinder extends Binder { MainService getService() {
             return MainService.this;
@@ -69,6 +76,8 @@ public class MainService extends Service {
 			doUpdate(true);
 			
 		}
+		
+		theService = this;
 		return START_STICKY;
 	}
 
@@ -100,6 +109,33 @@ public class MainService extends Service {
 			stopData.StopOrder = order;
 	}
 	
+	public void addReminder(NotificationHandler not) {
+		if (!reminders.contains(not)) {
+			reminders.add(not);
+		}
+	}
+	
+	private void clearReminders() {
+		for (Iterator<NotificationHandler> it = reminders.iterator(); it.hasNext();)
+			if (!it.next().IsSet)
+				it.remove();
+	}
+	
+	public NotificationHandler getReminder(Buss b) {
+		for (NotificationHandler n : reminders)
+			if (n.getBuss() == b)
+				return n;
+		
+		return null;
+	}
+	
+	public boolean stopHasReminders(Stop s) {
+		for (NotificationHandler n : reminders)
+			if (n.getStop() == s)
+				return true;
+		
+		return false; 
+	}
 	public int getMenu() {
 		return stopData.menu;
 	}
@@ -192,6 +228,8 @@ public class MainService extends Service {
 		        	((onUpdate)pairs.getValue()).run();
 		    }
 		}
+		
+		clearReminders();
 	}
 	
 	private void updateAllStops() {

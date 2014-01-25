@@ -3,14 +3,11 @@ package com.example.tritracker.activities;
 import java.util.ArrayList;
 
 import android.app.AlertDialog;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.view.ContextMenu;
@@ -37,7 +34,6 @@ import com.example.tritracker.Stop;
 import com.example.tritracker.Timer;
 import com.example.tritracker.Util;
 import com.example.tritracker.Util.ListType;
-import com.example.tritracker.activities.MainService.LocalBinder;
 import com.example.tritracker.arrayadaptors.StopListArrayAdaptor;
 import com.example.tritracker.json.ForgroundRequestManager;
 import com.example.tritracker.json.ForgroundRequestManager.ResultCallback;
@@ -53,30 +49,30 @@ public class StopListActivity extends Fragment implements UndoListener {
 	private ArrayList<Stop> stopList = new ArrayList<Stop>();
 	private boolean isFavorites;
 	
-	private MainService theService;
-	private boolean bound;
+	private MainService theService;	
 	
+	public StopListActivity(boolean t) {
+		isFavorites = t;
+	}
 	
-	@Override 
-	public void onStart() {
-		super.onStart();
-		Intent intent = new Intent(getActivity(), MainService.class);
-        getActivity().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);    
-        
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		ourView = inflater.inflate(R.layout.stop_list_layout, container, false);
+		mUndoBarController = new UndoBarController(ourView.findViewById(R.id.undobar), this);
+
+		theService = MainService.getService();
+		
+		((TextView) ourView.findViewById(R.id.NoMembers)).setText("Your " + (isFavorites ? "Favorites List" : "History") + " is Empty.");
+
         stopList = isFavorites ? theService.getFavorties() : theService.getHistory();
 		
-		new Sorter<Stop>(Stop.class, theService).sort(isFavorites ? ListType.Favorites : ListType.History, stopList, null);
-		adaptor = new StopListArrayAdaptor(theService, getActivity().getApplicationContext(), stopList, isFavorites);
+		new Sorter<Stop>(Stop.class).sort(isFavorites ? ListType.Favorites : ListType.History, stopList, null);
+		adaptor = new StopListArrayAdaptor(getActivity().getApplicationContext(), stopList, isFavorites);
 		
 		setListeners();
 		update(null);
 		
-		theService.sub(isFavorites ? "Favorites" : "History", new Timer.onUpdate() {
-			public void run() {
-				update(null);
-			}
-		});
-
+		return ourView;
 	}
 	
 	@Override
@@ -84,7 +80,7 @@ public class StopListActivity extends Fragment implements UndoListener {
 		switch (item.getItemId()) {
 			case R.id.menu_action_sort_list:
 				final ArrayList<Stop> tempStops = isFavorites ? theService.getFavorties() : theService.getHistory();
-				new Sorter<Stop>(Stop.class, theService).sortUI(getActivity(), isFavorites ? ListType.Favorites : ListType.History,	tempStops,
+				new Sorter<Stop>(Stop.class).sortUI(getActivity(), isFavorites ? ListType.Favorites : ListType.History,	tempStops,
 						new Timer.onUpdate() {
 							public void run() {
 								update(tempStops);
@@ -129,17 +125,20 @@ public class StopListActivity extends Fragment implements UndoListener {
 		return super.onContextItemSelected(item);
 	}
 	
+	
 	@Override
-	public void onResume() {
-		super.onResume();
-		
+	public void onStart() {
+		theService.sub(isFavorites ? "Favorites" : "History", new Timer.onUpdate() {
+			public void run() {
+				update(null);
+			}
+		});
+		super.onStart();
 	}
 	
 	@Override
 	public void onStop() {
 		theService.unsub(isFavorites ? "Favorites" : "History");
-		if (bound)
-			getActivity().unbindService(mConnection);
 		super.onStop();
 	}
 
@@ -148,27 +147,6 @@ public class StopListActivity extends Fragment implements UndoListener {
 		if (adaptor != null)
 			adaptor.notifyDataSetInvalidated();		
 		super.onDestroy();
-	}
-    private ServiceConnection mConnection = new ServiceConnection() {
-
-        @Override
-        public void onServiceConnected(ComponentName className, IBinder service) {
-            // We've bound to LocalService, cast the IBinder and get LocalService instance
-            LocalBinder binder = (LocalBinder) service;
-            theService = binder.getService();
-            bound = true;
-        }
-
-        
-        @Override
-        public void onServiceDisconnected(ComponentName arg0) {
-            bound = false;
-        }
-    };
-	
-	public StopListActivity(MainService service, boolean t) {
-		isFavorites = t;
-		theService = service;
 	}
 	
 	private void getJson(int stop) {
@@ -185,26 +163,15 @@ public class StopListActivity extends Fragment implements UndoListener {
 				Context c = getActivity().getApplicationContext();
 				
 				Intent tempIntent = new Intent(c, StopDetailsActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-				tempIntent.putExtra("stop", s);
+				tempIntent.putExtra("stop", s.StopID);
 				
 				c.startActivity(tempIntent);
 				theService.doUpdate(false);
 			}
 		};
 		
-		new ForgroundRequestManager(theService, call, getActivity(), getActivity().getApplicationContext(), stop).start();
+		new ForgroundRequestManager(call, getActivity(), getActivity().getApplicationContext(), stop).start();
 		
-	}
-
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		ourView = inflater.inflate(R.layout.stop_list_layout, container, false);
-		mUndoBarController = new UndoBarController(ourView.findViewById(R.id.undobar), this);
-		
-		((TextView) ourView.findViewById(R.id.NoMembers)).setText("Your " + (isFavorites ? "Favorites List" : "History") + " is Empty.");
-
-		setListeners();
-		return ourView;
 	}
 	
 	private void setListeners() {
@@ -300,6 +267,9 @@ public class StopListActivity extends Fragment implements UndoListener {
 		if (newStops != null) {
 			stopList = newStops;
 		}
+		
+		if (theService == null)
+			theService = MainService.getService();
 		if (getActivity() != null)
 			getActivity().runOnUiThread(new Runnable() {
 				@Override
@@ -315,7 +285,9 @@ public class StopListActivity extends Fragment implements UndoListener {
 							adaptor.addAll(stopList);
 						}
 						adaptor.notifyDataSetChanged();
-					}
+					} else
+						adaptor = new StopListArrayAdaptor(getActivity().getApplicationContext(), 
+								isFavorites ? theService.getFavorties() : theService.getHistory(), isFavorites);
 				}
 			});
 	}

@@ -59,6 +59,11 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
 	public void onStart() {
 		super.onStart();
         bindService(new Intent(this, MainService.class), mConnection, Context.BIND_AUTO_CREATE);
+        
+        if (favFrag != null)
+        	favFrag.update(null);
+        if (histFrag != null)
+        	histFrag.update(null);
 	}
 	
     @Override
@@ -67,8 +72,13 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
         // Unbind from the service
         if (bound)
             unbindService(mConnection);
+    }
+    
+    @Override
+    protected void onDestroy() {
         favFrag = null;
         histFrag = null;
+        super.onDestroy();
     }
     
     private ServiceConnection mConnection = new ServiceConnection() {
@@ -141,10 +151,10 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
 			}
 		
 		if (position == 0) {
-			favFrag = new StopListActivity(theService, true);
+			favFrag = new StopListActivity(true);
 			getSupportFragmentManager().beginTransaction().replace(R.id.container, (Fragment)favFrag).commit();
 		} else {
-			histFrag = new StopListActivity(theService, false);
+			histFrag = new StopListActivity(false);
 			getSupportFragmentManager().beginTransaction().replace(R.id.container, (Fragment)histFrag).commit();
 		}
 		
