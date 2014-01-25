@@ -37,6 +37,8 @@ public class Buss implements Parcelable {
 	}
 
 	public void setNotification(NotificationHandler n) {
+		if (notification != null)
+			notification.cancelNotification();
 		notification = n;
 	}
 
@@ -60,8 +62,11 @@ public class Buss implements Parcelable {
 		if (b.ScheduledTime != null)
 			ScheduledTime = new Date(b.ScheduledTime.getTime());
 		
-		if (b.notification != null)
+		if (b.notification != null){
+			if (notification != null)
+				notification.cancelNotification();
 			notification = b.notification;
+		}
 	}
 
 	@Override

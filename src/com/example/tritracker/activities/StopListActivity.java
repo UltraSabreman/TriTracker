@@ -215,7 +215,8 @@ public class StopListActivity extends Fragment implements UndoListener {
 		registerForContextMenu(layout);
 		view.setAdapter(adaptor);
 		
-		view.addFooterView(new View(getActivity().getApplicationContext()), null, true);
+		if (view.getFooterViewsCount() == 0)
+			view.addFooterView(getActivity().getLayoutInflater().inflate(R.layout.seperator, null), null, true);
 
 		edit.setOnEditorActionListener(new OnEditorActionListener() {
 			public boolean onEditorAction(TextView v, int actionId,

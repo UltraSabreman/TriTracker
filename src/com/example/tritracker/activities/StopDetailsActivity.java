@@ -1,7 +1,5 @@
 package com.example.tritracker.activities;
 
-import java.util.ArrayList;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ComponentName;
@@ -19,9 +17,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnCreateContextMenuListener;
+import android.view.View.OnLongClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.NumberPicker;
 import android.widget.RelativeLayout;
@@ -173,8 +171,9 @@ public class StopDetailsActivity extends Activity {
 			listView.setAdapter(adaptor);
 			adaptor.notifyDataSetChanged();
 			registerForContextMenu(layout);
-			
-			listView.addFooterView(new View(getApplicationContext()), null, true);
+
+			if (listView.getFooterViewsCount() == 0)
+				listView.addFooterView(getLayoutInflater().inflate(R.layout.seperator, null), null, true);
 			
 			layout.setOnCreateContextMenuListener(new OnCreateContextMenuListener() {
 				@Override
@@ -203,6 +202,15 @@ public class StopDetailsActivity extends Activity {
 					act.openContextMenu(arg1);
 					listView.clearChoices();
 					listView.requestLayout();
+				}
+			});
+			
+			listView.setOnLongClickListener(new OnLongClickListener() {
+				
+				@Override
+				public boolean onLongClick(View v) {
+					act.openContextMenu(v);
+					return false;
 				}
 			});
 

@@ -67,6 +67,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
         // Unbind from the service
         if (bound)
             unbindService(mConnection);
+        favFrag = null;
+        histFrag = null;
     }
     
     private ServiceConnection mConnection = new ServiceConnection() {
