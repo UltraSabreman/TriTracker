@@ -11,7 +11,7 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 
 import com.example.tritracker.activities.MainActivity;
-import com.example.tritracker.activities.StopListActivity;
+import com.example.tritracker.activities.StopListFragment;
 
 public class NotificationHandler {
 	private Context notContext;
@@ -94,7 +94,7 @@ public class NotificationHandler {
 				.setDefaults(Notification.DEFAULT_VIBRATE | Notification.DEFAULT_SOUND)
 				.setAutoCancel(true).setLights(0xffFF8800, 1500, 1000);
 		// Creates an explicit intent for an Activity in your app
-		Intent resultIntent = new Intent(notContext, StopListActivity.class);
+		Intent resultIntent = new Intent(notContext, StopListFragment.class);
 
 		// The stack builder object will contain an artificial back stack for
 		// the

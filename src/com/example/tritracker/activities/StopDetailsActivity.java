@@ -1,5 +1,7 @@
 package com.example.tritracker.activities;
 
+import java.util.ArrayList;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -22,6 +24,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.tritracker.Alert;
 import com.example.tritracker.Buss;
 import com.example.tritracker.NotificationHandler;
 import com.example.tritracker.R;
@@ -66,7 +69,8 @@ public class StopDetailsActivity extends Activity {
 	
 
 		final Activity act = this;
-		if (curStop.Alerts != null && curStop.Alerts.size() != 0) {
+		ArrayList<Alert> a = theService.getStopAlerts(curStop);
+		if (a != null && a.size() != 0) {
 			View alert = (View) findViewById(R.id.alertBackground);
 			alert.setVisibility(View.VISIBLE);
 
@@ -74,7 +78,7 @@ public class StopDetailsActivity extends Activity {
 				@Override
 				public void onClick(View v) {
 					Intent temp = new Intent(act, AlertListActivity.class);
-					temp.putExtra("stop", curStop);
+					temp.putExtra("stop", curStop.StopID);
 					startActivity(temp);
 				}
 			});
@@ -138,7 +142,8 @@ public class StopDetailsActivity extends Activity {
 				@Override
 				public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 					
-					if (curStop.Alerts != null && curStop.Alerts.size() > 0) {
+					ArrayList<Alert> a = theService.getStopAlerts(curStop);
+					if (a != null && a.size() > 0) {
 						menu.add(0, R.id.menu_action_view_alerts, ContextMenu.NONE, "View Relevant Alerts");
 					}
 					
@@ -267,7 +272,7 @@ public class StopDetailsActivity extends Activity {
 				return true;
 			case R.id.menu_action_view_alerts:
 				Intent temp = new Intent(this, AlertListActivity.class);
-				temp.putExtra("stop", curStop);
+				temp.putExtra("stop", curStop.StopID);
 				startActivity(temp);
 				return true;
 				
@@ -302,16 +307,17 @@ public class StopDetailsActivity extends Activity {
 		return menu;
 	}
 
-
+	private void goBack() {
+		Intent parentActivityIntent = new Intent(this, Util.parents.pop());
+		parentActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+		NavUtils.navigateUpTo(this, parentActivityIntent);
+	}
+	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case android.R.id.home:
-			Intent parentActivityIntent = new Intent(this, Util.parents.pop());
-			parentActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
-					| Intent.FLAG_ACTIVITY_NEW_TASK);
-			NavUtils.navigateUpTo(this, parentActivityIntent);
-
+			goBack();
 			return true;
 		case R.id.action_settings:
 			startActivity(new Intent(this, SettingsActivity.class));

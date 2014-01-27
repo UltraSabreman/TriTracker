@@ -233,20 +233,20 @@ public class MapActivity extends Activity implements GooglePlayServicesClient.Co
 	}
 	
 	private void getJson(int stop) {
-		Util.creatDiag(this);
+		Util.createSpinner(this);
 		ResultCallback call = new ForgroundRequestManager.ResultCallback() { 
 			public void run(Stop s) {
 				runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
-						Util.hideDiag();
+						Util.hideSpinner();
 					}
 				});
 				
 				Context c = getApplicationContext();
 				
 				Intent tempIntent = new Intent(c, StopDetailsActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-				tempIntent.putExtra("stop", s);
+				tempIntent.putExtra("stop", s.StopID);
 				
 				c.startActivity(tempIntent);
 				theService.doUpdate(false);
@@ -308,7 +308,7 @@ public class MapActivity extends Activity implements GooglePlayServicesClient.Co
 				stops.add(map.addMarker(new MarkerOptions()
 					.icon(icon)
 			        .title(s.Name)
-			        .snippet(s.StopID+"|"+s.getService())
+			        .snippet(s.StopID+"|"+Util.getListOfLines(s, true))
 			        .position(new LatLng(s.Latitude, s.Longitude))
 				));
 			}

@@ -23,8 +23,10 @@
 	<string name="title_activity_loading_overlay">LoadingOverlay</string>
 	<string name="fav_desc">Add/Remove from favorites</string>
 	<string name="action_map">Find Nearby Stops</string>
+	<string name="action_routes">Search For a Stop</string>
 	<string name="action_find_stop">Show This Stop on the map</string>
 	<string name="content">A Picture</string>
+	<string name="search">Search for a Route</string>
 	<string name="no_arrivals">No arrival information available.</string>
 	<string name="title_activity_alert_details">Alert Details</string>
 	<string name="affected_line">Affected Line: </string>
@@ -37,5 +39,6 @@
 	<string name="title_activity_undo_popup">UndoPopup</string>
 	<string name="title_activity_test">TestActivity</string>
 	<string name="title_activity_map">Map</string>
+	<string name="title_activity_search_routes">Search</string>
 
 </resources>

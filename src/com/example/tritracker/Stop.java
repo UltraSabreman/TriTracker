@@ -4,31 +4,25 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
+import com.example.tritracker.json.AllRoutesJSONResult;
 import com.example.tritracker.json.ArrivalJSONResult;
 import com.example.tritracker.json.MapJSONResult;
-import com.example.tritracker.json.MapJSONResult.ResultSet.Location.Route;
-import com.google.gson.annotations.Expose;
 //make me more specific
 //import android.content.
 
-public class Stop implements Parcelable {
-	@Expose	public String Name = "Invalid Street";
-	@Expose	public int StopID = -1;
-	@Expose	public String Direction = "Up Up and Away!";
-	@Expose	public Date LastAccesed = null;
+public class Stop  {
+	public String Name = "Invalid Street";
+	public int StopID = -1;
+	public String Direction = "Up Up and Away!";
+	public Date LastAccesed = null;
 	
-	@Expose	public boolean inHistory = false;
-	@Expose	public boolean inFavorites = false;
+	public boolean inHistory = false;
+	public boolean inFavorites = false;
 	
-	@Expose	public ArrayList<Buss> Busses = new ArrayList<Buss>();
+	public ArrayList<Buss> Busses = new ArrayList<Buss>();
 	
-	@Expose public double Latitude = 0;
-	@Expose public double Longitude = 0; 
-	public ArrayList<String> Routes = new ArrayList<String>();
-	public ArrayList<Alert> Alerts = new ArrayList<Alert>();
+	public double Latitude = 0;
+	public double Longitude = 0; 
 
 	public Stop(ArrivalJSONResult.ResultSet.Location l) {
 		Name = l.desc;
@@ -44,7 +38,7 @@ public class Stop implements Parcelable {
 		Direction = l.dir;
 		Latitude = l.lat;
 		Longitude = l.lng;
-		if (l.route != null) {
+		/*if (l.route != null) {
 			for (Route r : l.route) {
 				if (r.type.compareTo("R") == 0){
 					Routes.add(r.desc);//.substring(0, r.desc.indexOf(" ")));
@@ -52,18 +46,27 @@ public class Stop implements Parcelable {
 					Routes.add(String.valueOf(r.route));
 			}
 					
-		}
+		}*/
+	}
+	
+	public Stop(AllRoutesJSONResult.ResultSet.Route.Dir.Stop s, String des) {
+		Name = s.desc;
+		StopID = s.locid;
+		Latitude = s.lat;
+		Longitude = s.lng;
+		Direction = des;
 	}
 
 	public Stop(int id) {
 		StopID = id;
 	}
 
-	public String getService() {
-		if (Routes != null) {
+	/*public String getService() {
+		if (Busses != null) {
 			String s = "";
-			for (String ss : Routes)
-				s += ss + ", ";
+			for (Buss b : Busses) {
+				s += ro + ", ";
+			}
 			
 			if (s.compareTo("") != 0) {
 				s = s.substring(0, s.length() - 2);
@@ -71,14 +74,8 @@ public class Stop implements Parcelable {
 			return s;
 		}
 		return "";
-	}
-	
-	public void resetAlerts() {
-		if (Alerts != null) 
-			Alerts.clear();
-		Alerts = new ArrayList<Alert>();
-	}
-	
+	}*/
+		
 
 	public void Update(Stop s, boolean shouldUpdateDate) {
 		Name = new String(s.Name);
@@ -111,43 +108,8 @@ public class Stop implements Parcelable {
 		return null;
 	}
 
-	public static class Alert implements Parcelable {
-		public String Discription = "";
-		public int AffectedLine = -1;
 
-		public Alert(String d, int a) {
-			Discription = d;
-			AffectedLine = a;
-		}
-		
-		@Override
-		public int describeContents() {
-			return 0;
-		}
-
-		@Override
-		public void writeToParcel(Parcel out, int flags) {	
-			out.writeString(Discription);
-			out.writeInt(AffectedLine);
-		}
-		
-		public Alert(Parcel in) {
-			Discription = in.readString();
-			AffectedLine = in.readInt();
-		}
-		
-		public static final Parcelable.Creator<Alert> CREATOR = new Parcelable.Creator<Alert>() {
-			public Alert createFromParcel(Parcel in) {
-			    return new Alert(in);
-			}
-			
-			public Alert[] newArray(int size) {
-			    return new Alert[size];
-			}
-		};
-	}
-
-	@Override
+	/*@Override
 	public int describeContents() {
 		return 0;
 	}
@@ -164,7 +126,6 @@ public class Stop implements Parcelable {
 		out.writeDouble(Longitude);
 		
 		out.writeList(Busses);
-		out.writeList(Alerts);
 	}
 	
 	public Stop(Parcel in) {
@@ -178,11 +139,7 @@ public class Stop implements Parcelable {
 		Longitude = in.readDouble();
 		
 		Busses = new ArrayList<Buss>();
-		in.readList(Busses, Buss.class.getClassLoader());
-
-		
-		Alerts = new ArrayList<Alert>();
-		in.readList(Alerts, Alert.class.getClassLoader());
+		in.readList(Busses, Buss.class.getClassLoader());		
 	}
 	
 	public static final Parcelable.Creator<Stop> CREATOR = new Parcelable.Creator<Stop>() {
@@ -193,5 +150,5 @@ public class Stop implements Parcelable {
 		public Stop[] newArray(int size) {
 		    return new Stop[size];
 		}
-	};
+	};*/
 }

@@ -23,8 +23,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
 	private static final String STATE_SELECTED_NAVIGATION_ITEM = "selected_navigation_item";
 	private static boolean started = false;
 	
-	private StopListActivity favFrag;
-	private StopListActivity histFrag;
+	private StopListFragment favFrag;
+	private StopListFragment histFrag;
 	
 	private MainService theService;
 	private boolean bound;
@@ -128,6 +128,9 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
 		// Handle presses on the action bar items
 		//mUndoBarController.hideUndoBar(false);
 		switch (item.getItemId()) {
+		case R.id.action_routes:
+			startActivity(new Intent(getApplicationContext(), SearchRoutesActivity.class));
+			return true;
 		case R.id.action_settings:
 			startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
 			return true;
@@ -151,10 +154,10 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
 			}
 		
 		if (position == 0) {
-			favFrag = new StopListActivity(true);
+			favFrag = new StopListFragment(true);
 			getSupportFragmentManager().beginTransaction().replace(R.id.container, (Fragment)favFrag).commit();
 		} else {
-			histFrag = new StopListActivity(false);
+			histFrag = new StopListFragment(false);
 			getSupportFragmentManager().beginTransaction().replace(R.id.container, (Fragment)histFrag).commit();
 		}
 		

@@ -15,11 +15,11 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.tritracker.Alert;
 import com.example.tritracker.Buss;
 import com.example.tritracker.NotificationHandler;
 import com.example.tritracker.R;
 import com.example.tritracker.Stop;
-import com.example.tritracker.Stop.Alert;
 import com.example.tritracker.Util;
 import com.example.tritracker.activities.MainService;
 
@@ -63,13 +63,15 @@ public class BussListArrayAdaptor extends ArrayAdapter<Buss> {
 		Buss curBuss = getItem(position);
 
 		if (curBuss != null) {
-			if (curStop.Alerts != null && curStop.Alerts.size() != 0) {
+			ArrayList<Alert> a = theService.getStopAlerts(curStop);
+			if (a != null && a.size() != 0) {
 				boolean affected = false;
-				for (Alert d : curStop.Alerts) {
-					if (d.AffectedLine == curBuss.Route) {
-						affected = true;
-						break;
-					}
+				for (Alert d : a) {
+					for (Integer i : d.AffectedLines)
+						if (i.intValue() == curBuss.Route) {
+							affected = true;
+							break;
+						}
 				}
 				if (affected)
 					((ImageView) v.findViewById(R.id.AlertIcon))

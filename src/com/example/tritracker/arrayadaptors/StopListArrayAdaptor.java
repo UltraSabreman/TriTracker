@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.tritracker.Alert;
 import com.example.tritracker.R;
 import com.example.tritracker.Stop;
 import com.example.tritracker.Util;
@@ -73,7 +74,8 @@ public class StopListArrayAdaptor extends ArrayAdapter<Stop> {
 				});
 			}
 
-			if (curStop.Alerts != null && curStop.Alerts.size() != 0)
+			ArrayList<Alert> a = theService.getStopAlerts(curStop);
+			if (a != null && a.size() != 0)
 				((ImageView) v.findViewById(R.id.AlertIcon))
 						.setVisibility(View.VISIBLE);
 			else

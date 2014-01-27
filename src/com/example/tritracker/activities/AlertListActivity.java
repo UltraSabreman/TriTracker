@@ -1,5 +1,7 @@
 package com.example.tritracker.activities;
 
+import java.util.ArrayList;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,15 +10,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
 
+import com.example.tritracker.Alert;
 import com.example.tritracker.R;
-import com.example.tritracker.Stop;
 import com.example.tritracker.Util;
 import com.example.tritracker.arrayadaptors.AlertListArrayAdaptor;
 
 public class AlertListActivity extends Activity {
 	AlertListArrayAdaptor ar;
 	
-	private Stop curStop;
+	private MainService theService;
+	private ArrayList<Alert> alerts = new ArrayList<Alert>();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -26,10 +29,12 @@ public class AlertListActivity extends Activity {
 
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		
+		theService = MainService.getService();
+		
 		Bundle extras = getIntent().getExtras();
-		curStop = extras.getParcelable("stop");
+		alerts = theService.getStopAlerts(theService.getStop(extras.getInt("stop")));
 
-		ar = new AlertListArrayAdaptor(getApplicationContext(),	curStop.Alerts);
+		ar = new AlertListArrayAdaptor(getApplicationContext(),	alerts);
 
 		((ListView) findViewById(R.id.AlertList)).setAdapter(ar);
 	}

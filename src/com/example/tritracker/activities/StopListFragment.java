@@ -41,7 +41,7 @@ import com.example.tritracker.notmycode.SwipeDismissListViewTouchListener;
 import com.example.tritracker.notmycode.UndoBarController;
 import com.example.tritracker.notmycode.UndoBarController.UndoListener;
 
-public class StopListActivity extends Fragment implements UndoListener {
+public class StopListFragment extends Fragment implements UndoListener {
 	private UndoBarController mUndoBarController;
 	private View ourView;
 	private StopListArrayAdaptor adaptor;
@@ -51,7 +51,7 @@ public class StopListActivity extends Fragment implements UndoListener {
 	
 	private MainService theService;	
 	
-	public StopListActivity(boolean t) {
+	public StopListFragment(boolean t) {
 		isFavorites = t;
 	}
 	
@@ -138,6 +138,7 @@ public class StopListActivity extends Fragment implements UndoListener {
 	
 	@Override
 	public void onStop() {
+		update(null);
 		theService.unsub(isFavorites ? "Favorites" : "History");
 		super.onStop();
 	}
@@ -150,13 +151,13 @@ public class StopListActivity extends Fragment implements UndoListener {
 	}
 	
 	private void getJson(int stop) {
-		Util.creatDiag(getActivity());
+		Util.createSpinner(getActivity());
 		ResultCallback call = new ForgroundRequestManager.ResultCallback() { 
 			public void run(Stop s) {
 				getActivity().runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
-						Util.hideDiag();
+						Util.hideSpinner();
 					}
 				});
 				

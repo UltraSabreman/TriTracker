@@ -28,7 +28,6 @@ public class ForgroundRequestManager extends Thread {
 	}
 
 	public void run() {		
-		boolean shouldNotViewStop = false;
 		try {
 			Request<ArrivalJSONResult> tempF = new Request<ArrivalJSONResult>(ArrivalJSONResult.class,
 					new Request.JSONcallback<ArrivalJSONResult>() {
@@ -43,24 +42,6 @@ public class ForgroundRequestManager extends Thread {
 			synchronized (tempF) {
 				tempF.start();
 				tempF.join();
-			}
-			shouldNotViewStop = tempF.hasFailed();
-
-			if (!shouldNotViewStop) {
-				Request<DetourJSONResult> test = new Request<DetourJSONResult>(DetourJSONResult.class,
-						new Request.JSONcallback<DetourJSONResult>() {
-							public void run(DetourJSONResult r, int error) {
-								service.proccessDetours(r);
-							}
-						},
-						"http://developer.trimet.org/ws/V1/detours?routes="
-								+ Util.getListOfLines(service.getStop(theStop), false) + "&json=true&appID="
-								+ context.getString(R.string.appid));
-
-				synchronized (test) {
-					test.start();
-					test.join();
-				}
 			}
 		} catch (InterruptedException e) {
 			e.printStackTrace();

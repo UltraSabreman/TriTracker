@@ -118,7 +118,7 @@ public class Util {
 	}
 
 	
-	public static void creatDiag(final Activity act) {
+	public static void createSpinner(final Activity act) {
 		act.runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
@@ -127,7 +127,7 @@ public class Util {
 		});
 	}
 	
-	public static void hideDiag() {
+	public static void hideSpinner() {
 		if (wait != null) {
 			wait.finish();
 			wait = null;

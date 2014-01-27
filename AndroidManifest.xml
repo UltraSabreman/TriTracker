@@ -15,12 +15,18 @@
 		android:resizeable="true"
 		android:smallScreens="true" />
 
-	<uses-permission android:name="android.permission.INTERNET" />
-	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-	<uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
-	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+	<uses-permission
+		android:name="android.permission.INTERNET" />
+	<uses-permission
+		android:name="android.permission.ACCESS_NETWORK_STATE" />
+	<uses-permission
+		android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+	<uses-permission
+		android:name="android.permission.ACCESS_COARSE_LOCATION" />
+	<uses-permission
+		android:name="android.permission.ACCESS_FINE_LOCATION" />
+	<uses-permission
+		android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
 	<uses-sdk
 		android:minSdkVersion="14"
@@ -37,9 +43,8 @@
 			android:value="@integer/google_play_services_version" />
 		<meta-data
 			android:name="com.google.android.maps.v2.API_KEY"
-			android:value="AIzaSyBcN6QpEyvwN1XNMTxRYDTvsm0aA30NwnE" />
-			<!--laptop: AIzaSyBcN6QpEyvwN1XNMTxRYDTvsm0aA30NwnE pc: AIzaSyCdVhzm4y0fpWjoSill2c2qyov8bOn-ur8 />-->
-			
+			android:value="AIzaSyCdVhzm4y0fpWjoSill2c2qyov8bOn-ur8" />
+		<!-- laptop: AIzaSyBcN6QpEyvwN1XNMTxRYDTvsm0aA30NwnE pc: AIzaSyCdVhzm4y0fpWjoSill2c2qyov8bOn-ur8 /> -->
 
 		<service
 			android:name="com.example.tritracker.activities.MainService"
@@ -59,29 +64,31 @@
 		<activity
 			android:name="com.example.tritracker.activities.StopDetailsActivity"
 			android:windowSoftInputMode="stateHidden" >
-			<meta-data
-				android:name="android.support.PARENT_ACTIVITY"
-				android:value="com.example.tritracker.MainActivity" />
 		</activity>
 		<activity
 			android:name="com.example.tritracker.activities.AlertListActivity"
-			android:label="@string/title_activity_alert_details" 
+			android:label="@string/title_activity_alert_details"
 			android:windowSoftInputMode="stateHidden" >
 		</activity>
 		<activity
 			android:name="com.example.tritracker.activities.SettingsActivity"
-			android:label="@string/title_activity_settings" 
+			android:label="@string/title_activity_settings"
 			android:windowSoftInputMode="stateHidden" >
 		</activity>
 		<activity
 			android:name="com.example.tritracker.activities.MapActivity"
-			android:label="@string/title_activity_map" 
+			android:label="@string/title_activity_map"
 			android:windowSoftInputMode="stateHidden" >
 		</activity>
 		<activity
 			android:name="com.example.tritracker.activities.SpinnerPopupActivity"
-			android:theme="@android:style/Theme.Holo.Light.Dialog.NoActionBar" 
 			android:excludeFromRecents="true"
+			android:theme="@android:style/Theme.Holo.Light.Dialog.NoActionBar"
+			android:windowSoftInputMode="stateHidden" >
+		</activity>
+		<activity
+			android:name="com.example.tritracker.activities.SearchRoutesActivity"
+			android:label="@string/title_activity_search_routes" 
 			android:windowSoftInputMode="stateHidden" >
 		</activity>
 	</application>

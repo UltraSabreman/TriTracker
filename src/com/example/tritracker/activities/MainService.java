@@ -6,12 +6,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import android.app.Service;
 import android.content.Context;
@@ -19,17 +18,19 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 
+import com.example.tritracker.Alert;
 import com.example.tritracker.Buss;
 import com.example.tritracker.NotificationHandler;
 import com.example.tritracker.R;
 import com.example.tritracker.Stop;
-import com.example.tritracker.Stop.Alert;
 import com.example.tritracker.Timer;
 import com.example.tritracker.Timer.onUpdate;
-import com.example.tritracker.Util;
 import com.example.tritracker.Util.ListType;
+import com.example.tritracker.json.AllRoutesJSONResult;
+import com.example.tritracker.json.AllRoutesJSONResult.ResultSet.Route;
 import com.example.tritracker.json.ArrivalJSONResult;
 import com.example.tritracker.json.DetourJSONResult;
+import com.example.tritracker.json.DetourJSONResult.ResultSet;
 import com.example.tritracker.json.Request;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -37,12 +38,15 @@ import com.google.gson.JsonSyntaxException;
 import com.google.gson.annotations.Expose;
 
 public class MainService extends Service {
+	public boolean isUpdating = false;
+	
 	private Timer refreshTime = null;
 	private DataStore stopData;
 	private Map<String, onUpdate> refreshList = new HashMap<String, onUpdate>();
 	private final IBinder mBinder = new LocalBinder();
 	private ArrayList<NotificationHandler> reminders = new ArrayList<NotificationHandler>();
 	
+	private static boolean started = false;
 	private static MainService theService;
 	public static MainService getService() {
 		return theService;
@@ -55,14 +59,16 @@ public class MainService extends Service {
 	
 	@Override
 	public IBinder onBind(Intent intent) {
-		
 		return mBinder;
 	}
 	
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		if (refreshTime == null) {
-			readData();
+			if (!started) {
+				readData();
+				started = true;
+			}
 			
 			refreshTime = new Timer(stopData.RefreshDelay);
 			refreshTime.addCallBack("mainRefresh", 
@@ -76,7 +82,6 @@ public class MainService extends Service {
 			doUpdate(true);
 			
 		}
-		
 		theService = this;
 		return START_STICKY;
 	}
@@ -109,13 +114,17 @@ public class MainService extends Service {
 			stopData.StopOrder = order;
 	}
 	
+	public ArrayList<Route> getRoutes() {
+		return stopData.AvalibleRoutes;
+	}
+	
 	public void addReminder(NotificationHandler not) {
 		if (!reminders.contains(not)) {
 			reminders.add(not);
 		}
 	}
 	
-	private void clearReminders() {
+	private void updateReminders() {
 		for (Iterator<NotificationHandler> it = reminders.iterator(); it.hasNext();)
 			if (!it.next().IsSet)
 				it.remove();
@@ -229,19 +238,78 @@ public class MainService extends Service {
 		    }
 		}
 		
-		clearReminders();
+		updateReminders();
+		
+		long lastUpdate = stopData.lastRouteUpdate;
+		long now = new Date().getTime();
+		
+		long Days = (now - lastUpdate) / 1000 / 60 / 60 / 24;
+		
+		if (Days > 7) {
+			updateAvalibleRoutes();
+			stopData.lastRouteUpdate = now;
+		}
+	}
+	
+	public ArrayList<Alert> getStopAlerts(Stop s) {
+		if (s == null) return null;
+		ArrayList<Alert> retList = new ArrayList<Alert>();
+		for (Alert a : stopData.Alerts)
+			if (a.affectsStop(s))
+				if (!retList.contains(a))
+					retList.add(a);
+		return retList;	
+	}
+	
+	public boolean routeHasAlert(int route) {
+		for (Alert a :stopData.Alerts)
+			for (Integer i : a.AffectedLines)
+				if (i.intValue() == route)
+					return true;
+		return false;
+	}
+	
+	private void updateAvalibleRoutes() {
+		isUpdating = true;
+		new Request<AllRoutesJSONResult>(AllRoutesJSONResult.class, 
+				new Request.JSONcallback<AllRoutesJSONResult>() {
+					public void run(AllRoutesJSONResult res, int error) {
+						stopData.AvalibleRoutes.clear();
+						for (AllRoutesJSONResult.ResultSet.Route r : res.resultSet.route) {
+							stopData.AvalibleRoutes.add(r);
+						}
+						isUpdating = false;
+					}
+				},
+				"http://developer.trimet.org/ws/V1/routeConfig?json=true&dir=true&stops=true&appID="
+						+ getApplicationContext().getString(R.string.appid)).start();
+	}
+	
+	
+	private void updateDetours() {
+		new Request<DetourJSONResult>(DetourJSONResult.class, 
+				new Request.JSONcallback<DetourJSONResult>() {
+					public void run(DetourJSONResult r, int error) {
+						if (error != 0) return;
+						MainService.this.stopData.Alerts.clear();
+						
+						for (ResultSet.Detour d : r.resultSet.detour)
+							stopData.Alerts.add(new Alert(d));
+						
+						
+					}
+				},
+				"http://developer.trimet.org/ws/V1/detours?json=true&appID="
+						+ getApplicationContext().getString(R.string.appid)).start();
 	}
 	
 	private void updateAllStops() {
 		Context c = getApplicationContext();
 		
-		String busses = "";
 		String stops = "";
 		
-		for (Stop s : stopData.StopList) {
+		for (Stop s : stopData.StopList)
 			stops += String.valueOf(s.StopID) + ",";
-			busses += Util.getListOfLines(s, false) + ",";
-		}
 		
 		
 		if (stops.compareTo("") != 0) {
@@ -258,49 +326,20 @@ public class MainService extends Service {
 							+ stops + "&json=true&appID="
 							+ c.getString(R.string.appid)).start();
 		}
-		if (busses.compareTo("") != 0) {
-			busses = busses.substring(0, busses.length() - 1);
-
-			new Request<DetourJSONResult>(DetourJSONResult.class, 
-					new Request.JSONcallback<DetourJSONResult>() {
-						public void run(DetourJSONResult r, int error) {
-							if (error == 0)
-								proccessDetours(r);
-						}
-					},
-					"http://developer.trimet.org/ws/V1/detours?routes="
-							+ busses + "&json=true&appID="
-							+ c.getString(R.string.appid)).start();
+		updateDetours();
+		
+		long last = stopData.lastRouteUpdate;
+		long now = new Date().getTime();
+		
+		long days = (now - last) / 1000 / 60 / 60 / 24;
+		
+		if (days > 7) {
+			updateAvalibleRoutes();
+			stopData.lastRouteUpdate = now;
 		}
 	}
 	
 	
-	public void proccessDetours(DetourJSONResult r) {
-		if (r == null || r.resultSet == null)
-			return;
-
-		if (r.resultSet.detour != null) {
-			for (Stop s : stopData.StopList)
-				s.resetAlerts();
-
-			for (DetourJSONResult.ResultSet.Detour d : r.resultSet.detour) {
-
-				ArrayList<String> stopIds = new ArrayList<String>();
-				Matcher m = Pattern.compile("Stop ID ([0-9]+)").matcher(d.desc);
-				while (m.find()) {
-					stopIds.add(m.group(1));
-				}
-
-				for (String si : stopIds) {
-					Stop hist = getStop(Integer.parseInt(si));
-					if (hist != null) {
-						hist.Alerts.add(new Alert(d.desc, d.route[0].route));
-					}
-				}
-			}
-			return;
-		}
-	}
 	public void proccessArrivals(ArrivalJSONResult r) {
 		if (r == null || r.resultSet == null || r.resultSet.errorMessage != null)
 			return;
@@ -332,8 +371,7 @@ public class MainService extends Service {
 			String path = c.getString(R.string.data_path);
 			FileOutputStream outputStream = c.openFileOutput(path, Context.MODE_PRIVATE);
 			
-			Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
-			String data = gson.toJson(stopData);//new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+			String data = new Gson().toJson(stopData);//new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
 			
 			outputStream.write(data.getBytes());
 			outputStream.close();
@@ -351,11 +389,14 @@ public class MainService extends Service {
 
 	private void readData() {
 		try {
-			Context c = getApplicationContext();
+			Context c = getApplicationContext();			
+
+			//File t = new File(c.getString(R.string.data_path));
+			//t.delete();
+			
 		    BufferedReader r = new BufferedReader(new InputStreamReader(c.openFileInput(c.getString(R.string.data_path))));
 		    			
-			Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
-			stopData = gson.fromJson(r, DataStore.class);
+			stopData = new Gson().fromJson(r, DataStore.class);
 			
 			r.close();
 		} catch (JsonSyntaxException e) {
@@ -377,13 +418,17 @@ public class MainService extends Service {
 	}	
 
 	private class DataStore {
-		@Expose public int FavOrder = 0;
-		@Expose public int HistOrder = 0;
-		@Expose public int StopOrder = 0;
-		@Expose public int RefreshDelay = 5;
-		@Expose public ArrayList<Stop> StopList = new ArrayList<Stop>();
-		@Expose public double Radius = 900;// 1/2 mile in meters.
-		@Expose public int menu = 0;
+		public int FavOrder = 0;
+		public int HistOrder = 0;
+		public int StopOrder = 0;
+		public int RefreshDelay = 5;
+		public double Radius = 900;// 1/2 mile in meters.
+		public int menu = 0;
+		
+		public ArrayList<Stop> StopList = new ArrayList<Stop>();
+		public ArrayList<Route> AvalibleRoutes = new ArrayList<Route>();
+		public ArrayList<Alert> Alerts = new ArrayList<Alert>();
+		public long lastRouteUpdate = 0;
 	}
 
 

@@ -92,8 +92,7 @@ public class SettingsActivity extends Activity {
 
 	private void goBack() {
 		Intent parentActivityIntent = new Intent(this, Util.parents.pop());
-		parentActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
-				| Intent.FLAG_ACTIVITY_NEW_TASK);
+		parentActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
 		NavUtils.navigateUpTo(this, parentActivityIntent);
 	}
 

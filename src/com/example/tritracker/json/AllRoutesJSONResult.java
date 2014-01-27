@@ -23,8 +23,8 @@ public class AllRoutesJSONResult {
 				public class Stop {
 					public String desc;
 					public int locid;
-					public long lng;
-					public long lat;
+					public double lng;
+					public double lat;
 				}
 			}
 		}

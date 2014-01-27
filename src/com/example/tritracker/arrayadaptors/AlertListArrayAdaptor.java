@@ -9,8 +9,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.example.tritracker.Alert;
 import com.example.tritracker.R;
-import com.example.tritracker.Stop.Alert;
 
 public class AlertListArrayAdaptor extends ArrayAdapter<Alert> {
 	// private final Context context;
@@ -44,7 +44,14 @@ public class AlertListArrayAdaptor extends ArrayAdapter<Alert> {
 			TextView lines = (TextView) v.findViewById(R.id.AlertLines);
 			TextView disc = (TextView) v.findViewById(R.id.AlertDiscritpion);
 
-			lines.setText(" " + String.valueOf(curAlert.AffectedLine));
+			String al = "";
+			for (Integer i :curAlert.AffectedLines)
+				al += String.valueOf(i) + ", ";
+			
+			if (al.length() > 2)
+				al = al.substring(0, al.length() - 2);
+			lines.setText(" " + al);
+			
 			disc.setText(curAlert.Discription);
 		}
 

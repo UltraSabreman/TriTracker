@@ -2,22 +2,16 @@ package com.example.tritracker;
 
 import java.util.Date;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import com.example.tritracker.json.ArrivalJSONResult;
-import com.google.gson.annotations.Expose;
 
-//import java.util.Vector;
-
-public class Buss implements Parcelable {
-	@Expose	public int Route = -1;
-	@Expose	public boolean Detouring;
-	@Expose	public String Status;
-	@Expose	public String SignShort;
-	@Expose	public String SignLong;
-	@Expose	public Date EstimatedTime;
-	@Expose	public Date ScheduledTime;
+public class Buss {
+	public int Route = -1;
+	public boolean Detouring;
+	public String Status;
+	public String SignShort;
+	public String SignLong;
+	public Date EstimatedTime;
+	public Date ScheduledTime;
 
 	public Buss(ArrivalJSONResult.ResultSet.Arrival a) {
 		Route = a.route;
@@ -57,7 +51,7 @@ public class Buss implements Parcelable {
 		
 	}
 
-	@Override
+	/*@Override
 	public int describeContents() {
 		return 0;
 	}
@@ -102,5 +96,5 @@ public class Buss implements Parcelable {
 		public Buss[] newArray(int size) {
 		    return new Buss[size];
 		}
-	};
+	};*/
 }

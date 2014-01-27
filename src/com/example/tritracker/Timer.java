@@ -8,13 +8,13 @@ import java.util.Map.Entry;
 import android.os.Handler;
 
 public class Timer {
-	private int interval = 0;
+	private double interval = 0;
 	private Handler timerHandler = new Handler();
 	private Runnable timerRunnable = null;
 	private Map<String, onUpdate> updateList = new HashMap<String, onUpdate>();
 	
-	public Timer(int interval) {
-		this.interval = interval;
+	public Timer(double d) {
+		this.interval = d;
 	}
 	
 	public void updateDelay(int newInterval) {
