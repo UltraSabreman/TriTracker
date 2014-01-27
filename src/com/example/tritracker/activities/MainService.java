@@ -11,6 +11,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import android.app.Service;
 import android.content.Context;
@@ -33,9 +36,7 @@ import com.example.tritracker.json.DetourJSONResult;
 import com.example.tritracker.json.DetourJSONResult.ResultSet;
 import com.example.tritracker.json.Request;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
-import com.google.gson.annotations.Expose;
 
 public class MainService extends Service {
 	public boolean isUpdating = false;
@@ -239,16 +240,6 @@ public class MainService extends Service {
 		}
 		
 		updateReminders();
-		
-		long lastUpdate = stopData.lastRouteUpdate;
-		long now = new Date().getTime();
-		
-		long Days = (now - lastUpdate) / 1000 / 60 / 60 / 24;
-		
-		if (Days > 7) {
-			updateAvalibleRoutes();
-			stopData.lastRouteUpdate = now;
-		}
 	}
 	
 	public ArrayList<Alert> getStopAlerts(Stop s) {
@@ -274,11 +265,23 @@ public class MainService extends Service {
 		new Request<AllRoutesJSONResult>(AllRoutesJSONResult.class, 
 				new Request.JSONcallback<AllRoutesJSONResult>() {
 					public void run(AllRoutesJSONResult res, int error) {
-						stopData.AvalibleRoutes.clear();
-						for (AllRoutesJSONResult.ResultSet.Route r : res.resultSet.route) {
-							stopData.AvalibleRoutes.add(r);
+						Lock lock = new ReentrantLock();
+						
+						try {
+							while (!lock.tryLock(100, TimeUnit.MILLISECONDS));
+							try {
+								stopData.AvalibleRoutes.clear();
+								for (AllRoutesJSONResult.ResultSet.Route r : res.resultSet.route) {
+									stopData.AvalibleRoutes.add(r);
+								}
+								isUpdating = false;
+							} finally {
+								lock.unlock();
+							}
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
 						}
-						isUpdating = false;
 					}
 				},
 				"http://developer.trimet.org/ws/V1/routeConfig?json=true&dir=true&stops=true&appID="
@@ -371,10 +374,22 @@ public class MainService extends Service {
 			String path = c.getString(R.string.data_path);
 			FileOutputStream outputStream = c.openFileOutput(path, Context.MODE_PRIVATE);
 			
-			String data = new Gson().toJson(stopData);//new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+			Lock lock = new ReentrantLock();
 			
-			outputStream.write(data.getBytes());
-			outputStream.close();
+			try {
+				while (!lock.tryLock(100, TimeUnit.MILLISECONDS));
+				try {
+					String data = new Gson().toJson(stopData);//new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+			
+					outputStream.write(data.getBytes());
+					outputStream.close();
+				} finally {
+					lock.unlock();
+				}
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+
 		} catch (JsonSyntaxException e) {
 			System.out.println("---Error: WRITE, json syntax");
 			e.printStackTrace();

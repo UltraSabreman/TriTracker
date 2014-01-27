@@ -20,12 +20,18 @@
 		android:layout_height="1dp"
 		android:layout_above="@id/UIStopIDBox"/>
 	
-	<ListView
-		android:id="@+id/RouteList"
+	<RelativeLayout 
+		android:id="@+id/longClickCatcher"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
-		android:divider="?android:attr/listDivider"
 		android:layout_above="@id/UIseperator"
-		android:footerDividersEnabled="true" />
+		android:layout_alignParentTop="true">
+		<ListView
+			android:id="@+id/RouteList"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:divider="?android:attr/listDivider"
+			android:footerDividersEnabled="true" />
+	</RelativeLayout>
 
 </RelativeLayout>

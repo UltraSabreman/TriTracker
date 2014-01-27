@@ -62,14 +62,22 @@ public class RouteListArrayAdaptor extends ArrayAdapter<Route> {
 			TextView LineName = (TextView) v.findViewById(R.id.LineName);
 			
 			String route = "";
-			if (curRoute.desc.contains(String.valueOf(curRoute.route)))
+			String sign = "";
+			if (curRoute.desc.contains(String.valueOf(curRoute.route))) {
 				route = String.valueOf(curRoute.route);
-			else if (curRoute.desc.contains("WES"))
+				sign = curRoute.desc.replace(route + "-", "");
+			} else if (curRoute.desc.contains("WES")) {
 				route = "WES";
-			else if (curRoute.desc.contains("Streetcar"))
+				sign = curRoute.desc.replace(route + " ", "");
+			} else if (curRoute.desc.contains("Streetcar")) {
 				route = "PSC";
-			else {
+				sign = curRoute.desc;
+			} else if (curRoute.desc.contains("Tram")) {
+				route = "TRAM";
+				sign = curRoute.desc;
+			} else {
 				route = "MAX";
+				sign = curRoute.desc.replace(route + " ", "");
 				if (curRoute.desc.contains("Green"))
 					LineNumber.setTextColor(Color.parseColor("#73E673")); //green
 				else if (curRoute.desc.contains("Red"))
@@ -81,8 +89,7 @@ public class RouteListArrayAdaptor extends ArrayAdapter<Route> {
 			}
 
 			LineNumber.setText(route);
-
-			String sign = curRoute.desc.replace(route + " ", "");
+			
 			if (!Character.isUpperCase(sign.charAt(0)))
 				sign = sign.substring(0, 1).toUpperCase(Locale.US) + sign.substring(1);
 

@@ -6,13 +6,29 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnCreateContextMenuListener;
+import android.view.View.OnLongClickListener;
+import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
 
 import com.example.tritracker.R;
+import com.example.tritracker.Sorter;
+import com.example.tritracker.Stop;
 import com.example.tritracker.Timer;
 import com.example.tritracker.Util;
+import com.example.tritracker.Util.ListType;
 import com.example.tritracker.arrayadaptors.RouteListArrayAdaptor;
 import com.example.tritracker.json.AllRoutesJSONResult.ResultSet.Route;
 
@@ -54,14 +70,40 @@ public class SearchRoutesActivity extends Activity {
 	private void init() {
 		routes = theService.getRoutes();
 		
-		if (routes != null) {
+		if (routes != null) {			
 			ListView view = (ListView) findViewById(R.id.RouteList);
+			EditText edit = (EditText) findViewById(R.id.UIStopIDBox);
 			ar = new RouteListArrayAdaptor(getApplicationContext(), routes);
+			new Sorter<Route>(Route.class).sortList(routes, ListType.Routes);
 			view.setAdapter(ar);
 			ar.notifyDataSetChanged();
+			
+		
+			if (view.getFooterViewsCount() == 0)
+				view.addFooterView(getLayoutInflater().inflate(R.layout.seperator, null), null, true);
+
+			edit.setOnEditorActionListener(new OnEditorActionListener() {
+				public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+					if (event != null) {
+						EditText edit = (EditText) findViewById(R.id.UIStopIDBox);
+						String text = edit.getText().toString();
+						
+						//TODO: filter stuff here.
+					}
+					return false;
+				}
+			});	
+			
+			view.setOnItemClickListener(new OnItemClickListener() {
+				public void onItemClick(AdapterView<?> arg0, View arg1,	int position, long arg3) {
+					Route temp = ar.getItem(position);
+					//if (temp != null) 
+						//TODO: do stuff here.
+				}
+			});
 		}
 	}
-
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.search_routes, menu);

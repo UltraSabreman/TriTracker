@@ -22,7 +22,7 @@ public class Util {
 	private static Context c;
 	public static SpinnerPopupActivity wait;
 	
-	public static enum ListType {Favorites, History, Busses};	
+	public static enum ListType {Favorites, History, Busses, Routes};	
 	public static enum TimeType { Second, Minute, Hour, Day };
 	
 	public static long getTimeFromDate(Date d, TimeType type) {
