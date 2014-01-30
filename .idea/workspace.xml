@@ -27,84 +27,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="91b0027d-ed75-4735-9016-29242f1ef0c7" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/AndroidManifest.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/AndroidManifest.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/source/buildConfig/debug/com/example/tritracker/BuildConfig.java" afterPath="$PROJECT_DIR$/build/source/buildConfig/debug/com/example/tritracker/BuildConfig.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/source/r/debug/com/google/android/gms/R.java" afterPath="$PROJECT_DIR$/build/source/r/debug/com/google/android/gms/R.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/R.txt" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/R.txt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/TriTracker.iml" afterPath="$PROJECT_DIR$/TriTracker.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values/ads_attrs.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values/ads_attrs.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values/colors.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values/colors.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/drawable/common_signin_btn_icon_dark.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/drawable/common_signin_btn_icon_dark.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/drawable/common_signin_btn_icon_light.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/drawable/common_signin_btn_icon_light.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/color/common_signin_btn_text_dark.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/color/common_signin_btn_text_dark.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/drawable/common_signin_btn_text_dark.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/drawable/common_signin_btn_text_dark.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/color/common_signin_btn_text_light.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/color/common_signin_btn_text_light.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/drawable/common_signin_btn_text_light.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/drawable/common_signin_btn_text_light.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/local.properties" afterPath="$PROJECT_DIR$/local.properties" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values/maps_attrs.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values/maps_attrs.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/proguard.txt" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/proguard.txt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/project.properties" afterPath="$PROJECT_DIR$/project.properties" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values/strings.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-af/strings.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-af/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-am/strings.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-am/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-ar/strings.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-ar/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-be/strings.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-be/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-bg/strings.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-bg/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-ca/strings.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-ca/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-cs/strings.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-cs/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-da/strings.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-da/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-de/strings.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-de/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-el/strings.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-el/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-en-rGB/strings.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-en-rGB/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-en-rIN/strings.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-en-rIN/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-es/strings.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-es/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-es-rUS/strings.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-es-rUS/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-et/strings.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-et/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-et-rEE/strings.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-et-rEE/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-fa/strings.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-fa/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-fi/strings.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-fi/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-fr/strings.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-fr/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-fr-rCA/strings.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-fr-rCA/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-hi/strings.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-hi/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-hr/strings.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-hr/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-hu/strings.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-hu/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-hy-rAM/strings.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-hy-rAM/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-in/strings.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-in/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-it/strings.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-it/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-iw/strings.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-iw/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-ja/strings.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-ja/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-ka-rGE/strings.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-ka-rGE/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-km-rKH/strings.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-km-rKH/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-ko/strings.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-ko/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-lo-rLA/strings.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-lo-rLA/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-lt/strings.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-lt/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-lv/strings.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-lv/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-mn-rMN/strings.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-mn-rMN/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-ms/strings.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-ms/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-ms-rMY/strings.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-ms-rMY/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-nb/strings.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-nb/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-nl/strings.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-nl/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-pl/strings.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-pl/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-pt/strings.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-pt/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-pt-rBR/strings.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-pt-rBR/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-pt-rPT/strings.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-pt-rPT/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-ro/strings.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-ro/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-ru/strings.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-ru/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-sk/strings.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-sk/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-sl/strings.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-sl/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-sr/strings.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-sr/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-sv/strings.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-sv/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-sw/strings.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-sw/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-th/strings.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-th/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-tl/strings.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-tl/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-tr/strings.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-tr/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-uk/strings.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-uk/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-vi/strings.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-vi/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-zh-rCN/strings.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-zh-rCN/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-zh-rHK/strings.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-zh-rHK/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-zh-rTW/strings.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-zh-rTW/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-zu/strings.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values-zu/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values/version.xml" afterPath="$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res/values/version.xml" />
     </list>
     <ignored path="TriTracker.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -186,7 +109,7 @@
       <file leaf-file-name="build.gradle" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/build.gradle">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="21" column="38" selection-start="436" selection-end="436" vertical-scroll-proportion="0.82258064" vertical-offset="51" max-vertical-offset="833">
+            <state line="17" column="11" selection-start="345" selection-end="345" vertical-scroll-proportion="0.51965064" vertical-offset="51" max-vertical-offset="833">
               <folding />
             </state>
           </provider>
@@ -593,8 +516,8 @@
   <component name="ProjectFrameBounds">
     <option name="x" value="-8" />
     <option name="y" value="-8" />
-    <option name="width" value="1382" />
-    <option name="height" value="744" />
+    <option name="width" value="1616" />
+    <option name="height" value="876" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="false">
     <OptionsSetting value="true" id="Add" />
@@ -622,6 +545,8 @@
       <sortByType />
     </navigator>
     <panes>
+      <pane id="PackagesPane" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -714,8 +639,6 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="PackagesPane" />
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -771,6 +694,19 @@
       <option name="PORT" value="5005" />
       <method />
     </configuration>
+    <configuration default="true" type="Applet" factoryName="Applet">
+      <module name="" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="HTML_FILE_NAME" />
+      <option name="HTML_USED" value="false" />
+      <option name="WIDTH" value="400" />
+      <option name="HEIGHT" value="300" />
+      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
+      <option name="VM_PARAMETERS" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <method />
+    </configuration>
     <configuration default="true" type="TestNG" factoryName="TestNG">
       <module name="" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
@@ -796,19 +732,6 @@
       <envs />
       <properties />
       <listeners />
-      <method />
-    </configuration>
-    <configuration default="true" type="Applet" factoryName="Applet">
-      <module name="" />
-      <option name="MAIN_CLASS_NAME" />
-      <option name="HTML_FILE_NAME" />
-      <option name="HTML_USED" value="false" />
-      <option name="WIDTH" value="400" />
-      <option name="HEIGHT" value="300" />
-      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
-      <option name="VM_PARAMETERS" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
       <method />
     </configuration>
     <configuration default="true" type="Application" factoryName="Application">
@@ -945,7 +868,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
+    <frame x="-8" y="-8" width="1616" height="876" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -955,19 +878,19 @@
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32974428" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.34860885" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3485868" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
       <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32839838" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.34860885" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3485868" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.23352855" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.233125" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32974428" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
@@ -989,6 +912,20 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/AndroidManifest.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="14" column="33" selection-start="412" selection-end="412" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1734">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/build.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="21" column="38" selection-start="436" selection-end="436" vertical-scroll-proportion="0.0" vertical-offset="51" max-vertical-offset="833">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/AndroidManifest.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state line="14" column="33" selection-start="412" selection-end="412" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1734">
@@ -1113,11 +1050,6 @@
         <state />
       </provider>
     </entry>
-    <entry file="jar://$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/classes.jar!/com/google/android/gms/maps/GoogleMap.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="25" column="22" selection-start="1034" selection-end="1034" vertical-scroll-proportion="0.82258064" vertical-offset="51" max-vertical-offset="2992" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/example/tritracker/activities/MainActivity.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="65" column="17" selection-start="2129" selection-end="2129" vertical-scroll-proportion="0.0" vertical-offset="676" max-vertical-offset="2652">
@@ -1166,7 +1098,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/build.gradle">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="21" column="38" selection-start="436" selection-end="436" vertical-scroll-proportion="0.82258064" vertical-offset="51" max-vertical-offset="833">
+        <state line="17" column="11" selection-start="345" selection-end="345" vertical-scroll-proportion="0.51965064" vertical-offset="51" max-vertical-offset="833">
           <folding />
         </state>
       </provider>
