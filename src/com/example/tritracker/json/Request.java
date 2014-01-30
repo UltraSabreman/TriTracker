@@ -62,7 +62,7 @@ public class Request <T> extends Thread {
 			
 			if (responseString != null)
 				result = new Gson().fromJson(responseString, type);		
-			
+
 			callback.run(result, error);
 		}
 	}

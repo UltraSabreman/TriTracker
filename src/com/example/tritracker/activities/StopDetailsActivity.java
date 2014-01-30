@@ -333,7 +333,7 @@ public class StopDetailsActivity extends Activity {
 			}
 
 			invalidateOptionsMenu();
-			theService.doUpdate(false);
+			//theService.doUpdate(false);
 			return true;
 		case R.id.action_map:
 			Intent temp = new Intent(getApplicationContext(), MapActivity.class);

@@ -70,7 +70,7 @@ public class StopListFragment extends Fragment implements UndoListener {
 		adaptor = new StopListArrayAdaptor(getActivity().getApplicationContext(), stopList, isFavorites);
 		
 		setListeners();
-		update();
+		update(true);
 		
 		return ourView;
 	}
@@ -83,7 +83,7 @@ public class StopListFragment extends Fragment implements UndoListener {
 				new Sorter<Stop>(Stop.class).sortUI(getActivity(), isFavorites ? ListType.Favorites : ListType.History,	tempStops,
 						new Timer.onUpdate() {
 							public void run() {
-								update();
+								update(true);
 								theService.doUpdate(false);
 							}
 						});
@@ -101,7 +101,7 @@ public class StopListFragment extends Fragment implements UndoListener {
 							else
 								s.inHistory = false;
 
-						update();
+						update(true);
 						theService.doUpdate(false);
 					}
 				});
@@ -127,16 +127,16 @@ public class StopListFragment extends Fragment implements UndoListener {
 	public void onStart() {
 		theService.sub(isFavorites ? "Favorites" : "History", new Timer.onUpdate() {
 			public void run() {
-				update();
+				update(true);
 			}
 		});
-        update();
+        update(false);
 		super.onStart();
 	}
 
     @Override
     public void onResume() {
-        update();
+        update(false);
         super.onResume();
     }
 	
@@ -260,20 +260,22 @@ public class StopListFragment extends Fragment implements UndoListener {
 										+ (undoList.size() > 1 ? "s": ""), null);
 							}
 						}
-						update();
+						update(true);
 					}
 				});
 		view.setOnTouchListener(touchListener);
 		view.setOnScrollListener(touchListener.makeScrollListener());
 	}
 
-	public void update() {
+	public void update(boolean get) {
         if (theService == null)
             theService = MainService.getService();
 
 
-        stopList.clear();
-        stopList = isFavorites ? theService.getFavorties() : theService.getHistory();
+        if (get) {
+            stopList.clear();
+            stopList = isFavorites ? theService.getFavorties() : theService.getHistory();
+        }
 
 		if (getActivity() != null)
 			getActivity().runOnUiThread(new Runnable() {
@@ -313,7 +315,7 @@ public class StopListFragment extends Fragment implements UndoListener {
 			}
 			undoList.clear();
 		}
-		update();
+		update(true);
 	}
 
 }

@@ -60,10 +60,10 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
 		super.onStart();
         bindService(new Intent(this, MainService.class), mConnection, Context.BIND_AUTO_CREATE);
         
-        if (favFrag != null)
+        /*if (favFrag != null)
         	favFrag.update();
         if (histFrag != null)
-        	histFrag.update();
+        	histFrag.update();*/
 	}
 	
     @Override
