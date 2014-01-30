@@ -88,6 +88,7 @@ public class MapActivity extends Activity implements GooglePlayServicesClient.Co
         	targetPos = new LatLng(extras.getDouble("lat"), extras.getDouble("lng"));
 
         theService = MainService.getService();
+        mLocationClient.connect();
     }
     
     
@@ -127,7 +128,7 @@ public class MapActivity extends Activity implements GooglePlayServicesClient.Co
 	@Override
 	public void onConnected(Bundle arg0) {		
 		GoogleMap map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
-	
+
         LatLng myPos;//
         if (targetPos != null) {
         	myPos = targetPos;
@@ -138,7 +139,7 @@ public class MapActivity extends Activity implements GooglePlayServicesClient.Co
             Location test = mLocationClient.getLastLocation();
         	myPos = new LatLng(test.getLatitude(), test.getLongitude());//-33.867, 151.206);
         }
-        
+
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(myPos, targetPos != null ? 18 : 15));
         
         
