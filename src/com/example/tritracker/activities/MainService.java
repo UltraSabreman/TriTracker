@@ -1,20 +1,5 @@
 package com.example.tritracker.activities;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -37,6 +22,21 @@ import com.example.tritracker.json.DetourJSONResult.ResultSet;
 import com.example.tritracker.json.Request;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class MainService extends Service {
 	public boolean isUpdating = false;
@@ -75,7 +75,20 @@ public class MainService extends Service {
 			refreshTime.addCallBack("mainRefresh", 
 				new Timer.onUpdate() {
 					public void run() {
-						doUpdate(true);				
+                        Lock lock = new ReentrantLock();
+
+                        try {
+                            while (!lock.tryLock(100, TimeUnit.MILLISECONDS));
+                            try {
+                                doUpdate(true);
+                            } finally {
+                                lock.unlock();
+                            }
+                        } catch (InterruptedException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+
 					}
 				}
 			);

@@ -1,11 +1,14 @@
 package com.example.tritracker;
 
+import android.os.Handler;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import android.os.Handler;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class Timer {
 	private double interval = 0;
@@ -49,9 +52,21 @@ public class Timer {
 				    }
 				}
 				
-				if (interval> 0)
-					timerHandler.postDelayed(this,
-							(int) (interval * 1000));
+				if (interval> 0) {
+                    Lock lock = new ReentrantLock();
+
+                    try {
+                        while (!lock.tryLock(100, TimeUnit.MILLISECONDS));
+                        try {
+                            timerHandler.postDelayed(this, (int) (interval * 1000));
+                        } finally {
+                            lock.unlock();
+                        }
+                    } catch (InterruptedException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
 			}
 		};
 
