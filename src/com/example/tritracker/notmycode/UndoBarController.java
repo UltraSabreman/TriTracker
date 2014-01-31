@@ -27,7 +27,6 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewPropertyAnimator;
 import android.widget.TextView;
-
 import com.example.tritracker.R;
 
 public class UndoBarController {

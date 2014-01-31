@@ -7,9 +7,9 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.example.tritracker.R;
 import com.example.tritracker.activities.MainService;
 import com.example.tritracker.json.AllRoutesJSONResult.ResultSet.Route.Dir.Stop;
+import com.example.tritracker.R;
 
 import java.util.ArrayList;
 

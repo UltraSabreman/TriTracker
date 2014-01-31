@@ -1,7 +1,5 @@
 package com.example.tritracker.arrayadaptors;
 
-import java.util.ArrayList;
-
 import android.content.Context;
 import android.graphics.Color;
 import android.view.LayoutInflater;
@@ -17,6 +15,8 @@ import com.example.tritracker.R;
 import com.example.tritracker.Stop;
 import com.example.tritracker.Util;
 import com.example.tritracker.activities.MainService;
+
+import java.util.ArrayList;
 
 public class StopListArrayAdaptor extends ArrayAdapter<Stop> {
 	private boolean fav = false;

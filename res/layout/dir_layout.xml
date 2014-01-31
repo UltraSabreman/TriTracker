@@ -5,23 +5,23 @@
 	android:orientation="horizontal"
 	android:padding="6dip"
 	android:clipToPadding="false"
-	android:clipChildren="false" >	
-	
-	<RelativeLayout
-		android:layout_width="fill_parent"
-		android:layout_height="fill_parent">
+	android:clipChildren="false" >
 
-		<TextView
-			android:id="@+id/LineName"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:ellipsize="marquee"
-			android:marqueeRepeatLimit="marquee_forever"
-			android:scrollHorizontally="true"
-			android:singleLine="true"
-			android:text="To Oregon City TC or Clackamas Community Collegefghfghfhg"
-			android:textColor="@android:color/holo_blue_dark"
-			android:textSize="16sp" />
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+
+        <TextView
+            android:id="@+id/LineName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:scrollHorizontally="true"
+            android:singleLine="true"
+            android:text="To Oregon City TC or Clackamas Community Collegefghfghfhg"
+            android:textColor="@android:color/holo_blue_dark"
+            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/Dir"

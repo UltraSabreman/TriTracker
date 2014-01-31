@@ -1,7 +1,5 @@
 package com.example.tritracker.activities;
 
-import java.util.ArrayList;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -34,6 +32,8 @@ import com.example.tritracker.Timer;
 import com.example.tritracker.Util;
 import com.example.tritracker.Util.ListType;
 import com.example.tritracker.arrayadaptors.BussListArrayAdaptor;
+
+import java.util.ArrayList;
 
 public class StopDetailsActivity extends Activity {
 	private Buss menuBuss = null;

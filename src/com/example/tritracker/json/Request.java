@@ -1,7 +1,6 @@
 package com.example.tritracker.json;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import com.google.gson.Gson;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -16,7 +15,8 @@ import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 
-import com.google.gson.Gson;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 public class Request <T> extends Thread {
 	private int error = 0;

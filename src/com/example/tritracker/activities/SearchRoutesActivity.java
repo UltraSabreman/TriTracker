@@ -15,7 +15,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.ListView;
 
-import com.example.tritracker.R;
 import com.example.tritracker.Sorter;
 import com.example.tritracker.Stop;
 import com.example.tritracker.Timer;
@@ -26,6 +25,7 @@ import com.example.tritracker.arrayadaptors.RouteListArrayAdaptor;
 import com.example.tritracker.arrayadaptors.RouteStopListArrayAdaptor;
 import com.example.tritracker.json.AllRoutesJSONResult.ResultSet.Route;
 import com.example.tritracker.json.ForgroundRequestManager;
+import com.example.tritracker.R;
 
 import java.util.ArrayList;
 

@@ -5,9 +5,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
-import com.example.tritracker.R;
 import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
 import com.google.android.gms.maps.model.Marker;
+import com.example.tritracker.R;
 
 public class MarkerInfoWindowArrayAdaptor implements InfoWindowAdapter {
   LayoutInflater inflater=null;

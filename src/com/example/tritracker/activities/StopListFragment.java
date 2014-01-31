@@ -1,7 +1,5 @@
 package com.example.tritracker.activities;
 
-import java.util.ArrayList;
-
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -40,6 +38,8 @@ import com.example.tritracker.json.ForgroundRequestManager.ResultCallback;
 import com.example.tritracker.notmycode.SwipeDismissListViewTouchListener;
 import com.example.tritracker.notmycode.UndoBarController;
 import com.example.tritracker.notmycode.UndoBarController.UndoListener;
+
+import java.util.ArrayList;
 
 public class StopListFragment extends Fragment implements UndoListener {
 	private UndoBarController mUndoBarController;

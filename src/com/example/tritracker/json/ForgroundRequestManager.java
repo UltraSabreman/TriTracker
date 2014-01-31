@@ -1,17 +1,17 @@
 package com.example.tritracker.json;
 
-import java.util.Date;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 
 import com.example.tritracker.Buss;
-import com.example.tritracker.R;
 import com.example.tritracker.Stop;
 import com.example.tritracker.Util;
 import com.example.tritracker.activities.MainService;
+import com.example.tritracker.R;
+
+import java.util.Date;
 
 public class ForgroundRequestManager extends Thread {
 	private int theStop = 0;

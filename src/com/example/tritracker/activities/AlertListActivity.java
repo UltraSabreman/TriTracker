@@ -1,7 +1,5 @@
 package com.example.tritracker.activities;
 
-import java.util.ArrayList;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,6 +12,8 @@ import com.example.tritracker.Alert;
 import com.example.tritracker.R;
 import com.example.tritracker.Util;
 import com.example.tritracker.arrayadaptors.AlertListArrayAdaptor;
+
+import java.util.ArrayList;
 
 public class AlertListActivity extends Activity {
 	AlertListArrayAdaptor ar;

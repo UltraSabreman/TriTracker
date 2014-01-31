@@ -13,8 +13,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
-import com.example.tritracker.R;
 import com.example.tritracker.Util;
+import com.example.tritracker.R;
 
 public class SettingsActivity extends Activity {
 

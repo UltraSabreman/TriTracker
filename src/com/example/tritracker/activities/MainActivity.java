@@ -13,10 +13,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 
-import com.example.tritracker.R;
 import com.example.tritracker.Timer;
 import com.example.tritracker.Util;
 import com.example.tritracker.activities.MainService.LocalBinder;
+import com.example.tritracker.R;
 
 public class MainActivity extends FragmentActivity implements ActionBar.OnNavigationListener {
 
