@@ -95,6 +95,7 @@ public class MainService extends Service {
 			);
 			refreshTime.restartTimer();
 			doUpdate(true);
+            //updateAvalibleRoutes();
 			
 		}
 		theService = this;

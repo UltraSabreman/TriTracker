@@ -34,20 +34,23 @@ public class SearchRoutesActivity extends Activity {
 
 	private ArrayList<Route> routes = new ArrayList<Route>();
     private ArrayList<Route> dRoutes = new ArrayList<Route>();
+    private TextWatcher rw = null;
     private RouteListArrayAdaptor routeAdaptor;
     private Route curRoute = null;
 
     private ArrayList<Route.Dir> dirs = new ArrayList<Route.Dir>();
     private ArrayList<Route.Dir> dDirs = new ArrayList<Route.Dir>();
+    private TextWatcher dw = null;
     private RouteDirListArrayAdaptor dirAdaptor;
 
     private ArrayList<Route.Dir.Stop> stops = new ArrayList<Route.Dir.Stop>();
     private ArrayList<Route.Dir.Stop> dStops = new ArrayList<Route.Dir.Stop>();
+    private TextWatcher sw = null;
     private RouteStopListArrayAdaptor stopAdaptor;
 
     public enum DisplayMode{Routes, Dirs, Stops};
     private DisplayMode mode = DisplayMode.Routes;
-	private Timer test;
+    private  Timer test;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -70,61 +73,15 @@ public class SearchRoutesActivity extends Activity {
 					if (!theService.isUpdating) {
                         initRoutes();
 						Util.hideSpinner();
-						test.stopTimer();
+						SearchRoutesActivity.this.test.stopTimer();
 					}
 				}
 			});
 			test.restartTimer();
 		}
+
 	}
 
-    private void initDirs(Route r) {
-        if (r == null) return;
-
-        dirs.clear();
-        for (Route.Dir d : r.dir)
-            dirs.add(d);
-
-
-        if (dirs != null) {
-            ListView view = (ListView) findViewById(R.id.RouteList);
-            EditText edit = (EditText) findViewById(R.id.UIStopIDBox);
-            dirAdaptor = new RouteDirListArrayAdaptor(getApplicationContext(), dDirs);
-            view.setAdapter(dirAdaptor);
-            searchDirs(null);
-            dirAdaptor.notifyDataSetChanged();
-
-            edit.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-
-                }
-
-                @Override
-                public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-                    EditText edit = (EditText) findViewById(R.id.UIStopIDBox);
-                    String text = edit.getText().toString();
-
-                    searchDirs(text);
-                }
-
-                @Override
-                public void afterTextChanged(Editable editable) {
-
-                }
-            });
-
-            view.setOnItemClickListener(new OnItemClickListener() {
-                public void onItemClick(AdapterView<?> arg0, View arg1,	int position, long arg3) {
-                    Route.Dir temp = dirAdaptor.getItem(position);
-                    if (temp != null)
-                        initStops(temp);
-                }
-            });
-
-            mode = DisplayMode.Dirs;
-        }
-    }
 
     private void initStops(Route.Dir d) {
         if (d == null) return;
@@ -133,8 +90,10 @@ public class SearchRoutesActivity extends Activity {
         for (Route.Dir.Stop s : d.stop)
             stops.add(s);
 
-
         if (stops != null) {
+            setTitle("Select a Stop");
+            clearEverything();
+
             ListView view = (ListView) findViewById(R.id.RouteList);
             EditText edit = (EditText) findViewById(R.id.UIStopIDBox);
             stopAdaptor = new RouteStopListArrayAdaptor(getApplicationContext(), dStops);
@@ -142,7 +101,7 @@ public class SearchRoutesActivity extends Activity {
             searchStops(null);
             stopAdaptor.notifyDataSetChanged();
 
-            edit.addTextChangedListener(new TextWatcher() {
+            sw = new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
 
@@ -160,7 +119,9 @@ public class SearchRoutesActivity extends Activity {
                 public void afterTextChanged(Editable editable) {
 
                 }
-            });
+            };
+
+            edit.addTextChangedListener(sw);
             view.setOnItemClickListener(new OnItemClickListener() {
                 public void onItemClick(AdapterView<?> arg0, View arg1,	int position, long arg3) {
                     Route.Dir.Stop temp = stopAdaptor.getItem(position);
@@ -174,25 +135,26 @@ public class SearchRoutesActivity extends Activity {
         }
 
     }
+    private void initDirs(Route r) {
+        if (r == null) return;
+
+        dirs.clear();
+        for (Route.Dir d : r.dir)
+            dirs.add(d);
 
 
-	private void initRoutes() {
-		routes = theService.getRoutes();
-		
-		if (routes != null) {			
-			ListView view = (ListView) findViewById(R.id.RouteList);
-			EditText edit = (EditText) findViewById(R.id.UIStopIDBox);
-            routeAdaptor = new RouteListArrayAdaptor(getApplicationContext(), dRoutes);
-			new Sorter<Route>(Route.class).sortList(dRoutes, ListType.Routes);
-			view.setAdapter(routeAdaptor);
-            searchRoutes(null);
-            routeAdaptor.notifyDataSetChanged();
-			
-		
-			if (view.getFooterViewsCount() == 0)
-				view.addFooterView(getLayoutInflater().inflate(R.layout.seperator, null), null, true);
+        if (dirs != null) {
+            setTitle("Select a Direction");
+            clearEverything();
 
-            edit.addTextChangedListener(new TextWatcher() {
+            ListView view = (ListView) findViewById(R.id.RouteList);
+            EditText edit = (EditText) findViewById(R.id.UIStopIDBox);
+            dirAdaptor = new RouteDirListArrayAdaptor(getApplicationContext(), dDirs);
+            view.setAdapter(dirAdaptor);
+            searchDirs(null);
+            dirAdaptor.notifyDataSetChanged();
+
+            dw = new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
 
@@ -203,14 +165,62 @@ public class SearchRoutesActivity extends Activity {
                     EditText edit = (EditText) findViewById(R.id.UIStopIDBox);
                     String text = edit.getText().toString();
 
-                    searchRoutes(text);
+                    searchDirs(text);
                 }
 
                 @Override
                 public void afterTextChanged(Editable editable) {
 
                 }
+            };
+            edit.addTextChangedListener(dw);
+
+            view.setOnItemClickListener(new OnItemClickListener() {
+                public void onItemClick(AdapterView<?> arg0, View arg1,	int position, long arg3) {
+                    Route.Dir temp = dirAdaptor.getItem(position);
+                    if (temp != null)
+                        initStops(temp);
+                }
             });
+
+            mode = DisplayMode.Dirs;
+        }
+    }
+
+	private void initRoutes() {
+		routes = theService.getRoutes();
+		
+		if (routes != null) {
+            setTitle("Select a Route");
+            clearEverything();
+
+			ListView view = (ListView) findViewById(R.id.RouteList);
+			EditText edit = (EditText) findViewById(R.id.UIStopIDBox);
+            routeAdaptor = new RouteListArrayAdaptor(getApplicationContext(), dRoutes);
+            searchRoutes(null);
+			new Sorter<Route>(Route.class).sortList(dRoutes, ListType.Routes);
+			view.setAdapter(routeAdaptor);
+            routeAdaptor.notifyDataSetChanged();
+
+			if (view.getFooterViewsCount() == 0)
+				view.addFooterView(getLayoutInflater().inflate(R.layout.seperator, null), null, true);
+
+            rw = new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+                }
+
+                @Override
+                public void afterTextChanged(Editable editable) {
+                    searchRoutes(editable.toString());
+                }
+            };
+            edit.addTextChangedListener(rw);
 
 			view.setOnItemClickListener(new OnItemClickListener() {
 				public void onItemClick(AdapterView<?> arg0, View arg1,	int position, long arg3) {
@@ -225,6 +235,30 @@ public class SearchRoutesActivity extends Activity {
             mode = DisplayMode.Routes;
 		}
 	}
+
+    private void clearEverything() {
+        ListView view = (ListView) findViewById(R.id.RouteList);
+        EditText edit = (EditText) findViewById(R.id.UIStopIDBox);
+
+        edit.removeTextChangedListener(sw);
+        edit.removeTextChangedListener(dw);
+        edit.removeTextChangedListener(rw);
+        view.setOnItemClickListener(null);
+
+        if (stopAdaptor != null) {
+            stopAdaptor.notifyDataSetInvalidated();
+            stopAdaptor = null;
+        }
+        if (dirAdaptor != null) {
+            dirAdaptor.notifyDataSetInvalidated();
+            dirAdaptor = null;
+        }
+        if (routeAdaptor != null) {
+            routeAdaptor.notifyDataSetInvalidated();
+            routeAdaptor = null;
+        }
+    }
+
 
     private void getJson(int stop) {
         Util.createSpinner(this);

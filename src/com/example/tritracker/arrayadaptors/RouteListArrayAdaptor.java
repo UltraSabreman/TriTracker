@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.tritracker.R;
@@ -38,10 +37,6 @@ public class RouteListArrayAdaptor extends ArrayAdapter<Route> {
         Route curRoute = getItem(position);
 
         if (curRoute != null) {
-            if (theService.routeHasAlert(curRoute.route))
-                ((ImageView) v.findViewById(R.id.AlertIcon)).setVisibility(View.VISIBLE);
-            else
-                ((ImageView) v.findViewById(R.id.AlertIcon)).setVisibility(View.INVISIBLE);
 
             TextView LineNumber = (TextView) v.findViewById(R.id.LineNumber);
             LineNumber.setTextColor(Color.BLACK);

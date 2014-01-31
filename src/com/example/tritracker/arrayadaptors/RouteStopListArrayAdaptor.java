@@ -5,11 +5,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.example.tritracker.R;
 import com.example.tritracker.activities.MainService;
 import com.example.tritracker.json.AllRoutesJSONResult.ResultSet.Route.Dir.Stop;
-import com.example.tritracker.R;
 
 import java.util.ArrayList;
 
@@ -35,12 +36,21 @@ public class RouteStopListArrayAdaptor extends ArrayAdapter<Stop> {
 
         if (curStop != null) {
             TextView LineNumber = (TextView) v.findViewById(R.id.StopID);
-            TextView LineName = (TextView) v.findViewById(R.id.LineName);
+            TextView LineName = (TextView) v.findViewById(R.id.StopName);
 
 
             LineName.setText(curStop.desc);
             LineName.setSelected(true);
-            LineNumber.setText(curStop.locid);
+
+            LineNumber.setText(String.valueOf(curStop.locid));
+
+            RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) LineNumber.getLayoutParams();
+            lp.addRule(RelativeLayout.CENTER_VERTICAL);
+            LineNumber.setLayoutParams(lp);
+
+            lp = (RelativeLayout.LayoutParams) LineName.getLayoutParams();
+            lp.addRule(RelativeLayout.CENTER_VERTICAL);
+            LineName.setLayoutParams(lp);
         }
 
         return v;

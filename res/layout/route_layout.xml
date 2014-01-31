@@ -11,16 +11,6 @@
 		android:layout_width="fill_parent"
 		android:layout_height="fill_parent">
 		
-		<ImageView 
-			android:id="@+id/AlertIcon"
-			android:layout_width="18dp"
-			android:layout_height="18dp"
-			android:layout_marginLeft="-8dp"
-			android:layout_marginTop="-8dp"
-			android:src="@drawable/ic_action_error"
-			android:visibility="invisible"
-			android:contentDescription="@string/content"/>	
-
 		<TextView
 			android:id="@+id/LineNumber"
 			android:layout_width="60dp"

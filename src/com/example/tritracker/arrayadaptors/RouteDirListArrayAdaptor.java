@@ -35,10 +35,10 @@ public class RouteDirListArrayAdaptor extends ArrayAdapter<Dir> {
         Dir curDir = getItem(position);
 
         if (curDir != null) {
-            TextView Direction = (TextView) v.findViewById(R.id.Dir);
+            TextView Direction = (TextView) v.findViewById(R.id.Dirname);
             TextView LineName = (TextView) v.findViewById(R.id.LineName);
 
-            LineName.setText(curDir.dir);
+            LineName.setText(curDir.desc);
             LineName.setSelected(true);
 
             Direction.setText(curDir.dir == 1 ? "Inbound" : "Outbound");

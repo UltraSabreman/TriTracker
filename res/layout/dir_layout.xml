@@ -24,7 +24,7 @@
             android:textSize="16sp" />
 
         <TextView
-            android:id="@+id/Dir"
+            android:id="@+id/Dirname"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/LineName"
@@ -32,6 +32,6 @@
             android:text="Inbound"
             android:layout_marginLeft="@dimen/activity_horizontal_margin"
             android:textColor="@android:color/darker_gray"
-            android:textSize="16sp" />
+            android:textSize="12sp" />
     </RelativeLayout>
 </LinearLayout>
