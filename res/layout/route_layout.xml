@@ -39,7 +39,7 @@
 			android:layout_marginRight="3dp"
 			android:layout_toRightOf="@id/LineNumber"
 			android:background="@color/TestColor" />
-		
+
 		<TextView
 			android:id="@+id/LineName"
 			android:layout_width="wrap_content"

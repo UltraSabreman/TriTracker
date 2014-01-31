@@ -19,7 +19,7 @@ public class AllRoutesJSONResult {
 				public Stop[] stop;
 				public String desc;
 				public int dir;
-				
+
 				public class Stop {
 					public String desc;
 					public int locid;

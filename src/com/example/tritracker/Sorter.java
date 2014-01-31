@@ -1,10 +1,5 @@
 package com.example.tritracker;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Locale;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -12,6 +7,11 @@ import android.content.DialogInterface;
 import com.example.tritracker.Util.ListType;
 import com.example.tritracker.activities.MainService;
 import com.example.tritracker.json.AllRoutesJSONResult.ResultSet.Route;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Locale;
 
 public class Sorter <T> {
 	public int sortOrder = 0;
@@ -134,8 +134,8 @@ public class Sorter <T> {
 	}
 	
 	private static class RouteSorter implements Comparator<Route> {
-		private int getLineValue(String iname) {
-			String name = iname.toLowerCase(Locale.US);
+		private int getLineValue(String inname) {
+			String name = inname.toLowerCase(Locale.US);
 			if (name.contains("max"))
 				if (name.contains("blue"))
 					return 1000;
@@ -145,20 +145,21 @@ public class Sorter <T> {
 					return 1002;
 				else
 					return 1003;
-			else if (name.contains("streetcar"))
+			if (name.contains("streetcar"))
 				if (name.contains("cl"))
 					return 1004;
 				else
 					return 1005;
-			else if (name.contains("commuter"))
+			if (name.contains("commuter"))
 				return 1006;
-			else if (name.contains("shuttle"))
+			if (name.contains("shuttle"))
 				return 1007;
-			else if (name.contains("tram"))
+			if (name.contains("tram"))
 				return 1008;
-			else
-				return 0;
-				
+            if (name.contains("trolley"))
+                return 1009;
+
+		    return 0;
 		}
 		
 		@Override

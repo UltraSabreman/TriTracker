@@ -29,6 +29,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -246,9 +247,9 @@ public class MainService extends Service {
 		if (refreshList != null && refreshList.size() != 0) {
 			Iterator<Entry<String, onUpdate>> it = refreshList.entrySet().iterator();
 		    while (it.hasNext()) {
-		        Map.Entry<String, onUpdate> pairs = (Map.Entry<String, onUpdate>)it.next();
+		        Map.Entry<String, onUpdate> pairs = it.next();
 		        if(pairs != null && pairs.getValue() != null)
-		        	((onUpdate)pairs.getValue()).run();
+		        	pairs.getValue().run();
 		    }
 		}
 		
@@ -268,7 +269,7 @@ public class MainService extends Service {
 	public boolean routeHasAlert(int route) {
 		for (Alert a :stopData.Alerts)
 			for (Integer i : a.AffectedLines)
-				if (i.intValue() == route)
+				if (i == route)
 					return true;
 		return false;
 	}
@@ -284,9 +285,7 @@ public class MainService extends Service {
 							while (!lock.tryLock(100, TimeUnit.MILLISECONDS));
 							try {
 								stopData.AvalibleRoutes.clear();
-								for (AllRoutesJSONResult.ResultSet.Route r : res.resultSet.route) {
-									stopData.AvalibleRoutes.add(r);
-								}
+                                Collections.addAll(stopData.AvalibleRoutes, res.resultSet.route);
 								isUpdating = false;
 							} finally {
 								lock.unlock();

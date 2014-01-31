@@ -1,7 +1,6 @@
 <component name="libraryTable">
   <library name="Gradle: ComGoogleAndroidGmsPlayServices4030.aar">
     <CLASSES>
-      <root url="file://$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/res" />
       <root url="jar://$PROJECT_DIR$/build/exploded-bundles/ComGoogleAndroidGmsPlayServices4030.aar/classes.jar!/" />
     </CLASSES>
     <JAVADOC />
