@@ -133,6 +133,13 @@ public class MainService extends Service {
 	public ArrayList<Route> getRoutes() {
 		return stopData.AvalibleRoutes;
 	}
+    public Route getRouteByNumber(int route) {
+        for (Route r : stopData.AvalibleRoutes)
+            if (r.route == route)
+                return r;
+        return null;
+    }
+
 	
 	public void addReminder(NotificationHandler not) {
 		if (!reminders.contains(not)) {

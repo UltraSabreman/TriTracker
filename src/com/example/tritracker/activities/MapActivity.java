@@ -3,6 +3,13 @@ package com.example.tritracker.activities;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.Point;
+import android.graphics.Rect;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
@@ -11,8 +18,11 @@ import android.view.MenuItem;
 
 import com.example.tritracker.R;
 import com.example.tritracker.Stop;
+import com.example.tritracker.Timer;
 import com.example.tritracker.Util;
 import com.example.tritracker.arrayadaptors.MarkerInfoWindowArrayAdaptor;
+import com.example.tritracker.json.AllRoutesJSONResult.ResultSet.Route;
+import com.example.tritracker.json.BussesJSONResult;
 import com.example.tritracker.json.ForgroundRequestManager;
 import com.example.tritracker.json.ForgroundRequestManager.ResultCallback;
 import com.example.tritracker.json.MapJSONResult;
@@ -35,8 +45,10 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
+import java.util.Random;
 //import com.example.tritracker.arrayadaptors
 
 public class MapActivity extends Activity implements GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnectionFailedListener {
@@ -47,6 +59,7 @@ public class MapActivity extends Activity implements GooglePlayServicesClient.Co
 
 	private LatLng targetPos = null;
 	private ArrayList<Marker> stops = new ArrayList<Marker>();
+    private ArrayList<Marker> busses = new ArrayList<Marker>();
 	
 	private static LatLng oldPos = null;
 		
@@ -62,7 +75,9 @@ public class MapActivity extends Activity implements GooglePlayServicesClient.Co
         	oldPos = null;
         
         if (searchCircle != null)
-        	searchCircle.remove();  
+        	searchCircle.remove();
+
+        theService.unsub("map tick");
         
         targetPos = null;
     }	
@@ -78,17 +93,30 @@ public class MapActivity extends Activity implements GooglePlayServicesClient.Co
         
         // Get a handle to the Map Fragment
         GoogleMap map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
-        map.setInfoWindowAdapter(new MarkerInfoWindowArrayAdaptor(getLayoutInflater()));
+        if (map != null) {
+            map.setInfoWindowAdapter(new MarkerInfoWindowArrayAdaptor(getLayoutInflater()));
         
-        mLocationClient = new LocationClient(this, this, this);//(this, this, this);
-        map.setMyLocationEnabled(true);
+            mLocationClient = new LocationClient(this, this, this);//(this, this, this);
+            map.setMyLocationEnabled(true);
        
-        Bundle extras = getIntent().getExtras();
-        if (extras != null)
-        	targetPos = new LatLng(extras.getDouble("lat"), extras.getDouble("lng"));
+            Bundle extras = getIntent().getExtras();
+            if (extras != null)
+                targetPos = new LatLng(extras.getDouble("lat"), extras.getDouble("lng"));
 
-        theService = MainService.getService();
-        mLocationClient.connect();
+            theService = MainService.getService();
+            mLocationClient.connect();
+
+            theService.sub("map tick", new Timer.onUpdate() {
+                @Override
+                public void run() {
+                    for (Marker m : busses)
+                        m.remove();
+                    busses.clear();
+
+                    getBusPosses(null);
+                }
+            });
+        }
     }
     
     
@@ -141,17 +169,16 @@ public class MapActivity extends Activity implements GooglePlayServicesClient.Co
         }
 
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(myPos, targetPos != null ? 18 : 15));
-        
-        
-        BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.ic_pin_orange);
-        
-       
+
+        DrawRoute(33);
+
         searchMarker = map.addMarker(new MarkerOptions()
-			.icon(icon)//BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
-	        .title("Search Location")
-	        .snippet("From where to search for stops.")
-	        .position(myPos)
-	        .draggable(true));
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_pin_orange))//BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
+                .title("Search Location")
+                .snippet("From where to search for stops.")
+                .position(myPos)
+                .draggable(true));
+
         if (targetPos != null)
         	searchMarker.setVisible(false);
         
@@ -225,13 +252,98 @@ public class MapActivity extends Activity implements GooglePlayServicesClient.Co
 	    // Get back the mutable Circle
         searchCircle = map.addCircle(circleOptions);
         getJson();
+        getBusPosses(null);
 	}
+
+
+    public void DrawRoute(int RouteNum) {
+        Route test = theService.getRouteByNumber(RouteNum);
+        if (test == null) return;
+
+        GoogleMap map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
+        PolylineOptions rectOptions = new PolylineOptions();
+        rectOptions.color(0xff00aa00);
+        rectOptions.geodesic(true);
+
+        for (Route.Dir d : test.dir)
+            for (Route.Dir.Stop s : d.stop) {
+                LatLng pos = new LatLng(s.lat, s.lng);
+
+                map.addMarker(new MarkerOptions()
+                        .icon(BitmapDescriptorFactory.fromBitmap(drawStopCircle(0xff00aa00)))//.icon(icon)//BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
+                        .position(pos)
+                        .flat(true));
+
+                rectOptions.add(pos);
+            }
+
+        map.addPolyline(rectOptions);
+    }
+
 
 	@Override
 	public void onDisconnected() {
 		// TODO Auto-generated method stub
 		
 	}
+
+    public Bitmap drawBussCirle(String ID, int col) {
+        Bitmap result = Bitmap.createBitmap(100, 120, Bitmap.Config.ARGB_8888);
+
+        Canvas canvas = new Canvas(result);
+        Paint paint = new Paint();
+            paint.setColor(Color.BLACK);
+            paint.setStyle(Paint.Style.FILL);
+            paint.setAntiAlias(true);
+            paint.setTextSize(40);
+            paint.setFakeBoldText(true);
+
+        canvas.drawCircle(result.getWidth() / 2, (result.getHeight()+ 20 )/ 2 , 50, paint);
+
+        paint.setColor(col);
+        canvas.drawCircle(result.getWidth() / 2, (result.getHeight()+ 20 )/ 2, 48, paint);
+
+        paint.setColor(Color.BLACK);
+        Rect bounds = new Rect();
+        paint.getTextBounds(ID, 0, ID.length(), bounds);
+
+        canvas.drawText(ID, result.getWidth() / 2 - bounds.width() / 2, result.getHeight() / 2 + (bounds.height()+ 20) / 2, paint);
+
+        Point t = new Point();
+        t.set(result.getWidth() / 2, 0);
+
+        Path path = new Path();
+        path.moveTo(result.getWidth() / 2, 0);
+        path.lineTo(result.getWidth() / 2 + 20, 25);
+        path.lineTo(result.getWidth() / 2 - 20, 25);
+        path.close();
+
+        canvas.drawPath(path, paint);
+
+
+        return result;
+    }
+
+
+
+    public Bitmap drawStopCircle(int col) {
+        Bitmap result = Bitmap.createBitmap(25, 25, Bitmap.Config.ARGB_8888);
+
+        Canvas canvas = new Canvas(result);
+        Paint paint = new Paint();
+        paint.setColor(Color.BLACK);
+        paint.setStyle(Paint.Style.FILL);
+        paint.setAntiAlias(true);
+
+        canvas.drawCircle(result.getWidth() / 2, result.getHeight() / 2, 12.5f, paint);
+
+        paint.setColor(col);
+        canvas.drawCircle(result.getWidth() / 2, result.getHeight() / 2, 12, paint);
+
+        return result;
+    }
+
+
 	
 	private void getJson(int stop) {
 		Util.createSpinner(this);
@@ -257,7 +369,67 @@ public class MapActivity extends Activity implements GooglePlayServicesClient.Co
 		new ForgroundRequestManager(call, this, getApplicationContext(), stop).start();
 		
 	}
-	
+
+    public void getBusPosses(String busses) {
+        new Request<BussesJSONResult>(BussesJSONResult.class,
+                new Request.JSONcallback<BussesJSONResult>() {
+                    @Override
+                    public void run(final BussesJSONResult r, final int error) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                drawBusses(r);
+                            }
+                        });
+                    }
+                },
+                "http://developer.trimet.org/beta/v2/vehicles?"
+                        + (busses != null ? "routes="+ busses : "")
+                        + "&appID=" + getString(R.string.appid)).start();
+    }
+
+
+    public void drawBusses(BussesJSONResult r) {
+        if (r == null) return;
+
+        GoogleMap map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
+        Random rand = new Random();
+        for (BussesJSONResult.ResultSet.Vehicle v : r.resultSet.vehicle) {
+            LatLng pos = new LatLng(v.latitude, v.longitude);
+            String id;
+
+            if (v.signMessage != null) {
+                int end = v.signMessage.indexOf(" ");
+                if (end == -1)
+                    id = String.valueOf(v.routeNumber);
+                else
+                    id = v.signMessage.substring(0,end);
+            } else
+                id = String.valueOf(v.routeNumber);
+
+            rand.setSeed(v.routeNumber);
+
+            int colr = rand.nextInt(255) + 1;
+            int colg = rand.nextInt(255) + 1;
+            int colb = rand.nextInt(255) + 1;
+
+            int color = 0xFF000000;
+            color = color | ( colr << (4 * 4));
+            color = color | ( colg << (4 * 2));
+            color = color | ( colb );
+
+
+            busses.add(map.addMarker(new MarkerOptions()
+                    .icon(BitmapDescriptorFactory.fromBitmap(drawBussCirle(id, color)))
+                    .anchor(0.5f, 0.5f)
+                    .rotation((float) v.bearing)
+                    .position(pos)
+                    .flat(true)));
+
+        }
+    }
+
+
 	public void getJson() {
 		for (Marker m : stops)
 			m.remove();
