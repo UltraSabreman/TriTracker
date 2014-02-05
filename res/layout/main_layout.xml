@@ -17,7 +17,7 @@
 	
 	<RelativeLayout
 		android:id="@+id/UIseperator"
-		android:background="@color/TestColor"
+		android:background="@color/BackgroundGrey"
 		android:layout_width="match_parent"
 		android:layout_height="1dp"
 		android:layout_above="@id/UIStopIDBox"/>

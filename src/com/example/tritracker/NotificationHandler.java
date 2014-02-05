@@ -70,7 +70,7 @@ public class NotificationHandler {
 	public void editNotification(int time) {
 		timer.stopTimer();
 		timeToWait = time;
-		timer.restartTimer(); //TODO is this needed?		
+		timer.restartTimer();
 	}
 
 	public Buss getBuss() {

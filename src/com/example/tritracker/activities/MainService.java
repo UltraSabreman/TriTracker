@@ -86,7 +86,6 @@ public class MainService extends Service {
                                 lock.unlock();
                             }
                         } catch (InterruptedException e) {
-                            // TODO Auto-generated catch block
                             e.printStackTrace();
                         }
 
@@ -299,7 +298,6 @@ public class MainService extends Service {
 								lock.unlock();
 							}
 						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					}
@@ -315,9 +313,14 @@ public class MainService extends Service {
 					public void run(DetourJSONResult r, int error) {
 						if (error != 0) return;
 						MainService.this.stopData.Alerts.clear();
-						
-						for (ResultSet.Detour d : r.resultSet.detour)
-							stopData.Alerts.add(new Alert(d));
+
+                        if (r.resultSet == null)
+                            System.out.println("ResultSetNull");
+                        else if (r.resultSet.detour == null)
+                            System.out.println("DetourNull");
+                        else
+                            for (ResultSet.Detour d : r.resultSet.detour)
+							    stopData.Alerts.add(new Alert(d));
 						
 						
 					}

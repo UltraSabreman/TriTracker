@@ -28,7 +28,7 @@
 			android:layout_marginLeft="3dp"
 			android:layout_marginRight="3dp"
 			android:layout_toRightOf="@id/LineNumber"
-			android:background="@color/TestColor" />
+			android:background="@color/BackgroundGrey" />
 
 		<TextView
 			android:id="@+id/LineName"

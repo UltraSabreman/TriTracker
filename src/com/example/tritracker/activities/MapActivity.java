@@ -94,7 +94,7 @@ public class MapActivity extends Activity implements GooglePlayServicesClient.Co
         // Get a handle to the Map Fragment
         GoogleMap map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
         if (map != null) {
-            map.setInfoWindowAdapter(new MarkerInfoWindowArrayAdaptor(getLayoutInflater()));
+            map.setInfoWindowAdapter(new MarkerInfoWindowArrayAdaptor(getLayoutInflater(),  getApplicationContext()));
         
             mLocationClient = new LocationClient(this, this, this);//(this, this, this);
             map.setMyLocationEnabled(true);
@@ -113,7 +113,7 @@ public class MapActivity extends Activity implements GooglePlayServicesClient.Co
                         m.remove();
                     busses.clear();
 
-                    getBusPosses(null);
+                    //getBusPosses(null);
                 }
             });
         }
@@ -169,8 +169,6 @@ public class MapActivity extends Activity implements GooglePlayServicesClient.Co
         }
 
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(myPos, targetPos != null ? 18 : 15));
-
-        DrawRoute(33);
 
         searchMarker = map.addMarker(new MarkerOptions()
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_pin_orange))//BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
@@ -252,7 +250,9 @@ public class MapActivity extends Activity implements GooglePlayServicesClient.Co
 	    // Get back the mutable Circle
         searchCircle = map.addCircle(circleOptions);
         getJson();
-        getBusPosses(null);
+
+        //DrawRoute(33);
+        //getBusPosses(null);
 	}
 
 

@@ -1,7 +1,6 @@
 package com.example.tritracker.arrayadaptors;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -100,11 +99,11 @@ public class StopListArrayAdaptor extends ArrayAdapter<Stop> {
 
 			// this lists the routes, and adds commas between them.
 			if (curStop.Busses != null && curStop.Busses.size() != 0) {
-				lines.setTextColor(Color.parseColor("#aaaaaa"));
+				lines.setTextColor(getContext().getResources().getColor(R.color.BackgroundGrey));
 				lines.setText("Lines: " + Util.getListOfLines(curStop, true));
 
 			} else {
-				lines.setTextColor(Color.parseColor("#FF6666"));
+				lines.setTextColor(getContext().getResources().getColor(R.color.LightRed));
 				lines.setText("No Arrival Information");
 
 			}

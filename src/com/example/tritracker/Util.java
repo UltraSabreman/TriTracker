@@ -45,20 +45,20 @@ public class Util {
 	
 	public static Date dateFromString(String s) {
 		if (s == null)
-			return null;
+			return new Date(0);
 		try {
 			s = s.replace("T", "");
 			return new SimpleDateFormat("yyyy-MM-ddHH:mm:ss.SSSZ", Locale.US)
 					.parse(s);
 		} catch (ParseException e) {
-			return null;
+			return new Date(0);
 		}
 	}
 
 	public static int getBussMinutes(Buss b) {
 		Date est = null;
 
-		if (b.Status.compareTo("estimated") == 0 && b.EstimatedTime != null) {
+		if (b.Stats.get(0).compareTo("estimated") == 0 && b.EstimatedTime != null) {
 			est = new Date(b.EstimatedTime.getTime() - new Date().getTime());
 		} else {
 			est = new Date(b.ScheduledTime.getTime() - new Date().getTime());

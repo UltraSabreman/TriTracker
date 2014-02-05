@@ -18,9 +18,11 @@ import java.util.Locale;
 public class RouteListArrayAdaptor extends ArrayAdapter<Route> {
 	// private final Context context;
 	private MainService theService;
+    private Context context;
 
 	public RouteListArrayAdaptor(Context context, ArrayList<Route> l) {
 		super(context, R.layout.route_layout, l);
+        this.context = context;
 		this.theService = MainService.getService();
 	}
 
@@ -63,13 +65,13 @@ public class RouteListArrayAdaptor extends ArrayAdapter<Route> {
                 route = "MAX";
                 sign = curRoute.desc.replace(route + " ", "");
                 if (curRoute.desc.contains("Green"))
-                    LineNumber.setTextColor(Color.parseColor("#73E673")); //green
+                    LineNumber.setTextColor(context.getResources().getColor(R.color.MaxGreen)); //green
                 else if (curRoute.desc.contains("Red"))
-                    LineNumber.setTextColor(Color.parseColor("#E67375"));
+                    LineNumber.setTextColor(context.getResources().getColor(R.color.MaxRed));
                 else if (curRoute.desc.contains("Blue"))
-                    LineNumber.setTextColor(Color.parseColor("#7399E6"));
+                    LineNumber.setTextColor(context.getResources().getColor(R.color.MaxBlue));
                 else if (curRoute.desc.contains("Yellow"))
-                    LineNumber.setTextColor(Color.parseColor("#E6DC73"));
+                    LineNumber.setTextColor(context.getResources().getColor(R.color.MaxYellow));
             }
 
             LineNumber.setText(route);

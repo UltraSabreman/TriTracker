@@ -59,19 +59,14 @@
 			android:layout_marginLeft="3dp"
 			android:layout_marginRight="3dp"
 			android:layout_toRightOf="@id/LineNumber"
-			android:background="@color/TestColor" />
+			android:background="@color/BackgroundGrey" />
 
-		<TextView
+		<ViewFlipper
 			android:id="@+id/Time"
 			android:layout_width="wrap_content"
 			android:layout_height="match_parent"
 			android:layout_alignParentRight="true"
-			android:layout_centerVertical="true"
-			android:gravity="center"
-			android:maxLines="1"
-			android:text="22 Min"
-			android:textColor="@android:color/holo_green_dark"
-			android:textSize="16sp" />
+			android:layout_centerVertical="true"/>
 		
 		<TextView
 			android:id="@+id/LineName"
@@ -85,19 +80,16 @@
 			android:singleLine="true"
 			android:text="To Clackamas CC"
 			android:textColor="@android:color/holo_blue_dark"
-			android:textSize="16sp" />			
-		<TextView
+			android:textSize="16sp" />
+
+		<ViewFlipper
 			android:id="@+id/Schedule"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_below="@id/LineName"
 			android:layout_toRightOf="@id/UIseperator3"
-			android:ellipsize="end"
-			android:maxLines="1"
 			android:paddingLeft="@dimen/activity_horizontal_margin"
-			android:text="Scheduled at: 07:15 PM "
-			android:textColor="@android:color/darker_gray"
-			android:textSize="12sp" />
+			android:text="Scheduled at: 07:15 PM "/>
 		
 
 
