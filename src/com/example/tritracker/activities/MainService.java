@@ -371,22 +371,22 @@ public class MainService extends Service {
 			return;
 
 		ArrivalJSONResult.ResultSet rs = r.resultSet;
-		ArrayList<Stop> stops = new ArrayList<Stop>();
 		if (rs.location != null) {
 			for (ArrivalJSONResult.ResultSet.Location l : rs.location) {
-				stops.add(new Stop(l));
-			}
-	
-			for (Stop s : stops) {
-				if (rs.arrival != null)
-					for (ArrivalJSONResult.ResultSet.Arrival a : rs.arrival) {
-						if (s.StopID == a.locid)
-							s.Busses.add(new Buss(a));
-					}
-	
-				Stop tempStop = getStop(s);
-				if (tempStop != null)
-					tempStop.Update(s, false);
+				Stop temp = new Stop(l);
+
+                if (rs.arrival != null)
+                    for (ArrivalJSONResult.ResultSet.Arrival a : rs.arrival) {
+                        Buss t = temp.getBuss(a.fullSign);
+                        if (t == null)
+                            temp.Busses.add(new Buss(a));
+                        else
+                            t.AddTime(a);
+                    }
+
+                Stop tempStop = getStop(temp);
+                if (tempStop != null)
+                    tempStop.Update(temp, false);
 			}
 		}
 	}
@@ -395,13 +395,12 @@ public class MainService extends Service {
 		try {
 			Context c = getApplicationContext();
 			String path = c.getString(R.string.data_path);
-			FileOutputStream outputStream = c.openFileOutput(path, Context.MODE_PRIVATE);
 			
 			Lock lock = new ReentrantLock();
-			
 			try {
 				while (!lock.tryLock(100, TimeUnit.MILLISECONDS));
 				try {
+                    FileOutputStream outputStream = c.openFileOutput(path, Context.MODE_PRIVATE);
 					String data = new Gson().toJson(stopData);//new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
 			
 					outputStream.write(data.getBytes());

@@ -271,7 +271,6 @@ public class StopListFragment extends Fragment implements UndoListener {
         if (theService == null)
             theService = MainService.getService();
 
-
         if (get) {
             stopList.clear();
             stopList = isFavorites ? theService.getFavorties() : theService.getHistory();

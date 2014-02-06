@@ -38,15 +38,8 @@ public class BussListArrayAdaptor extends ArrayAdapter<Buss> {
 		this.theService = MainService.getService();
 	}
 
-	@Override
-	public void notifyDataSetChanged() {
-		super.notifyDataSetChanged();
-
-	}
-
 	public void updateStop(Stop s) {
 		curStop = s;
-		notifyDataSetChanged();
 	}
 
 	@Override
@@ -75,6 +68,8 @@ public class BussListArrayAdaptor extends ArrayAdapter<Buss> {
 							affected = true;
 							break;
 						}
+                    if (affected)
+                        break;
 				}
 				if (affected)
 					((ImageView) v.findViewById(R.id.AlertIcon))
@@ -157,15 +152,15 @@ public class BussListArrayAdaptor extends ArrayAdapter<Buss> {
         for(Date d : curBuss.ScheduledTimes) {
             String s = formatter.format(d);
 
-            RelativeLayout.LayoutParams layoutParams=new RelativeLayout.LayoutParams(
-                    ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT );
+ //           RelativeLayout.LayoutParams layoutParams=new RelativeLayout.LayoutParams(
+ //                   ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT );
 
             TextView tTextView = new TextView(context);
                 tTextView.setTextSize(12);
                 tTextView.setTextColor(context.getResources().getColor(android.R.color.darker_gray));
                 tTextView.setEllipsize(TextUtils.TruncateAt.MARQUEE);
                 tTextView.setSingleLine(true);
-                tTextView.setLayoutParams(layoutParams);
+  //              tTextView.setLayoutParams(layoutParams);
                 tTextView.setText("Scheduled at: " + s);
                 tTextView.setSelected(true);
             SFlipper.addView(tTextView);
@@ -177,15 +172,15 @@ public class BussListArrayAdaptor extends ArrayAdapter<Buss> {
             boolean flag = false;
             String name = "";
 
-            RelativeLayout.LayoutParams layoutParams=new RelativeLayout.LayoutParams(
-                    ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT );
+  //          RelativeLayout.LayoutParams layoutParams=new RelativeLayout.LayoutParams(
+ //                   ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT );
 
             TextView tTextView = new TextView(context);
                 tTextView.setTextSize(16);
                 tTextView.setEllipsize(TextUtils.TruncateAt.MARQUEE);
                 tTextView.setSingleLine(true);
-                tTextView.setLayoutParams(layoutParams);
-                tTextView.setGravity(Gravity.CENTER);
+         //       tTextView.setLayoutParams(layoutParams);
+                //tTextView.setGravity(Gravity.CENTER);
 
             if (curBuss.Stats.get(index).compareTo("estimated") == 0) {
                 flag = true;
@@ -229,8 +224,8 @@ public class BussListArrayAdaptor extends ArrayAdapter<Buss> {
         SFlipper.setOutAnimation(context, android.R.anim.slide_out_right);
         TFlipper.setOutAnimation(context, android.R.anim.slide_out_right);
 
-        SFlipper.setFlipInterval(2000);
-        TFlipper.setFlipInterval(2000);
+        SFlipper.setFlipInterval(5000);
+        TFlipper.setFlipInterval(5000);
 
         SFlipper.startFlipping();
         TFlipper.startFlipping();

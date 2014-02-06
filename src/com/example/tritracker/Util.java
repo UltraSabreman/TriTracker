@@ -55,13 +55,13 @@ public class Util {
 		}
 	}
 
-	public static int getBussMinutes(Buss b) {
+	public static int getBussMinutes(Buss b, int pos) {
 		Date est = null;
 
-		if (b.Stats.get(0).compareTo("estimated") == 0 && b.EstimatedTime != null) {
-			est = new Date(b.EstimatedTime.getTime() - new Date().getTime());
+		if (b.Stats.get(0).compareTo("estimated") == 0 && b.EstimatedTimes != null) {
+			est = new Date(b.EstimatedTimes.get(pos).getTime() - new Date().getTime());
 		} else {
-			est = new Date(b.ScheduledTime.getTime() - new Date().getTime());
+			est = new Date(b.ScheduledTimes.get(pos).getTime() - new Date().getTime());
 		}
 
 		return mToS(est.getTime()) / 60;

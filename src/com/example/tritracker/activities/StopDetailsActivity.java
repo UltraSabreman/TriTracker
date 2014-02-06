@@ -94,14 +94,18 @@ public class StopDetailsActivity extends Activity {
     	curStop = theService.getStop(curStop);
     	
 		runOnUiThread(new Runnable() {
-			@Override
-			public void run() {					
-				if (adaptor != null) {
-					Stop s = StopDetailsActivity.this.curStop;
-					adaptor.updateStop(s);
-				}
-			}
-		});
+            @Override
+            public void run() {
+                if (adaptor != null) {
+                    adaptor.updateStop(curStop);
+                    adaptor.clear();
+                    System.out.println("Stuff: " + curStop.Busses.size());
+                    adaptor.addAll(curStop.Busses);
+
+                    adaptor.notifyDataSetChanged();
+                }
+            }
+        });
     }
 
     @Override
@@ -191,13 +195,14 @@ public class StopDetailsActivity extends Activity {
 
 		final NumberPicker b = (NumberPicker) ourView.findViewById(R.id.reminderTime);
 
-		b.setMaxValue(Math.min(Util.getBussMinutes(theBuss), 60));
+        //TODO add ability to select ther stops.
+		b.setMaxValue(Math.min(Util.getBussMinutes(theBuss, 0), 60));
 		b.setMinValue(1);
 		
 		theService.sub("wheel update", new Timer.onUpdate() {
 			@Override
 			public void run() {
-				b.setMaxValue(Math.min(Util.getBussMinutes(theBuss), 60));
+				b.setMaxValue(Math.min(Util.getBussMinutes(theBuss, 0), 60));
 			}
 		});
 
@@ -219,7 +224,7 @@ public class StopDetailsActivity extends Activity {
 					n.editNotification(b.getValue());
 					Util.showToast("Reminder Updated", Toast.LENGTH_SHORT);
 				} else {
-					theService.addReminder(new NotificationHandler(getApplicationContext(), getIntent(), curStop, theBuss, b.getValue()));
+					theService.addReminder(new NotificationHandler(getApplicationContext(), getIntent(), curStop, theBuss, 0, b.getValue()));
 					Util.showToast("Reminder Set", Toast.LENGTH_SHORT);
 				}
 				adaptor.notifyDataSetChanged();

@@ -27,6 +27,12 @@ public class Buss {
 
 	}
 
+    public void AddTime(ArrivalJSONResult.ResultSet.Arrival a) {
+        Stats.add(a.status);
+        EstimatedTimes.add(Util.dateFromString(a.estimated));
+        ScheduledTimes.add(Util.dateFromString(a.scheduled));
+    }
+
 	public Buss(Buss b) {
 		update(b);
 	}
@@ -34,7 +40,7 @@ public class Buss {
 	public boolean compareTo(Buss b) {
 		if (b == null)
 			return false;
-		if ((ScheduledTimes == null && b.ScheduledTimes == null) || ScheduledTimes.get(0).compareTo(b.ScheduledTimes.get(0)) == 0)
+		if (SignLong.compareTo(b.SignLong) == 0)
 			return true;
 		return false;
 	}

@@ -99,7 +99,7 @@ public class StopListArrayAdaptor extends ArrayAdapter<Stop> {
 
 			// this lists the routes, and adds commas between them.
 			if (curStop.Busses != null && curStop.Busses.size() != 0) {
-				lines.setTextColor(getContext().getResources().getColor(R.color.BackgroundGrey));
+				lines.setTextColor(getContext().getResources().getColor(android.R.color.darker_gray));
 				lines.setText("Lines: " + Util.getListOfLines(curStop, true));
 
 			} else {

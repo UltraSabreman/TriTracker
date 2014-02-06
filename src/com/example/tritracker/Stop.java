@@ -61,22 +61,6 @@ public class Stop  {
 		StopID = id;
 	}
 
-	/*public String getService() {
-		if (Busses != null) {
-			String s = "";
-			for (Buss b : Busses) {
-				s += ro + ", ";
-			}
-			
-			if (s.compareTo("") != 0) {
-				s = s.substring(0, s.length() - 2);
-			}
-			return s;
-		}
-		return "";
-	}*/
-		
-
 	public void Update(Stop s, boolean shouldUpdateDate) {
 		Name = new String(s.Name);
 		StopID = s.StopID;
@@ -102,53 +86,12 @@ public class Stop  {
 	}
 
 	public Buss getBuss(Buss ib) {
-		for (Buss b : Busses)
-			if (b != null && b.compareTo(ib))
-				return b;
-		return null;
+        return getBuss(ib.SignLong);
 	}
-
-
-	/*@Override
-	public int describeContents() {
-		return 0;
-	}
-
-	@Override
-	public void writeToParcel(Parcel out, int flags) {	
-		out.writeString(Name);
-		out.writeInt(StopID);
-		out.writeString(Direction);
-		out.writeLong(LastAccesed.getTime());
-		out.writeInt(inHistory ? 1 : 0);
-		out.writeInt(inFavorites ? 1 : 0);
-		out.writeDouble(Latitude);
-		out.writeDouble(Longitude);
-		
-		out.writeList(Busses);
-	}
-	
-	public Stop(Parcel in) {
-		Name = in.readString();
-		StopID = in.readInt();
-		Direction = in.readString();
-		LastAccesed = new Date(in.readLong());
-		inHistory = in.readInt() == 1 ? true : false;
-		inFavorites = in.readInt() == 1 ? true : false;
-		Latitude = in.readDouble();
-		Longitude = in.readDouble();
-		
-		Busses = new ArrayList<Buss>();
-		in.readList(Busses, Buss.class.getClassLoader());		
-	}
-	
-	public static final Parcelable.Creator<Stop> CREATOR = new Parcelable.Creator<Stop>() {
-		public Stop createFromParcel(Parcel in) {
-		    return new Stop(in);
-		}
-		
-		public Stop[] newArray(int size) {
-		    return new Stop[size];
-		}
-	};*/
+    public Buss getBuss(String name) {
+        for (Buss b : Busses)
+            if (b != null && b.SignLong.compareTo(name) == 0)
+                return b;
+        return null;
+    }
 }

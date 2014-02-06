@@ -119,6 +119,7 @@ public class Sorter <T> {
 			// 2 == By Arrival Time
 		}
 
+        //TODO make this work with the secodn and third ones.
 		@Override
 		public int compare(Buss o1, Buss o2) {
 			if (compareType == 0)
@@ -126,10 +127,10 @@ public class Sorter <T> {
 			if (compareType == 1)
 				return (o1.Route < o2.Route ? -1
 						: (o1.Route > o2.Route ? 1 : 0));
-			else if (o1.EstimatedTime != null && o2.EstimatedTime != null)
-				return o1.EstimatedTime.compareTo(o2.EstimatedTime); // fix me
+			else if (o1.EstimatedTimes != null && o2.EstimatedTimes != null)
+				return o1.EstimatedTimes.get(0).compareTo(o2.EstimatedTimes.get(0)); // fix me
 			else
-				return o1.ScheduledTime.compareTo(o2.ScheduledTime); // fix me
+				return o1.ScheduledTimes.get(0).compareTo(o2.ScheduledTimes.get(0)); // fix me
 		}
 	}
 	

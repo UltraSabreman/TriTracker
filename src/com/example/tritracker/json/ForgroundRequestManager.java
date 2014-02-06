@@ -144,8 +144,13 @@ public class ForgroundRequestManager extends Thread {
 		readStop.LastAccesed = new Date();
 
 		if (rs.arrival != null)
-			for (ArrivalJSONResult.ResultSet.Arrival a : rs.arrival)
-				readStop.Busses.add(new Buss(a));
+			for (ArrivalJSONResult.ResultSet.Arrival a : rs.arrival) {
+			    Buss t = readStop.getBuss(a.fullSign);
+                if (t == null)
+				    readStop.Busses.add(new Buss(a));
+                else
+                    t.AddTime(a);
+            }
 		else
 			readStop.Busses = null;
 

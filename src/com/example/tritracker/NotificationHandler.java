@@ -17,7 +17,8 @@ public class NotificationHandler {
 	private Context notContext;
 	private Timer timer;
 	private NotificationManager not;
-	public Buss trackedBuss;
+    private Buss trackedBuss;
+    private int arrival;
 	private Stop trackedStop;
 	private int timeToWait;
 
@@ -27,24 +28,25 @@ public class NotificationHandler {
 		return timeToWait;
 	}
 
-	public NotificationHandler(final Context c, Intent i, Stop s, Buss b, int time) {
+	public NotificationHandler(final Context c, Intent i, Stop s, Buss b, int pos, int time) {
 		timer = new Timer(1);
-		set(c, i, s, b, time);
+		set(c, i, s, b, pos, time);
 	}
 
-	public void set(final Context c, Intent i, Stop s, Buss b, int time) {
+	public void set(final Context c, Intent i, Stop s, Buss b, int pos, int time) {
 		trackedBuss = b;
 		trackedStop = s;
 		notContext = c;
+        arrival = pos;
 		timeToWait = time;
 
 		timer.addCallBack("main", new Timer.onUpdate() {
 			public void run() {
 				Date est = null;
-				if (trackedBuss.Status.compareTo("estimated") == 0)
-					est = new Date(trackedBuss.EstimatedTime.getTime() - new Date().getTime());
+				if (trackedBuss.Stats.get(arrival).compareTo("estimated") == 0)
+					est = new Date(trackedBuss.EstimatedTimes.get(arrival).getTime() - new Date().getTime());
 				else
-					est = new Date(trackedBuss.ScheduledTime.getTime() - new Date().getTime());
+					est = new Date(trackedBuss.ScheduledTimes.get(arrival).getTime() - new Date().getTime());
 				
 				long test = est.getTime() / 1000 / 60; //Util.getTimeFromDate(est, TimeType.Minute);
 				if (test <= timeToWait) {
@@ -90,7 +92,8 @@ public class NotificationHandler {
 				.setContentTitle(trackedBuss.SignShort)
 				.setContentText(trackedStop.Name)
 				.setTicker("Buss Arrival Alert")
-				.setWhen(trackedBuss.EstimatedTime != null ? trackedBuss.EstimatedTime.getTime() : trackedBuss.ScheduledTime.getTime())
+				.setWhen(trackedBuss.EstimatedTimes != null ?
+                trackedBuss.EstimatedTimes.get(arrival).getTime() : trackedBuss.ScheduledTimes.get(arrival).getTime())
 				.setDefaults(Notification.DEFAULT_VIBRATE | Notification.DEFAULT_SOUND)
 				.setAutoCancel(true).setLights(0xffFF8800, 1500, 1000);
 		// Creates an explicit intent for an Activity in your app
