@@ -58,7 +58,7 @@ public class StopDetailsActivity extends Activity {
 		int id = extras.getInt("stop");
 		curStop = theService.getStop(id);
 		
-		setTitle("Stop ID: " + curStop.StopID);
+		setTitle("Stop ID: " + id);
 
 		TextView StopName = (TextView) findViewById(R.id.UIStopInfoName);
 		TextView StopDir = (TextView) findViewById(R.id.UIStopInfoDirection);
@@ -84,24 +84,27 @@ public class StopDetailsActivity extends Activity {
 			});
 
 		} else
-			((View) findViewById(R.id.alertBackground)).setVisibility(View.INVISIBLE);	
+			((View) findViewById(R.id.alertBackground)).setVisibility(View.INVISIBLE);
 		
 		initList();
+
+        theService.sub("BussList", new Timer.onUpdate() {
+            public void run() {
+                onUpdate();
+            }
+        });
 	}
 
   
     public void onUpdate() {
     	curStop = theService.getStop(curStop);
-    	
-		runOnUiThread(new Runnable() {
-            @Override
+        System.out.println("Stuff1: " + curStop.Busses.size());
+		this.runOnUiThread(new Runnable() {
             public void run() {
                 if (adaptor != null) {
+                    //adaptor.clear();
+                   // adaptor.addAll(curStop.Busses);
                     adaptor.updateStop(curStop);
-                    adaptor.clear();
-                    System.out.println("Stuff: " + curStop.Busses.size());
-                    adaptor.addAll(curStop.Busses);
-
                     adaptor.notifyDataSetChanged();
                 }
             }
@@ -113,15 +116,15 @@ public class StopDetailsActivity extends Activity {
         super.onStop();
         theService.unsub("BussList");
     }
-    
+
     @Override
-    protected void onStart() {
-    	super.onStart();
-		theService.sub("BussList", new Timer.onUpdate() {
-			public void run() {
-				onUpdate();
-			}
-		});
+    protected void onResume() {
+        super.onResume();
+        theService.sub("BussList", new Timer.onUpdate() {
+            public void run() {
+                onUpdate();
+            }
+        });
     }
 
 	void initList() {

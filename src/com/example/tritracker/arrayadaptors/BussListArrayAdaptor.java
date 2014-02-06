@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
@@ -20,6 +19,7 @@ import com.example.tritracker.Stop;
 import com.example.tritracker.Util;
 import com.example.tritracker.activities.MainService;
 
+import java.text.DecimalFormat;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -147,66 +147,54 @@ public class BussListArrayAdaptor extends ArrayAdapter<Buss> {
         ViewFlipper SFlipper = (ViewFlipper) v.findViewById(R.id.Schedule);
         ViewFlipper TFlipper = (ViewFlipper) v.findViewById(R.id.Time);
 
+        SFlipper.removeAllViews();
+        TFlipper.removeAllViews();
 
+        int index = 0;
         Format formatter = new SimpleDateFormat("hh:mm a", Locale.US);
-        for(Date d : curBuss.ScheduledTimes) {
-            String s = formatter.format(d);
-
- //           RelativeLayout.LayoutParams layoutParams=new RelativeLayout.LayoutParams(
- //                   ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT );
-
+        for(Buss.TimeBox t : curBuss.times) {
+            String s = formatter.format(t.ScheduledTime);
             TextView tTextView = new TextView(context);
                 tTextView.setTextSize(12);
                 tTextView.setTextColor(context.getResources().getColor(android.R.color.darker_gray));
                 tTextView.setEllipsize(TextUtils.TruncateAt.MARQUEE);
+                tTextView.setMarqueeRepeatLimit(-1);
                 tTextView.setSingleLine(true);
-  //              tTextView.setLayoutParams(layoutParams);
                 tTextView.setText("Scheduled at: " + s);
                 tTextView.setSelected(true);
             SFlipper.addView(tTextView);
-        }
 
-        int index = 0;
-        for(Date d : curBuss.EstimatedTimes) {
-            Date est = null;
-            boolean flag = false;
-            String name = "";
 
-  //          RelativeLayout.LayoutParams layoutParams=new RelativeLayout.LayoutParams(
- //                   ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT );
-
-            TextView tTextView = new TextView(context);
+            tTextView = new TextView(context);
                 tTextView.setTextSize(16);
                 tTextView.setEllipsize(TextUtils.TruncateAt.MARQUEE);
                 tTextView.setSingleLine(true);
-         //       tTextView.setLayoutParams(layoutParams);
-                //tTextView.setGravity(Gravity.CENTER);
+                tTextView.setMarqueeRepeatLimit(-1);
+                tTextView.setGravity(Gravity.CENTER_VERTICAL);
 
-            if (curBuss.Stats.get(index).compareTo("estimated") == 0) {
+            Date est = null;
+            boolean flag = false;
+            if (t.Status.compareTo("estimated") == 0) {
                 flag = true;
-                est = new Date(d.getTime()	- new Date().getTime());
+                est = new Date(t.EstimatedTime.getTime()	- new Date().getTime());
             } else
-                est = new Date(curBuss.ScheduledTimes.get(index).getTime()	- new Date().getTime());
+                est = new Date(t.ScheduledTime.getTime()	- new Date().getTime());
 
             int min = Util.mToS(est.getTime()) / 60;
 
+            String name = "";
             if (min < 30) {
                 if (min == 0)
                     name = "Due";
-                else {
-                    formatter = new SimpleDateFormat("mm", Locale.US);
-                    name = (formatter.format(est) + " Min");
-                    if (min < 10)
-                        name = name.replaceFirst("0", "");
-                }
+                else
+                    name = String.valueOf(min + " Min");
                 if (flag) tTextView.setTextColor(context.getResources().getColor(R.color.MinGood));
             } else if (min >= 30 && min < 60) {
-                formatter = new SimpleDateFormat("mm", Locale.US);
-                name = formatter.format(est) + " Min";
+                name = String.valueOf(min + " Min");
                 if (flag) tTextView.setTextColor(context.getResources().getColor(R.color.MinOk));
             } else {
-                formatter = new SimpleDateFormat("h", Locale.US);
-                name = formatter.format(est) + " Hour(s)";
+                Double hours = ((double)min / 60);
+                name = new DecimalFormat((hours > 9 ? "0" : "") + "0.0").format(hours) + " Hour" + (hours > 1 ? "s" : "");
                 if (flag) tTextView.setTextColor(context.getResources().getColor(R.color.MinBad));
             }
             if (!flag)
@@ -218,17 +206,10 @@ public class BussListArrayAdaptor extends ArrayAdapter<Buss> {
             index++;
         }
 
-        SFlipper.setInAnimation(context, android.R.anim.slide_in_left);
-        TFlipper.setInAnimation(context, android.R.anim.slide_in_left);
-
-        SFlipper.setOutAnimation(context, android.R.anim.slide_out_right);
-        TFlipper.setOutAnimation(context, android.R.anim.slide_out_right);
-
-        SFlipper.setFlipInterval(5000);
-        TFlipper.setFlipInterval(5000);
-
-        SFlipper.startFlipping();
-        TFlipper.startFlipping();
+        if (curBuss.times.size() > 1) {
+            SFlipper.startFlipping();
+            TFlipper.startFlipping();
+        }
 
 
         return v;

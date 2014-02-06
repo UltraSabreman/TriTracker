@@ -76,19 +76,7 @@ public class MainService extends Service {
 			refreshTime.addCallBack("mainRefresh", 
 				new Timer.onUpdate() {
 					public void run() {
-                        Lock lock = new ReentrantLock();
-
-                        try {
-                            while (!lock.tryLock(100, TimeUnit.MILLISECONDS));
-                            try {
-                                doUpdate(true);
-                            } finally {
-                                lock.unlock();
-                            }
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-
+                        doUpdate(true);
 					}
 				}
 			);
@@ -249,7 +237,8 @@ public class MainService extends Service {
 	public void doUpdate(boolean fetch) {
 		if (fetch)
 			updateAllStops();
-		dumpData();
+
+        dumpData();
 		
 		if (refreshList != null && refreshList.size() != 0) {
 			Iterator<Entry<String, onUpdate>> it = refreshList.entrySet().iterator();
@@ -314,11 +303,7 @@ public class MainService extends Service {
 						if (error != 0) return;
 						MainService.this.stopData.Alerts.clear();
 
-                        if (r.resultSet == null)
-                            System.out.println("ResultSetNull");
-                        else if (r.resultSet.detour == null)
-                            System.out.println("DetourNull");
-                        else
+                        if (r.resultSet != null && r.resultSet.detour != null)
                             for (ResultSet.Detour d : r.resultSet.detour)
 							    stopData.Alerts.add(new Alert(d));
 						
@@ -375,15 +360,21 @@ public class MainService extends Service {
 			for (ArrivalJSONResult.ResultSet.Location l : rs.location) {
 				Stop temp = new Stop(l);
 
-                if (rs.arrival != null)
+                if (rs.arrival != null) {
+                    int i = 0;
                     for (ArrivalJSONResult.ResultSet.Arrival a : rs.arrival) {
+                        if (a == null || a.locid != temp.StopID) continue;
+
                         Buss t = temp.getBuss(a.fullSign);
                         if (t == null)
                             temp.Busses.add(new Buss(a));
                         else
                             t.AddTime(a);
-                    }
 
+                        rs.arrival[i++] = null;
+                    }
+                }
+                //TODO fix this stupidity
                 Stop tempStop = getStop(temp);
                 if (tempStop != null)
                     tempStop.Update(temp, false);
@@ -395,31 +386,19 @@ public class MainService extends Service {
 		try {
 			Context c = getApplicationContext();
 			String path = c.getString(R.string.data_path);
-			
-			Lock lock = new ReentrantLock();
-			try {
-				while (!lock.tryLock(100, TimeUnit.MILLISECONDS));
-				try {
-                    FileOutputStream outputStream = c.openFileOutput(path, Context.MODE_PRIVATE);
-					String data = new Gson().toJson(stopData);//new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
-			
-					outputStream.write(data.getBytes());
-					outputStream.close();
-				} finally {
-					lock.unlock();
-				}
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+            FileOutputStream outputStream = c.openFileOutput(path, Context.MODE_PRIVATE);
 
+            synchronized (stopData) {
+                String data = new Gson().toJson(stopData);
+
+                outputStream.write(data.getBytes());
+                outputStream.close();
+            }
 		} catch (JsonSyntaxException e) {
-			System.out.println("---Error: WRITE, json syntax");
 			e.printStackTrace();
 		} catch (FileNotFoundException e) {
-			System.out.println("---Error: WRITE, file not found");
 			e.printStackTrace();
 		} catch (IOException e) {
-			System.out.println("---Error: WRITE, IOexception");
 			e.printStackTrace();
 		}
 	}
@@ -428,25 +407,20 @@ public class MainService extends Service {
 		try {
 			Context c = getApplicationContext();			
 
-			//File t = new File(c.getString(R.string.data_path));
-			//t.delete();
-			
 		    BufferedReader r = new BufferedReader(new InputStreamReader(c.openFileInput(c.getString(R.string.data_path))));
-		    			
-			stopData = new Gson().fromJson(r, DataStore.class);
+            synchronized (stopData) {
+			    stopData = new Gson().fromJson(r, DataStore.class);
 			
-			r.close();
+			    r.close();
+            }
+
 		} catch (JsonSyntaxException e) {
-			System.out.println("---Error: READ, json syntax");
 			e.printStackTrace();
 		} catch (FileNotFoundException e) {
-			System.out.println("---Error: READ, file not found");
 			e.printStackTrace();
 		} catch (IOException e) {
-			System.out.println("---Error: READ, IO eceptions");
 			e.printStackTrace();
 		} catch (Exception  e) {
-			System.out.println("---Error: READ, WTF");
 			e.printStackTrace();
 		} finally {
 			if (stopData == null)
@@ -458,7 +432,7 @@ public class MainService extends Service {
 		public int FavOrder = 0;
 		public int HistOrder = 0;
 		public int StopOrder = 0;
-		public int RefreshDelay = 5;
+		public int RefreshDelay = 30;
 		public double Radius = 900;// 1/2 mile in meters.
 		public int menu = 0;
 		

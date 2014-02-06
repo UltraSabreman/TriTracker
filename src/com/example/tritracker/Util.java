@@ -1,11 +1,5 @@
 package com.example.tritracker;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-import java.util.Stack;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -15,6 +9,12 @@ import android.widget.Toast;
 
 import com.example.tritracker.activities.SpinnerPopupActivity;
 import com.example.tritracker.json.ForgroundRequestManager.checkStops;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.Stack;
 
 public class Util {
 	public static Stack<Class<?>> parents = new Stack<Class<?>>();
@@ -45,23 +45,23 @@ public class Util {
 	
 	public static Date dateFromString(String s) {
 		if (s == null)
-			return new Date(0);
+			return null;
 		try {
 			s = s.replace("T", "");
-			return new SimpleDateFormat("yyyy-MM-ddHH:mm:ss.SSSZ", Locale.US)
-					.parse(s);
+			return new SimpleDateFormat("yyyy-MM-ddHH:mm:ss.SSSZ", Locale.US).parse(s);
 		} catch (ParseException e) {
-			return new Date(0);
+			return null;
 		}
 	}
 
 	public static int getBussMinutes(Buss b, int pos) {
 		Date est = null;
 
-		if (b.Stats.get(0).compareTo("estimated") == 0 && b.EstimatedTimes != null) {
-			est = new Date(b.EstimatedTimes.get(pos).getTime() - new Date().getTime());
+        //TODO make this work with more.
+		if (b.times.get(0) != null && b.times.get(0).Status.compareTo("estimated") == 0) {
+			est = new Date(b.times.get(pos).EstimatedTime.getTime() - new Date().getTime());
 		} else {
-			est = new Date(b.ScheduledTimes.get(pos).getTime() - new Date().getTime());
+			est = new Date(b.times.get(pos).ScheduledTime.getTime() - new Date().getTime());
 		}
 
 		return mToS(est.getTime()) / 60;

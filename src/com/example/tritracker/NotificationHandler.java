@@ -1,7 +1,5 @@
 package com.example.tritracker;
 
-import java.util.Date;
-
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -12,6 +10,8 @@ import android.support.v4.app.TaskStackBuilder;
 
 import com.example.tritracker.activities.MainActivity;
 import com.example.tritracker.activities.StopListFragment;
+
+import java.util.Date;
 
 public class NotificationHandler {
 	private Context notContext;
@@ -43,10 +43,11 @@ public class NotificationHandler {
 		timer.addCallBack("main", new Timer.onUpdate() {
 			public void run() {
 				Date est = null;
-				if (trackedBuss.Stats.get(arrival).compareTo("estimated") == 0)
-					est = new Date(trackedBuss.EstimatedTimes.get(arrival).getTime() - new Date().getTime());
+                //TODO make this work with more
+				if (trackedBuss.times.get(arrival).Status.compareTo("estimated") == 0)
+					est = new Date(trackedBuss.times.get(arrival).EstimatedTime.getTime() - new Date().getTime());
 				else
-					est = new Date(trackedBuss.ScheduledTimes.get(arrival).getTime() - new Date().getTime());
+					est = new Date(trackedBuss.times.get(arrival).ScheduledTime.getTime() - new Date().getTime());
 				
 				long test = est.getTime() / 1000 / 60; //Util.getTimeFromDate(est, TimeType.Minute);
 				if (test <= timeToWait) {
@@ -92,18 +93,14 @@ public class NotificationHandler {
 				.setContentTitle(trackedBuss.SignShort)
 				.setContentText(trackedStop.Name)
 				.setTicker("Buss Arrival Alert")
-				.setWhen(trackedBuss.EstimatedTimes != null ?
-                trackedBuss.EstimatedTimes.get(arrival).getTime() : trackedBuss.ScheduledTimes.get(arrival).getTime())
+                //TODO make this work for more
+				.setWhen(trackedBuss.times.get(arrival).EstimatedTime != null ?
+                trackedBuss.times.get(arrival).EstimatedTime.getTime() : trackedBuss.times.get(arrival).ScheduledTime.getTime())
 				.setDefaults(Notification.DEFAULT_VIBRATE | Notification.DEFAULT_SOUND)
 				.setAutoCancel(true).setLights(0xffFF8800, 1500, 1000);
 		// Creates an explicit intent for an Activity in your app
 		Intent resultIntent = new Intent(notContext, StopListFragment.class);
 
-		// The stack builder object will contain an artificial back stack for
-		// the
-		// started Activity.
-		// This ensures that navigating backward from the Activity leads out of
-		// your application to the Home screen.
 		TaskStackBuilder stackBuilder = TaskStackBuilder.create(notContext);
 		// Adds the back stack for the Intent (but not the Intent itself)
 		stackBuilder.addParentStack(MainActivity.class);

@@ -55,15 +55,14 @@ public class Timer {
 				if (interval> 0) {
                     Lock lock = new ReentrantLock();
 
+
                     try {
-                        while (!lock.tryLock(100, TimeUnit.MILLISECONDS));
-                        try {
-                            timerHandler.postDelayed(this, (int) (interval * 1000));
-                        } finally {
-                            lock.unlock();
-                        }
+                        lock.tryLock(100, TimeUnit.MILLISECONDS);
+                        timerHandler.postDelayed(this, (int) (interval * 1000));
                     } catch (InterruptedException e) {
                         e.printStackTrace();
+                    }finally {
+                        lock.unlock();
                     }
                 }
 			}

@@ -11,26 +11,34 @@ public class Buss {
 	public String SignShort;
 	public String SignLong;
 
-    public ArrayList<String> Stats = new ArrayList<String>();
-	public ArrayList<Date> EstimatedTimes = new ArrayList<Date>();
-	public ArrayList<Date> ScheduledTimes = new ArrayList<Date>();
+    public ArrayList<TimeBox> times = new ArrayList<TimeBox>();
+
+    public class TimeBox {
+        public String Status = "";
+        public Date EstimatedTime = null;
+        public Date ScheduledTime = null;
+
+        public TimeBox(Date e, Date s, String st) {
+            EstimatedTime = e;
+            ScheduledTime = s;
+            if (st != null)
+                Status = st;
+        }
+
+    }
 
 	public Buss(ArrivalJSONResult.ResultSet.Arrival a) {
 		Route = a.route;
 		Detouring = a.detour;
-		Stats.add(a.status);
+
 		SignShort = a.shortSign;
 		SignLong = a.fullSign;
 
-        EstimatedTimes.add(Util.dateFromString(a.estimated));
-		ScheduledTimes.add(Util.dateFromString(a.scheduled));
-
+        times.add(new TimeBox(Util.dateFromString(a.estimated), Util.dateFromString(a.scheduled), a.estimated));
 	}
 
     public void AddTime(ArrivalJSONResult.ResultSet.Arrival a) {
-        Stats.add(a.status);
-        EstimatedTimes.add(Util.dateFromString(a.estimated));
-        ScheduledTimes.add(Util.dateFromString(a.scheduled));
+        times.add(new TimeBox(Util.dateFromString(a.estimated), Util.dateFromString(a.scheduled), a.estimated));
     }
 
 	public Buss(Buss b) {
@@ -48,19 +56,12 @@ public class Buss {
 	public void update(Buss b) {
 		Route = b.Route;
 		Detouring = b.Detouring;
-        Stats.clear();
-        Stats.addAll(b.Stats);
 		SignShort = new String(b.SignShort);
 		SignLong = new String(b.SignLong);
 
-		if (b.EstimatedTimes != null) {
-            EstimatedTimes.clear();
-            EstimatedTimes.addAll(b.EstimatedTimes);
+        if (b.times != null) {
+            times.clear();
+            times.addAll(b.times);
         }
-        if (b.ScheduledTimes != null){
-            EstimatedTimes.clear();
-            EstimatedTimes.addAll(b.EstimatedTimes);
-        }
-		
 	}
 }

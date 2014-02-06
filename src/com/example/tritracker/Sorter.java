@@ -127,10 +127,11 @@ public class Sorter <T> {
 			if (compareType == 1)
 				return (o1.Route < o2.Route ? -1
 						: (o1.Route > o2.Route ? 1 : 0));
-			else if (o1.EstimatedTimes != null && o2.EstimatedTimes != null)
-				return o1.EstimatedTimes.get(0).compareTo(o2.EstimatedTimes.get(0)); // fix me
+            //TODO make this work for more
+			else if (o1.times.get(0).EstimatedTime != null && o2.times.get(0).EstimatedTime  != null)
+				return o1.times.get(0).EstimatedTime.compareTo(o2.times.get(0).EstimatedTime ); // fix me
 			else
-				return o1.ScheduledTimes.get(0).compareTo(o2.ScheduledTimes.get(0)); // fix me
+				return o1.times.get(0).ScheduledTime.compareTo(o2.times.get(0).ScheduledTime); // fix me
 		}
 	}
 	

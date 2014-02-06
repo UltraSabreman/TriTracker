@@ -66,7 +66,11 @@
 			android:layout_width="wrap_content"
 			android:layout_height="match_parent"
 			android:layout_alignParentRight="true"
-			android:layout_centerVertical="true"/>
+			android:layout_centerVertical="true"
+            android:inAnimation="@android:anim/slide_in_left"
+            android:outAnimation="@android:anim/slide_out_right"
+            android:flipInterval="5000"
+            android:autoStart="false"/>
 		
 		<TextView
 			android:id="@+id/LineName"
@@ -85,11 +89,14 @@
 		<ViewFlipper
 			android:id="@+id/Schedule"
 			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
+			android:layout_height="fill_parent"
 			android:layout_below="@id/LineName"
 			android:layout_toRightOf="@id/UIseperator3"
-			android:paddingLeft="@dimen/activity_horizontal_margin"
-			android:text="Scheduled at: 07:15 PM "/>
+            android:inAnimation="@android:anim/slide_in_left"
+            android:outAnimation="@android:anim/slide_out_right"
+            android:flipInterval="5000"
+            android:autoStart="false"
+			android:paddingLeft="@dimen/activity_horizontal_margin"/>
 		
 
 
