@@ -22,7 +22,7 @@ public class StopListArrayAdaptor extends ArrayAdapter<Stop> {
 	private MainService theService;
 
 	public StopListArrayAdaptor(Context context, ArrayList<Stop> stops, boolean favorites) {
-		super(context, (favorites ? R.layout.fav_stop_layout : R.layout.hist_stop_layout), stops);
+		super(context, (favorites ? R.layout.favorites_stop : R.layout.history_stop), stops);
 		fav = favorites;
 		theService = MainService.getService();;
 	}
@@ -38,7 +38,7 @@ public class StopListArrayAdaptor extends ArrayAdapter<Stop> {
 
 		if (v == null) {
 			LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			v = inflater.inflate((fav ? R.layout.fav_stop_layout : R.layout.hist_stop_layout), null);
+			v = inflater.inflate((fav ? R.layout.favorites_stop : R.layout.history_stop), null);
 		}
 
 		final Stop curStop = theService.getStop(getItem(position));

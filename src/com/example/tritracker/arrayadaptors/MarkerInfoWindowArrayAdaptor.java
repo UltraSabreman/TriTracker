@@ -25,7 +25,7 @@ public class MarkerInfoWindowArrayAdaptor implements InfoWindowAdapter {
 
     @Override
     public View getInfoContents(Marker marker) {
-        View popup = inflater.inflate(R.layout.marker_info_window_layout, null);
+        View popup = inflater.inflate(R.layout.map_marker, null);
         TextView Title = (TextView)popup.findViewById(R.id.title);
         TextView Snippet = (TextView)popup.findViewById(R.id.snippit);
         TextView Lines = (TextView)popup.findViewById(R.id.lines);

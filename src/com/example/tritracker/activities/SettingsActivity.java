@@ -25,7 +25,7 @@ public class SettingsActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.settings_layout);
+		setContentView(R.layout.settings);
 
 		Util.parents.push(getClass());
 

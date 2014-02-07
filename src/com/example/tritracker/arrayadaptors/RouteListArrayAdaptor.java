@@ -21,7 +21,7 @@ public class RouteListArrayAdaptor extends ArrayAdapter<Route> {
     private Context context;
 
 	public RouteListArrayAdaptor(Context context, ArrayList<Route> l) {
-		super(context, R.layout.route_layout, l);
+		super(context, R.layout.search_route, l);
         this.context = context;
 		this.theService = MainService.getService();
 	}
@@ -33,7 +33,7 @@ public class RouteListArrayAdaptor extends ArrayAdapter<Route> {
 
         if (v == null) {
             LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            v = inflater.inflate(R.layout.route_layout, null);
+            v = inflater.inflate(R.layout.search_route, null);
         }
 
         Route curRoute = getItem(position);

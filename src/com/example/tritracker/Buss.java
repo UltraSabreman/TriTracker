@@ -34,11 +34,11 @@ public class Buss {
 		SignShort = a.shortSign;
 		SignLong = a.fullSign;
 
-        times.add(new TimeBox(Util.dateFromString(a.estimated), Util.dateFromString(a.scheduled), a.estimated));
+        times.add(new TimeBox(Util.dateFromString(a.estimated), Util.dateFromString(a.scheduled), a.status));
 	}
 
     public void AddTime(ArrivalJSONResult.ResultSet.Arrival a) {
-        times.add(new TimeBox(Util.dateFromString(a.estimated), Util.dateFromString(a.scheduled), a.estimated));
+        times.add(new TimeBox(Util.dateFromString(a.estimated), Util.dateFromString(a.scheduled), a.status));
     }
 
 	public Buss(Buss b) {

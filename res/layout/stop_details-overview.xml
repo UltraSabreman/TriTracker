@@ -1,0 +1,105 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="?android:attr/listPreferredItemHeightSmall"
+    android:orientation="horizontal"
+    android:padding="6dip"
+    android:clipToPadding="false"
+    android:clipChildren="false" >
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+
+        <ImageView
+            android:id="@+id/AlertIcon"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_marginLeft="-8dp"
+            android:layout_marginTop="-8dp"
+            android:src="@drawable/ic_action_error"
+            android:visibility="invisible"
+            android:contentDescription="@string/content"/>
+        <ImageView
+            android:id="@+id/ReminderIcon"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_marginLeft="-8dp"
+            android:layout_marginBottom="-8dp"
+            android:layout_alignParentBottom="true"
+            android:src="@drawable/ic_action_time"
+            android:visibility="invisible"
+            android:contentDescription="@string/content"/>
+
+        <TextView
+            android:id="@+id/ReminderTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/ReminderIcon"
+            android:layout_toRightOf="@id/ReminderIcon"
+            android:textColor="@android:color/darker_gray"
+            android:visibility="invisible"
+            android:textSize="10sp"
+            />
+
+        <TextView
+            android:id="@+id/LineNumber"
+            android:layout_width="60dp"
+            android:layout_height="fill_parent"
+            android:layout_alignParentLeft="true"
+            android:gravity="center"
+            android:singleLine="true"
+            android:text="MAX"
+            android:textSize="26sp" />
+
+        <View
+            android:id="@+id/UIseperator3"
+            android:layout_width="1dp"
+            android:layout_height="fill_parent"
+            android:layout_marginLeft="3dp"
+            android:layout_marginRight="3dp"
+            android:layout_toRightOf="@id/LineNumber"
+            android:background="@color/BackgroundGrey" />
+
+        <TextView
+            android:id="@+id/Time"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:gravity="center"
+            android:maxLines="1"
+            android:text="22 Min"
+            android:textColor="@android:color/holo_green_dark"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/LineName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/LineNumber"
+            android:layout_toRightOf="@id/UIseperator3"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:scrollHorizontally="true"
+            android:singleLine="true"
+            android:text="To Clackamas CC"
+            android:textColor="@android:color/holo_blue_dark"
+            android:textSize="16sp" />
+        <TextView
+            android:id="@+id/Schedule"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/LineName"
+            android:layout_toRightOf="@id/UIseperator3"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:text="Scheduled at: 07:15 PM "
+            android:textColor="@android:color/darker_gray"
+            android:textSize="12sp" />
+
+
+
+    </RelativeLayout>
+</LinearLayout>

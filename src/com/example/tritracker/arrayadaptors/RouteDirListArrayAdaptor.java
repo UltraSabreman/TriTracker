@@ -18,7 +18,7 @@ public class RouteDirListArrayAdaptor extends ArrayAdapter<Dir> {
 	private MainService theService;
 
 	public RouteDirListArrayAdaptor(Context context, ArrayList<Dir> l) {
-		super(context, R.layout.dir_layout, l);
+		super(context, R.layout.search_route_dir, l);
 		this.theService = MainService.getService();
 	}
 
@@ -29,7 +29,7 @@ public class RouteDirListArrayAdaptor extends ArrayAdapter<Dir> {
 
         if (v == null) {
             LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            v = inflater.inflate(R.layout.dir_layout, null);
+            v = inflater.inflate(R.layout.search_route_dir, null);
         }
 
         Dir curDir = getItem(position);

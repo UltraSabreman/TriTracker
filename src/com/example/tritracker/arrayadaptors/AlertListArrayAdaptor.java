@@ -17,7 +17,7 @@ public class AlertListArrayAdaptor extends ArrayAdapter<Alert> {
 	private final ArrayList<Alert> alerts;
 
 	public AlertListArrayAdaptor(Context context, ArrayList<Alert> alerts) {
-		super(context, R.layout.alert_layout, alerts);
+		super(context, R.layout.alerts_alert, alerts);
 		// this.context = context;
 		this.alerts = alerts;
 	}
@@ -35,7 +35,7 @@ public class AlertListArrayAdaptor extends ArrayAdapter<Alert> {
 		if (v == null) {
 			LayoutInflater inflater = (LayoutInflater) getContext()
 					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			v = inflater.inflate(R.layout.alert_layout, null);
+			v = inflater.inflate(R.layout.alerts_alert, null);
 		}
 
 		Alert curAlert = alerts.get(position);

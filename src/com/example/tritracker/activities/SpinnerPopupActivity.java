@@ -17,7 +17,7 @@ public class SpinnerPopupActivity extends Activity {
 		//getWindow().clearFlags(LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH);
 		getWindow().setFlags(LayoutParams.FLAG_NOT_TOUCH_MODAL, LayoutParams.FLAG_NOT_TOUCH_MODAL);
 		getWindow().setFlags(LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH, LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH);
-		setContentView(R.layout.spinner_popup_layout);
+		setContentView(R.layout.misc_spinner);
 		Util.wait = this;
 	}
     // ...but notify us that it happened.

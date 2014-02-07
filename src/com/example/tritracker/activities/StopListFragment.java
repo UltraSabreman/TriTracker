@@ -57,7 +57,7 @@ public class StopListFragment extends Fragment implements UndoListener {
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		ourView = inflater.inflate(R.layout.stop_list_layout, container, false);
+		ourView = inflater.inflate(R.layout.main_stop_list, container, false);
 		mUndoBarController = new UndoBarController(ourView.findViewById(R.id.undobar), this);
 
 		theService = MainService.getService();
@@ -187,7 +187,7 @@ public class StopListFragment extends Fragment implements UndoListener {
 		view.setAdapter(adaptor);
 		
 		if (view.getFooterViewsCount() == 0)
-			view.addFooterView(getActivity().getLayoutInflater().inflate(R.layout.seperator, null), null, true);
+			view.addFooterView(getActivity().getLayoutInflater().inflate(R.layout.misc_seperator, null), null, true);
 
 		edit.setOnEditorActionListener(new OnEditorActionListener() {
 			public boolean onEditorAction(TextView v, int actionId,

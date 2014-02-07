@@ -33,7 +33,7 @@ public class BussListArrayAdaptor extends ArrayAdapter<Buss> {
 	private MainService theService;
 
 	public BussListArrayAdaptor(Context context, ArrayList<Buss> l) {
-		super(context, R.layout.buss_layout, l);
+		super(context, R.layout.stop_details_line, l);
 		this.context = context;
 		this.theService = MainService.getService();
 	}
@@ -52,7 +52,7 @@ public class BussListArrayAdaptor extends ArrayAdapter<Buss> {
 		if (v == null) {
 			LayoutInflater inflater = (LayoutInflater) getContext()
 					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			v = inflater.inflate(R.layout.buss_layout, null);
+			v = inflater.inflate(R.layout.stop_details_line, null);
 		}
 
 		Buss curBuss = getItem(position);

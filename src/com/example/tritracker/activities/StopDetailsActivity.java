@@ -47,7 +47,7 @@ public class StopDetailsActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.stop_details_layout);
+		setContentView(R.layout.stop_details);
 		Util.parents.push(getClass());
 
 		theService = MainService.getService();
@@ -143,7 +143,7 @@ public class StopDetailsActivity extends Activity {
 			registerForContextMenu(layout);
 
 			if (listView.getFooterViewsCount() == 0)
-				listView.addFooterView(getLayoutInflater().inflate(R.layout.seperator, null), null, true);
+				listView.addFooterView(getLayoutInflater().inflate(R.layout.misc_seperator, null), null, true);
 			
 			layout.setOnCreateContextMenuListener(new OnCreateContextMenuListener() {
 				@Override
@@ -193,7 +193,7 @@ public class StopDetailsActivity extends Activity {
 	public void buildDialouge(final Buss theBuss, final boolean add) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-		final View ourView = getLayoutInflater().inflate(R.layout.set_reminder,	null);
+		final View ourView = getLayoutInflater().inflate(R.layout.stop_details_reminder,	null);
 		((TextView) ourView.findViewById(R.id.reminderLabel)).setText(" Min before arrival.");
 
 		final NumberPicker b = (NumberPicker) ourView.findViewById(R.id.reminderTime);
@@ -294,7 +294,7 @@ public class StopDetailsActivity extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.stop_details_action_bar, menu);
+		getMenuInflater().inflate(R.menu.stop_details_actionbar, menu);
 		menu = refreshFavIcon(menu);
 		return super.onCreateOptionsMenu(menu);
 	}

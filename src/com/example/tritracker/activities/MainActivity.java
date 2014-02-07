@@ -32,7 +32,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.main_layout);
+		setContentView(R.layout.main);
 		
 		Util.parents.push(getClass());
 		Util.initToast(getApplicationContext());
@@ -120,7 +120,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main_action_bar, menu);
+		getMenuInflater().inflate(R.menu.main_actionbar, menu);
 		return true;
 	}
 	@Override

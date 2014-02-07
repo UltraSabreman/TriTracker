@@ -55,7 +55,7 @@ public class SearchRoutesActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_search_routes);
+		setContentView(R.layout.search);
 		Util.parents.push(getClass());
 
 		getActionBar().setDisplayHomeAsUpEnabled(true);
@@ -203,7 +203,7 @@ public class SearchRoutesActivity extends Activity {
             routeAdaptor.notifyDataSetChanged();
 
 			if (view.getFooterViewsCount() == 0)
-				view.addFooterView(getLayoutInflater().inflate(R.layout.seperator, null), null, true);
+				view.addFooterView(getLayoutInflater().inflate(R.layout.misc_seperator, null), null, true);
 
             rw = new TextWatcher() {
                 @Override
@@ -355,7 +355,7 @@ public class SearchRoutesActivity extends Activity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.search_routes, menu);
+		getMenuInflater().inflate(R.menu.search_actionbar, menu);
 		return true;
 	}
 

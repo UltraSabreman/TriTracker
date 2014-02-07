@@ -24,7 +24,7 @@ public class AlertListActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.alert_list_layout);
+		setContentView(R.layout.alerts);
 		Util.parents.push(getClass());
 
 		getActionBar().setDisplayHomeAsUpEnabled(true);
@@ -42,7 +42,7 @@ public class AlertListActivity extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.alert_list_action_bar, menu);
+		getMenuInflater().inflate(R.menu.alets_actionbar, menu);
 		return true;
 	}
 

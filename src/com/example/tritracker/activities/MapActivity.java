@@ -85,7 +85,7 @@ public class MapActivity extends Activity implements GooglePlayServicesClient.Co
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.map_layout);
+        setContentView(R.layout.map);
 
         Util.parents.push(getClass());
         
@@ -123,7 +123,7 @@ public class MapActivity extends Activity implements GooglePlayServicesClient.Co
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.map_action_bar, menu);
+		getMenuInflater().inflate(R.menu.map_actionbar, menu);
 		return true;
 	}
 	
