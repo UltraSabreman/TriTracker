@@ -30,18 +30,7 @@
 			android:src="@drawable/ic_action_time"
 			android:visibility="invisible"
 			android:contentDescription="@string/content"/>
-		
-		<TextView
-			android:id="@+id/ReminderTime"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_alignBottom="@id/ReminderIcon"
-			android:layout_toRightOf="@id/ReminderIcon"
-			android:textColor="@android:color/darker_gray"
-			android:visibility="invisible"
-			android:textSize="10sp"
-			/>
-		
+
 		<TextView
 			android:id="@+id/LineNumber"
 			android:layout_width="60dp"

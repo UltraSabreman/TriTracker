@@ -15,27 +15,27 @@ public class Timer {
 	private Handler timerHandler = new Handler();
 	private Runnable timerRunnable = null;
 	private Map<String, onUpdate> updateList = new HashMap<String, onUpdate>();
-	
+
 	public Timer(double d) {
 		this.interval = d;
 	}
-	
+
 	public void updateDelay(int newInterval) {
 		interval = newInterval;
-		
+
 		restartTimer();
 	}
-	
+
 	public void addCallBack(String key, onUpdate func) {
 		if (!updateList.containsKey(key))
 			updateList.put(key, func);
 	}
-	
+
 	public void removeCallBack(String key) {
 		if (updateList.containsKey(key))
 			updateList.remove(key);
 	}
-	
+
 	public void restartTimer() {
 		if (timerRunnable != null)
 			timerHandler.removeCallbacks(timerRunnable);
@@ -45,26 +45,29 @@ public class Timer {
 			public void run() {
 				if (updateList != null && updateList.size() != 0) {
 					Iterator<Entry<String, onUpdate>> it = updateList.entrySet().iterator();
-				    while (it.hasNext()) {
-				        Map.Entry<String, onUpdate> pairs = (Map.Entry<String, onUpdate>)it.next();
-				        if(pairs != null && pairs.getValue() != null)
-				        	((onUpdate)pairs.getValue()).run();
-				    }
+					while (it.hasNext()) {
+						Map.Entry<String, onUpdate> pairs = (Map.Entry<String, onUpdate>) it.next();
+						if (pairs != null && pairs.getValue() != null) {
+							synchronized(pairs) {
+								((onUpdate) pairs.getValue()).run();
+							}
+						}
+					}
 				}
-				
-				if (interval> 0) {
-                    Lock lock = new ReentrantLock();
+
+				if (interval > 0) {
+					Lock lock = new ReentrantLock();
 
 
-                    try {
-                        lock.tryLock(100, TimeUnit.MILLISECONDS);
-                        timerHandler.postDelayed(this, (int) (interval * 1000));
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }finally {
-                        lock.unlock();
-                    }
-                }
+					try {
+						lock.tryLock(100, TimeUnit.MILLISECONDS);
+						timerHandler.postDelayed(this, (int) (interval * 1000));
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					} finally {
+						lock.unlock();
+					}
+				}
 			}
 		};
 
@@ -76,7 +79,7 @@ public class Timer {
 		if (timerRunnable != null)
 			timerHandler.removeCallbacks(timerRunnable);
 	}
-	
+
 	public interface onUpdate {
 		public void run();
 	}

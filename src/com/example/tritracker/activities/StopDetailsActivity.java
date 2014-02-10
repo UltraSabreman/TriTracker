@@ -1,8 +1,6 @@
 package com.example.tritracker.activities;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
@@ -17,7 +15,6 @@ import android.view.View.OnLongClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
-import android.widget.NumberPicker;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,22 +39,22 @@ public class StopDetailsActivity extends Activity {
 	private BussListArrayAdaptor adaptor;
 
 	private MainService theService;
-	
-	
+
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.stop_details);
+		setContentView(R.layout.stopdetails);
 		Util.parents.push(getClass());
 
 		theService = MainService.getService();
-		
+
 		getActionBar().setDisplayHomeAsUpEnabled(true);
-		
+
 		Bundle extras = getIntent().getExtras();
 		int id = extras.getInt("stop");
 		curStop = theService.getStop(id);
-		
+
 		setTitle("Stop ID: " + id);
 
 		TextView StopName = (TextView) findViewById(R.id.UIStopInfoName);
@@ -66,7 +63,7 @@ public class StopDetailsActivity extends Activity {
 		StopName.setText(curStop.Name);
 		StopName.setSelected(true);
 		StopDir.setText(curStop.Direction);
-	
+
 
 		final Activity act = this;
 		ArrayList<Alert> a = theService.getStopAlerts(curStop);
@@ -85,47 +82,44 @@ public class StopDetailsActivity extends Activity {
 
 		} else
 			((View) findViewById(R.id.alertBackground)).setVisibility(View.INVISIBLE);
-		
+
 		initList();
 
-        theService.sub("BussList", new Timer.onUpdate() {
-            public void run() {
-                onUpdate();
-            }
-        });
+		theService.sub("BussList", new Timer.onUpdate() {
+			public void run() {
+				onUpdate();
+			}
+		});
 	}
 
-  
-    public void onUpdate() {
-    	curStop = theService.getStop(curStop);
-        System.out.println("Stuff1: " + curStop.Busses.size());
+
+	public void onUpdate() {
+		curStop = theService.getStop(curStop);
 		this.runOnUiThread(new Runnable() {
-            public void run() {
-                if (adaptor != null) {
-                    //adaptor.clear();
-                   // adaptor.addAll(curStop.Busses);
-                    adaptor.updateStop(curStop);
-                    adaptor.notifyDataSetChanged();
-                }
-            }
-        });
-    }
+			public void run() {
+				if (adaptor != null) {
+					adaptor.updateStop(curStop);
+					adaptor.notifyDataSetChanged();
+				}
+			}
+		});
+	}
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        theService.unsub("BussList");
-    }
+	@Override
+	protected void onStop() {
+		super.onStop();
+		theService.unsub("BussList");
+	}
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        theService.sub("BussList", new Timer.onUpdate() {
-            public void run() {
-                onUpdate();
-            }
-        });
-    }
+	@Override
+	protected void onResume() {
+		super.onResume();
+		theService.sub("BussList", new Timer.onUpdate() {
+			public void run() {
+				onUpdate();
+			}
+		});
+	}
 
 	void initList() {
 		if (curStop.Busses == null || curStop.Busses.size() == 0) {
@@ -137,48 +131,51 @@ public class StopDetailsActivity extends Activity {
 			final RelativeLayout layout = (RelativeLayout) findViewById(R.id.longClickCatcher);
 			adaptor = new BussListArrayAdaptor(this, curStop.Busses);
 			adaptor.updateStop(curStop);
-			
+
 			listView.setAdapter(adaptor);
 			adaptor.notifyDataSetChanged();
 			registerForContextMenu(layout);
 
 			if (listView.getFooterViewsCount() == 0)
 				listView.addFooterView(getLayoutInflater().inflate(R.layout.misc_seperator, null), null, true);
-			
+
 			layout.setOnCreateContextMenuListener(new OnCreateContextMenuListener() {
 				@Override
 				public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-					
+
 					ArrayList<Alert> a = theService.getStopAlerts(curStop);
 					if (a != null && a.size() > 0) {
 						menu.add(0, R.id.menu_action_view_alerts, ContextMenu.NONE, "View Relevant Alerts");
 					}
-					
+
 					if (menuBuss != null) {
 						NotificationHandler n = theService.getReminder(menuBuss);
 						if (n != null && n.IsSet) {
 							menu.add(0, R.id.menu_action_edit_reminder, ContextMenu.NONE, "Edit Reminder");
 							menu.add(0, R.id.menu_action_remove_reminder, ContextMenu.NONE, "Remove Reminder");
-						} else 
+						} else
 							menu.add(0, R.id.menu_action_add_reminder, ContextMenu.NONE, "Add Reminder");
 					}
-					
+
 					menu.add(0, R.id.menu_action_sort_list, ContextMenu.NONE, "Sort Arrivals");
 				}
 			});
-			
-			
+
+
 			listView.setOnItemClickListener(new OnItemClickListener() {
-				public void onItemClick(AdapterView<?> arg0, View arg1,	int pos, long id) {
-					menuBuss = curStop.Busses.get(pos);
-					act.openContextMenu(arg1);
+				public void onItemClick(AdapterView<?> arg0, View arg1, int pos, long id) {
+					Intent temp = new Intent(getApplicationContext(), BussLineOverviewActivity.class);
+					temp.putExtra("stopID", curStop.StopID);
+					temp.putExtra("selection", pos);
+					startActivity(temp);
+
 					listView.clearChoices();
 					listView.requestLayout();
 				}
 			});
-			
+
 			listView.setOnLongClickListener(new OnLongClickListener() {
-				
+
 				@Override
 				public boolean onLongClick(View v) {
 					act.openContextMenu(v);
@@ -190,75 +187,19 @@ public class StopDetailsActivity extends Activity {
 
 	}
 
-	public void buildDialouge(final Buss theBuss, final boolean add) {
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-		final View ourView = getLayoutInflater().inflate(R.layout.stop_details_reminder,	null);
-		((TextView) ourView.findViewById(R.id.reminderLabel)).setText(" Min before arrival.");
-
-		final NumberPicker b = (NumberPicker) ourView.findViewById(R.id.reminderTime);
-
-        //TODO add ability to select ther stops.
-		b.setMaxValue(Math.min(Util.getBussMinutes(theBuss, 0), 60));
-		b.setMinValue(1);
-		
-		theService.sub("wheel update", new Timer.onUpdate() {
-			@Override
-			public void run() {
-				b.setMaxValue(Math.min(Util.getBussMinutes(theBuss, 0), 60));
-			}
-		});
-
-		builder.setTitle("Set a Reminder").setView(ourView);
-		if (!add) {
-			Buss buss = curStop.getBuss(theBuss);
-			NotificationHandler n = theService.getReminder(buss);
-			if (n.getTime() > b.getMaxValue())
-				b.setValue(b.getMaxValue());
-			else
-				b.setValue(n.getTime());
-		}
-
-		builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int id) {
-				Buss buss = curStop.getBuss(theBuss);
-				NotificationHandler n = theService.getReminder(buss);
-				if (n != null && n.IsSet && add) {
-					n.editNotification(b.getValue());
-					Util.showToast("Reminder Updated", Toast.LENGTH_SHORT);
-				} else {
-					theService.addReminder(new NotificationHandler(getApplicationContext(), getIntent(), curStop, theBuss, 0, b.getValue()));
-					Util.showToast("Reminder Set", Toast.LENGTH_SHORT);
-				}
-				adaptor.notifyDataSetChanged();
-				theService.unsub("wheel update");
-			}
-		});
-
-		builder.setNegativeButton("Cancel",
-				new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int id) {
-						theService.unsub("wheel update");
-					}
-				});
-
-		builder.create().show();
-	}
-
 	@Override
 	public void onContextMenuClosed(Menu menu) {
 		menuBuss = null;
 		super.onContextMenuClosed(menu);
 	}
-	
+
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.menu_action_add_reminder:
-				buildDialouge(menuBuss, true);
 				return true;
 			case R.id.menu_action_edit_reminder:
-				buildDialouge(menuBuss, false);
+				//buildDialouge(menuBuss, false);
 				return true;
 			case R.id.menu_action_remove_reminder:
 				Buss buss = curStop.getBuss(menuBuss);
@@ -276,14 +217,12 @@ public class StopDetailsActivity extends Activity {
 								adaptor.notifyDataSetChanged();
 								theService.doUpdate(false);
 							}
-						});		
+						});
 				return true;
 			case R.id.menu_action_view_alerts:
-				Intent temp = new Intent(this, AlertListActivity.class);
-				temp.putExtra("stop", curStop.StopID);
-				startActivity(temp);
+
 				return true;
-				
+
 		}
 		menuBuss = null;
 		theService.doUpdate(false);
@@ -294,7 +233,7 @@ public class StopDetailsActivity extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.stop_details_actionbar, menu);
+		getMenuInflater().inflate(R.menu.stopdetails_actionbar, menu);
 		menu = refreshFavIcon(menu);
 		return super.onCreateOptionsMenu(menu);
 	}
@@ -320,35 +259,35 @@ public class StopDetailsActivity extends Activity {
 		parentActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
 		NavUtils.navigateUpTo(this, parentActivityIntent);
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case android.R.id.home:
-			goBack();
-			return true;
-		case R.id.action_settings:
-			startActivity(new Intent(this, SettingsActivity.class));
-			return true;
-		case R.id.action_favorite:
-			if (curStop.inFavorites) {
-				curStop.inFavorites = false;
-				
-				Util.showToast("Removed stop from favorites.", Toast.LENGTH_SHORT);
-			} else {
-				curStop.inFavorites = true;
-				Util.showToast("Added stop to favorites.", Toast.LENGTH_SHORT);
-			}
+			case android.R.id.home:
+				goBack();
+				return true;
+			case R.id.action_settings:
+				startActivity(new Intent(this, SettingsActivity.class));
+				return true;
+			case R.id.action_favorite:
+				if (curStop.inFavorites) {
+					curStop.inFavorites = false;
 
-			invalidateOptionsMenu();
-			//theService.doUpdate(false);
-			return true;
-		case R.id.action_map:
-			Intent temp = new Intent(getApplicationContext(), MapActivity.class);
-			temp.putExtra("lat", curStop.Latitude);
-			temp.putExtra("lng", curStop.Longitude);
-			startActivity(temp);
-			return true;
+					Util.showToast("Removed stop from favorites.", Toast.LENGTH_SHORT);
+				} else {
+					curStop.inFavorites = true;
+					Util.showToast("Added stop to favorites.", Toast.LENGTH_SHORT);
+				}
+
+				invalidateOptionsMenu();
+				//theService.doUpdate(false);
+				return true;
+			case R.id.action_map:
+				Intent temp = new Intent(getApplicationContext(), MapActivity.class);
+				temp.putExtra("lat", curStop.Latitude);
+				temp.putExtra("lng", curStop.Longitude);
+				startActivity(temp);
+				return true;
 		}
 		return super.onOptionsItemSelected(item);
 	}

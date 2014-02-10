@@ -9,16 +9,16 @@ public class BussesJSONResult {
 		public long queryTime;
 
 		public class Vehicle {
-            public String signMessageLong;
-            public String signMessage;
-            public int routeNumber;
+			public String signMessageLong;
+			public String signMessage;
+			public int routeNumber;
 			public double longitude;
 			public double latitude;
-            public int bearing;
-            public int vehicleID;
+			public int bearing;
+			public int vehicleID;
 		}
 	}
-	
+
 	public class errorMessage {
 		public String content = "";
 	}

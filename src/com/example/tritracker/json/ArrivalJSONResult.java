@@ -2,7 +2,7 @@ package com.example.tritracker.json;
 
 public class ArrivalJSONResult {
 	public ResultSet resultSet;
-	
+
 	public class ResultSet {
 		public Location[] location;
 		public Arrival[] arrival;
@@ -27,6 +27,7 @@ public class ArrivalJSONResult {
 			public int locid;
 			public String fullSign;
 		}
+
 		public class errorMessage {
 			public String content = "";
 		}

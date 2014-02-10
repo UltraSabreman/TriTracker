@@ -11,11 +11,11 @@ public class MapJSONResult {
 		public class Location {
 			public String desc;
 			public int locid;
-			public String dir;	
+			public String dir;
 			public Route[] route;
 			public double lng;
 			public double lat;
-			
+
 			public class Route {
 				public String desc;
 				public int route;
@@ -23,7 +23,7 @@ public class MapJSONResult {
 			}
 		}
 	}
-	
+
 	public class errorMessage {
 		public String content = "";
 	}

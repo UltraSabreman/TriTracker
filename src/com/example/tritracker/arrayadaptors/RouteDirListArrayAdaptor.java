@@ -18,32 +18,32 @@ public class RouteDirListArrayAdaptor extends ArrayAdapter<Dir> {
 	private MainService theService;
 
 	public RouteDirListArrayAdaptor(Context context, ArrayList<Dir> l) {
-		super(context, R.layout.search_route_dir, l);
+		super(context, R.layout.search_dir, l);
 		this.theService = MainService.getService();
 	}
 
 
 	@Override
 	public View getView(int position, final View convertView, ViewGroup parent) {
-        View v = convertView;
+		View v = convertView;
 
-        if (v == null) {
-            LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            v = inflater.inflate(R.layout.search_route_dir, null);
-        }
+		if (v == null) {
+			LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			v = inflater.inflate(R.layout.search_dir, null);
+		}
 
-        Dir curDir = getItem(position);
+		Dir curDir = getItem(position);
 
-        if (curDir != null) {
-            TextView Direction = (TextView) v.findViewById(R.id.Dirname);
-            TextView LineName = (TextView) v.findViewById(R.id.LineName);
+		if (curDir != null) {
+			TextView Direction = (TextView) v.findViewById(R.id.Dirname);
+			TextView LineName = (TextView) v.findViewById(R.id.LineName);
 
-            LineName.setText(curDir.desc);
-            LineName.setSelected(true);
+			LineName.setText(curDir.desc);
+			LineName.setSelected(true);
 
-            Direction.setText(curDir.dir == 1 ? "Inbound" : "Outbound");
-        }
+			Direction.setText(curDir.dir == 1 ? "Inbound" : "Outbound");
+		}
 
-        return v;
+		return v;
 	}
 }

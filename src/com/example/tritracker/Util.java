@@ -21,28 +21,33 @@ public class Util {
 	private static Toast msg;
 	private static Context c;
 	public static SpinnerPopupActivity wait;
-	
-	public static enum ListType {Favorites, History, Busses, Routes};	
-	public static enum TimeType { Second, Minute, Hour, Day };
-	
+
+	public static enum ListType {Favorites, History, Busses, Routes}
+
+	;
+
+	public static enum TimeType {Second, Minute, Hour, Day}
+
+	;
+
 	public static long getTimeFromDate(Date d, TimeType type) {
-		if(type == TimeType.Second) {
+		if (type == TimeType.Second) {
 			long time = (d.getTime() / 1000);
 			return time;
-		}else if(type == TimeType.Minute) {
+		} else if (type == TimeType.Minute) {
 			long time = (d.getTime() / (1000 / 60));
 			return time;
-		}else if(type == TimeType.Hour) {
+		} else if (type == TimeType.Hour) {
 			long time = (d.getTime() / (1000 / 60 / 60));
 			return time;
-		} else if(type == TimeType.Day) {
+		} else if (type == TimeType.Day) {
 			long time = (d.getTime() / (1000 / 60 / 60 / 24));
 			return time;
 		}
-		
+
 		return d.getTime();
 	}
-	
+
 	public static Date dateFromString(String s) {
 		if (s == null)
 			return null;
@@ -54,14 +59,14 @@ public class Util {
 		}
 	}
 
-	public static int getBussMinutes(Buss b, int pos) {
+	public static int getBussMinutes(Buss.TimeBox t) {
 		Date est = null;
 
-        //TODO make this work with more.
-		if (b.times.get(0) != null && b.times.get(0).Status.compareTo("estimated") == 0) {
-			est = new Date(b.times.get(pos).EstimatedTime.getTime() - new Date().getTime());
+		//TODO make this work with more.
+		if (t != null && t.Status.compareTo("estimated") == 0) {
+			est = new Date(t.EstimatedTime.getTime() - new Date().getTime());
 		} else {
-			est = new Date(b.times.get(pos).ScheduledTime.getTime() - new Date().getTime());
+			est = new Date(t.ScheduledTime.getTime() - new Date().getTime());
 		}
 
 		return mToS(est.getTime()) / 60;
@@ -71,8 +76,6 @@ public class Util {
 		return (int) (mill / 1000);
 	}
 
-
-	
 
 	public static String getListOfLines(Stop s, boolean test) {
 		// this lists the routes, and adds commas between them.
@@ -117,7 +120,7 @@ public class Util {
 		msg.show();
 	}
 
-	
+
 	public static void createSpinner(final Activity act) {
 		act.runOnUiThread(new Runnable() {
 			@Override
@@ -126,7 +129,7 @@ public class Util {
 			}
 		});
 	}
-	
+
 	public static void hideSpinner() {
 		if (wait != null) {
 			wait.finish();
@@ -135,12 +138,12 @@ public class Util {
 	}
 
 	public static void messageDiag(final Activity act, final checkStops myFunc,
-			final String title, final String msg) {
+	                               final String title, final String msg) {
 		act.runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
 				AlertDialog.Builder builder = new AlertDialog.Builder(act);
-				
+
 				builder.setTitle(title).setMessage(msg);
 				builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int id) {

@@ -13,15 +13,14 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
-import com.example.tritracker.Util;
 import com.example.tritracker.R;
+import com.example.tritracker.Util;
 
 public class SettingsActivity extends Activity {
 
 	private MainService theService;
-	
 
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -30,16 +29,16 @@ public class SettingsActivity extends Activity {
 		Util.parents.push(getClass());
 
 		getActionBar().setDisplayHomeAsUpEnabled(true);
-		
+
 		theService = MainService.getService();
 
-		
+
 		EditText np = (EditText) findViewById(R.id.Delay);
 		np.setText(String.valueOf(theService.getDelay()));
 
 		np.setOnEditorActionListener(new OnEditorActionListener() {
 			public boolean onEditorAction(TextView v, int actionId,
-					KeyEvent event) {
+			                              KeyEvent event) {
 				if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER))
 						|| (actionId == EditorInfo.IME_ACTION_DONE)) {
 					EditText edit = (EditText) findViewById(R.id.Delay);
@@ -49,13 +48,13 @@ public class SettingsActivity extends Activity {
 				return false;
 			}
 		});
-		
+
 		np = (EditText) findViewById(R.id.Radius);
 		np.setText(String.valueOf(Math.round(theService.getMapRadius() / 0.3408)));
 
 		np.setOnEditorActionListener(new OnEditorActionListener() {
 			public boolean onEditorAction(TextView v, int actionId,
-					KeyEvent event) {
+			                              KeyEvent event) {
 				if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER))
 						|| (actionId == EditorInfo.IME_ACTION_DONE)) {
 					EditText edit = (EditText) findViewById(R.id.Radius);
@@ -74,7 +73,7 @@ public class SettingsActivity extends Activity {
 				"Auto-refresh delay",
 				"The delay (in seconds) at witch the app will refresh all stops. The higher the number, the less data-hungry it will be. Set to 0 to dissable.");
 	}
-	
+
 	public void helpRadius(View view) {
 		Util.messageDiag(
 				this,
@@ -99,10 +98,10 @@ public class SettingsActivity extends Activity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case android.R.id.home:
-			goBack();
+			case android.R.id.home:
+				goBack();
 
-			return true;
+				return true;
 		}
 		return super.onOptionsItemSelected(item);
 	}

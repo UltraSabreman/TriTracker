@@ -13,19 +13,19 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 
+import com.example.tritracker.R;
 import com.example.tritracker.Timer;
 import com.example.tritracker.Util;
 import com.example.tritracker.activities.MainService.LocalBinder;
-import com.example.tritracker.R;
 
 public class MainActivity extends FragmentActivity implements ActionBar.OnNavigationListener {
 
 	private static final String STATE_SELECTED_NAVIGATION_ITEM = "selected_navigation_item";
 	private static boolean started = false;
-	
+
 	private StopListFragment favFrag;
 	private StopListFragment histFrag;
-	
+
 	private MainService theService;
 	private boolean bound;
 
@@ -33,10 +33,10 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-		
+
 		Util.parents.push(getClass());
 		Util.initToast(getApplicationContext());
-		
+
 		// Set up the action bar to show a dropdown list.
 		final ActionBar actionBar = getActionBar();
 		actionBar.setDisplayShowTitleEnabled(false);
@@ -44,65 +44,65 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
 
 		// Set up the dropdown list navigation in the action bar.
 		actionBar.setListNavigationCallbacks(
-		// Specify a SpinnerAdapter to populate the dropdown list.
-				new ArrayAdapter<String>(actionBar.getThemedContext(),android.R.layout.simple_list_item_1, android.R.id.text1, 
-							new String[] {
+				// Specify a SpinnerAdapter to populate the dropdown list.
+				new ArrayAdapter<String>(actionBar.getThemedContext(), android.R.layout.simple_list_item_1, android.R.id.text1,
+						new String[]{
 								"Favorites",
-								"History", }), this);
+								"History",}), this);
 		if (!started) {
 			startService(new Intent(this, MainService.class));
 			started = true;
 		}
 	}
 
-	@Override 
+	@Override
 	public void onStart() {
 		super.onStart();
-        bindService(new Intent(this, MainService.class), mConnection, Context.BIND_AUTO_CREATE);
-        
+		bindService(new Intent(this, MainService.class), mConnection, Context.BIND_AUTO_CREATE);
+
         /*if (favFrag != null)
         	favFrag.update();
         if (histFrag != null)
         	histFrag.update();*/
 	}
-	
-    @Override
-    protected void onStop() {
-        super.onStop();
-        // Unbind from the service
-        if (bound)
-            unbindService(mConnection);
-    }
-    
-    @Override
-    protected void onDestroy() {
-        favFrag = null;
-        histFrag = null;
-        super.onDestroy();
-    }
-    
-    private ServiceConnection mConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName className, IBinder service) {
-            // We've bound to LocalService, cast the IBinder and get LocalService instance
-            LocalBinder binder = (LocalBinder) service;
-            theService = binder.getService();
-            bound = true;
-            
-            theService.sub("Main", new Timer.onUpdate() {
-            	public void run() {
-            	}
-            });
-            
-            theService.doUpdate(true);
-        }
 
-        @Override
-        public void onServiceDisconnected(ComponentName arg0) {
-            bound = false;
-        }
-    };
-	
+	@Override
+	protected void onStop() {
+		super.onStop();
+		// Unbind from the service
+		if (bound)
+			unbindService(mConnection);
+	}
+
+	@Override
+	protected void onDestroy() {
+		favFrag = null;
+		histFrag = null;
+		super.onDestroy();
+	}
+
+	private ServiceConnection mConnection = new ServiceConnection() {
+		@Override
+		public void onServiceConnected(ComponentName className, IBinder service) {
+			// We've bound to LocalService, cast the IBinder and get LocalService instance
+			LocalBinder binder = (LocalBinder) service;
+			theService = binder.getService();
+			bound = true;
+
+			theService.sub("Main", new Timer.onUpdate() {
+				public void run() {
+				}
+			});
+
+			theService.doUpdate(true);
+		}
+
+		@Override
+		public void onServiceDisconnected(ComponentName arg0) {
+			bound = false;
+		}
+	};
+
 	@Override
 	public void onRestoreInstanceState(Bundle savedInstanceState) {
 		// Restore the previously serialized current dropdown position.
@@ -123,44 +123,45 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
 		getMenuInflater().inflate(R.menu.main_actionbar, menu);
 		return true;
 	}
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle presses on the action bar items
 		//mUndoBarController.hideUndoBar(false);
 		switch (item.getItemId()) {
-		case R.id.action_routes:
-			startActivity(new Intent(getApplicationContext(), SearchRoutesActivity.class));
-			return true;
-		case R.id.action_settings:
-			startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
-			return true;
-		case R.id.action_map:
-			startActivity(new Intent(getApplicationContext(), MapActivity.class));
-			return true;
-		default:
-			return super.onOptionsItemSelected(item);
+			case R.id.action_routes:
+				startActivity(new Intent(getApplicationContext(), SearchRoutesActivity.class));
+				return true;
+			case R.id.action_settings:
+				startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
+				return true;
+			case R.id.action_map:
+				startActivity(new Intent(getApplicationContext(), MapActivity.class));
+				return true;
+			default:
+				return super.onOptionsItemSelected(item);
 		}
 	}
-	
+
 	@Override
 	public boolean onNavigationItemSelected(int position, long id) {
 		// When the given dropdown item is selected, show its contents in the
 		// container view.
-		while(theService == null)
+		while (theService == null)
 			try {
 				Thread.sleep(10);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-		
+
 		if (position == 0) {
 			favFrag = new StopListFragment(true);
-			getSupportFragmentManager().beginTransaction().replace(R.id.container, (Fragment)favFrag).commit();
+			getSupportFragmentManager().beginTransaction().replace(R.id.container, (Fragment) favFrag).commit();
 		} else {
 			histFrag = new StopListFragment(false);
-			getSupportFragmentManager().beginTransaction().replace(R.id.container, (Fragment)histFrag).commit();
+			getSupportFragmentManager().beginTransaction().replace(R.id.container, (Fragment) histFrag).commit();
 		}
-		
+
 		return true;
 	}
 }

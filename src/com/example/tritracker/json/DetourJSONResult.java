@@ -2,7 +2,7 @@ package com.example.tritracker.json;
 
 public class DetourJSONResult {
 	public ResultSet resultSet;
-	
+
 	public class ResultSet {
 		public Detour[] detour;
 		public String queryTime;
@@ -19,7 +19,7 @@ public class DetourJSONResult {
 				public String type = "";
 			}
 		}
-		
+
 		public class errorMessage {
 			public String content = "";
 		}

@@ -19,40 +19,40 @@ public class RouteStopListArrayAdaptor extends ArrayAdapter<Stop> {
 	private MainService theService;
 
 	public RouteStopListArrayAdaptor(Context context, ArrayList<Stop> l) {
-		super(context, R.layout.favorites_stop, l);
+		super(context, R.layout.main_stoplist_favorites, l);
 		this.theService = MainService.getService();
 	}
 
 	@Override
 	public View getView(int position, final View convertView, ViewGroup parent) {
-        View v = convertView;
+		View v = convertView;
 
-        if (v == null) {
-            LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            v = inflater.inflate(R.layout.favorites_stop, null);
-        }
+		if (v == null) {
+			LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			v = inflater.inflate(R.layout.main_stoplist_favorites, null);
+		}
 
-        Stop curStop = getItem(position);
+		Stop curStop = getItem(position);
 
-        if (curStop != null) {
-            TextView LineNumber = (TextView) v.findViewById(R.id.StopID);
-            TextView LineName = (TextView) v.findViewById(R.id.StopName);
+		if (curStop != null) {
+			TextView LineNumber = (TextView) v.findViewById(R.id.StopID);
+			TextView LineName = (TextView) v.findViewById(R.id.StopName);
 
 
-            LineName.setText(curStop.desc);
-            LineName.setSelected(true);
+			LineName.setText(curStop.desc);
+			LineName.setSelected(true);
 
-            LineNumber.setText(String.valueOf(curStop.locid));
+			LineNumber.setText(String.valueOf(curStop.locid));
 
-            RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) LineNumber.getLayoutParams();
-            lp.addRule(RelativeLayout.CENTER_VERTICAL);
-            LineNumber.setLayoutParams(lp);
+			RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) LineNumber.getLayoutParams();
+			lp.addRule(RelativeLayout.CENTER_VERTICAL);
+			LineNumber.setLayoutParams(lp);
 
-            lp = (RelativeLayout.LayoutParams) LineName.getLayoutParams();
-            lp.addRule(RelativeLayout.CENTER_VERTICAL);
-            LineName.setLayoutParams(lp);
-        }
+			lp = (RelativeLayout.LayoutParams) LineName.getLayoutParams();
+			lp.addRule(RelativeLayout.CENTER_VERTICAL);
+			LineName.setLayoutParams(lp);
+		}
 
-        return v;
+		return v;
 	}
 }

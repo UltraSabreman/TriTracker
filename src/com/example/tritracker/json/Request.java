@@ -18,16 +18,16 @@ import org.apache.http.params.HttpParams;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-public class Request <T> extends Thread {
+public class Request<T> extends Thread {
 	private int error = 0;
 	private String url = "";
 	private JSONcallback<T> callback;
 	private final Class<T> type;
 
-	public interface JSONcallback <T> {
+	public interface JSONcallback<T> {
 		public void run(T r, int error);
 	}
-	
+
 	public void run() {
 		final HttpParams httpParams = new BasicHttpParams();
 		HttpConnectionParams.setConnectionTimeout(httpParams, 30000);
@@ -59,9 +59,9 @@ public class Request <T> extends Thread {
 
 		if (callback != null) {
 			T result = null;
-			
+
 			if (responseString != null)
-				result = new Gson().fromJson(responseString, type);		
+				result = new Gson().fromJson(responseString, type);
 
 			callback.run(result, error);
 		}
@@ -73,7 +73,7 @@ public class Request <T> extends Thread {
 		this.type = type;
 		this.setName("JSON Request - " + type.toString());
 	}
-	
+
 	public boolean hasFailed() {
 		return error != 0;
 	}

@@ -11,21 +11,21 @@ public class Buss {
 	public String SignShort;
 	public String SignLong;
 
-    public ArrayList<TimeBox> times = new ArrayList<TimeBox>();
+	public ArrayList<TimeBox> times = new ArrayList<TimeBox>();
 
-    public class TimeBox {
-        public String Status = "";
-        public Date EstimatedTime = null;
-        public Date ScheduledTime = null;
+	public class TimeBox {
+		public String Status = "";
+		public Date EstimatedTime = null;
+		public Date ScheduledTime = null;
 
-        public TimeBox(Date e, Date s, String st) {
-            EstimatedTime = e;
-            ScheduledTime = s;
-            if (st != null)
-                Status = st;
-        }
+		public TimeBox(Date e, Date s, String st) {
+			EstimatedTime = e;
+			ScheduledTime = s;
+			if (st != null)
+				Status = st;
+		}
 
-    }
+	}
 
 	public Buss(ArrivalJSONResult.ResultSet.Arrival a) {
 		Route = a.route;
@@ -34,12 +34,12 @@ public class Buss {
 		SignShort = a.shortSign;
 		SignLong = a.fullSign;
 
-        times.add(new TimeBox(Util.dateFromString(a.estimated), Util.dateFromString(a.scheduled), a.status));
+		times.add(new TimeBox(Util.dateFromString(a.estimated), Util.dateFromString(a.scheduled), a.status));
 	}
 
-    public void AddTime(ArrivalJSONResult.ResultSet.Arrival a) {
-        times.add(new TimeBox(Util.dateFromString(a.estimated), Util.dateFromString(a.scheduled), a.status));
-    }
+	public void AddTime(ArrivalJSONResult.ResultSet.Arrival a) {
+		times.add(new TimeBox(Util.dateFromString(a.estimated), Util.dateFromString(a.scheduled), a.status));
+	}
 
 	public Buss(Buss b) {
 		update(b);
@@ -59,9 +59,9 @@ public class Buss {
 		SignShort = new String(b.SignShort);
 		SignLong = new String(b.SignLong);
 
-        if (b.times != null) {
-            times.clear();
-            times.addAll(b.times);
-        }
+		if (b.times != null) {
+			times.clear();
+			times.addAll(b.times);
+		}
 	}
 }

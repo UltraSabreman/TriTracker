@@ -14,7 +14,7 @@ public class AllRoutesJSONResult {
 			public Dir[] dir;
 			public int route;
 			public String type = "";
-			
+
 			public class Dir {
 				public Stop[] stop;
 				public String desc;
@@ -28,7 +28,7 @@ public class AllRoutesJSONResult {
 				}
 			}
 		}
-		
+
 		public class errorMessage {
 			public String content = "";
 		}

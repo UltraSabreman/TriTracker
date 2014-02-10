@@ -91,6 +91,13 @@
 			android:label="@string/title_activity_search_routes" 
 			android:windowSoftInputMode="stateHidden" >
 		</activity>
+        <activity
+            android:name="com.example.tritracker.activities.BussLineOverviewActivity"
+            android:label="@string/title_activity_search_routes"
+            android:excludeFromRecents="true"
+            android:theme="@android:style/Theme.Holo.Light.Dialog.NoActionBar"
+            android:windowSoftInputMode="stateHidden" >
+        </activity>
 	</application>
 
 </manifest>

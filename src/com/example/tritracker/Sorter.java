@@ -13,31 +13,32 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Locale;
 
-public class Sorter <T> {
+public class Sorter<T> {
 	public int sortOrder = 0;
 	//Sorting//
-    private final Class<T> type;
-    private MainService theService;
+	private final Class<T> type;
+	private MainService theService;
 
-    public Sorter(Class<T> type) {
-         this.type = type;
-         this.theService = MainService.getService();;
-    }
-    
-    public void sort(final ListType listtype, final ArrayList<T> listToSort, final Timer.onUpdate callback) {
-    	sortOrder = theService.getSort(listtype);
-    	sortList(listToSort, listtype);
-    }
-    
+	public Sorter(Class<T> type) {
+		this.type = type;
+		this.theService = MainService.getService();
+		;
+	}
+
+	public void sort(final ListType listtype, final ArrayList<T> listToSort, final Timer.onUpdate callback) {
+		sortOrder = theService.getSort(listtype);
+		sortList(listToSort, listtype);
+	}
+
 	public void sortUI(Activity a, final ListType listtype, final ArrayList<T> listToSort, final Timer.onUpdate callback) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(a);
 
 		builder.setTitle("Sort By");
-		String[] list = new String[] { "Stop name", "Stop ID", "Last Accesed" };
+		String[] list = new String[]{"Stop name", "Stop ID", "Last Accesed"};
 		if (type == Buss.class)
-			list = new String[] { "Route Name", "Route Number", "Arrival Time" };
+			list = new String[]{"Route Name", "Route Number", "Arrival Time"};
 		if (type == Route.class)
-			list = new String[] { "Route Name", "Route Number" };
+			list = new String[]{"Route Name", "Route Number"};
 
 		sortOrder = theService.getSort(listtype);
 		builder.setSingleChoiceItems(list, theService.getSort(listtype),
@@ -47,7 +48,7 @@ public class Sorter <T> {
 						sortOrder = which;
 					}
 				});
-		
+
 		builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int id) {
 				theService.setSort(listtype, sortOrder);
@@ -59,29 +60,29 @@ public class Sorter <T> {
 
 		builder.create().show();
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public boolean sortList(ArrayList<T> list, ListType listtype) {
 		if (list == null)
 			return false;
 		if (listtype == ListType.Favorites) {
-			Collections.sort((ArrayList<Stop>)list, new StopSorter(sortOrder));
-			if (sortOrder == 2)	Collections.reverse(list);
-				return true;
-		} else if (listtype == ListType.History) { // History
-			Collections.sort((ArrayList<Stop>)list, new StopSorter(sortOrder));
+			Collections.sort((ArrayList<Stop>) list, new StopSorter(sortOrder));
 			if (sortOrder == 2) Collections.reverse(list);
-				return true;
-		} else if (listtype == ListType.Busses) { // Buss
-			Collections.sort((ArrayList<Buss>)list, new BussSorter(sortOrder));
 			return true;
-		}else if (listtype == ListType.Routes) { // Buss
-			Collections.sort((ArrayList<Route>)list, new RouteSorter());
+		} else if (listtype == ListType.History) { // History
+			Collections.sort((ArrayList<Stop>) list, new StopSorter(sortOrder));
+			if (sortOrder == 2) Collections.reverse(list);
+			return true;
+		} else if (listtype == ListType.Busses) { // Buss
+			Collections.sort((ArrayList<Buss>) list, new BussSorter(sortOrder));
+			return true;
+		} else if (listtype == ListType.Routes) { // Buss
+			Collections.sort((ArrayList<Route>) list, new RouteSorter());
 			return true;
 		}
 		return false;
 	}
-	
+
 	private static class StopSorter implements Comparator<Stop> {
 		private int compareType = 0;
 
@@ -103,7 +104,7 @@ public class Sorter <T> {
 			else {
 				if (s.LastAccesed != null && s2.LastAccesed != null)
 					return s.LastAccesed.compareTo(s2.LastAccesed);
-				else 
+				else
 					return 0;
 			}
 		}
@@ -119,7 +120,7 @@ public class Sorter <T> {
 			// 2 == By Arrival Time
 		}
 
-        //TODO make this work with the secodn and third ones.
+		//TODO make this work with the secodn and third ones.
 		@Override
 		public int compare(Buss o1, Buss o2) {
 			if (compareType == 0)
@@ -127,14 +128,14 @@ public class Sorter <T> {
 			if (compareType == 1)
 				return (o1.Route < o2.Route ? -1
 						: (o1.Route > o2.Route ? 1 : 0));
-            //TODO make this work for more
-			else if (o1.times.get(0).EstimatedTime != null && o2.times.get(0).EstimatedTime  != null)
-				return o1.times.get(0).EstimatedTime.compareTo(o2.times.get(0).EstimatedTime ); // fix me
+				//TODO make this work for more
+			else if (o1.times.get(0).EstimatedTime != null && o2.times.get(0).EstimatedTime != null)
+				return o1.times.get(0).EstimatedTime.compareTo(o2.times.get(0).EstimatedTime); // fix me
 			else
 				return o1.times.get(0).ScheduledTime.compareTo(o2.times.get(0).ScheduledTime); // fix me
 		}
 	}
-	
+
 	private static class RouteSorter implements Comparator<Route> {
 		private int getLineValue(String inname) {
 			String name = inname.toLowerCase(Locale.US);
@@ -158,12 +159,12 @@ public class Sorter <T> {
 				return 1007;
 			if (name.contains("tram"))
 				return 1008;
-            if (name.contains("trolley"))
-                return 1009;
+			if (name.contains("trolley"))
+				return 1009;
 
-		    return 0;
+			return 0;
 		}
-		
+
 		@Override
 		public int compare(Route r, Route r2) {
 			int value1 = getLineValue(r.desc);
@@ -173,7 +174,7 @@ public class Sorter <T> {
 				value1 = r.route;
 			if (value2 == 0)
 				value2 = r.route;
-		
+
 			return (value1 < value2 ? -1 : (value1 > value2 ? 1 : 0));
 		}
 	}

@@ -1,28 +1,28 @@
 package com.example.tritracker;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-
 import com.example.tritracker.json.AllRoutesJSONResult;
 import com.example.tritracker.json.ArrivalJSONResult;
 import com.example.tritracker.json.MapJSONResult;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
 //make me more specific
 //import android.content.
 
-public class Stop  {
+public class Stop {
 	public String Name = "Invalid Street";
 	public int StopID = -1;
 	public String Direction = "Up Up and Away!";
 	public Date LastAccesed = null;
-	
+
 	public boolean inHistory = false;
 	public boolean inFavorites = false;
-	
+
 	public ArrayList<Buss> Busses = new ArrayList<Buss>();
-	
+
 	public double Latitude = 0;
-	public double Longitude = 0; 
+	public double Longitude = 0;
 
 	public Stop(ArrivalJSONResult.ResultSet.Location l) {
 		Name = l.desc;
@@ -31,7 +31,7 @@ public class Stop  {
 		Latitude = l.lat;
 		Longitude = l.lng;
 	}
-	
+
 	public Stop(MapJSONResult.ResultSet.Location l) {
 		Name = l.desc;
 		StopID = l.locid;
@@ -48,7 +48,7 @@ public class Stop  {
 					
 		}*/
 	}
-	
+
 	public Stop(AllRoutesJSONResult.ResultSet.Route.Dir.Stop s, String des) {
 		Name = s.desc;
 		StopID = s.locid;
@@ -79,19 +79,20 @@ public class Stop  {
 					Busses.add(new Buss(b));
 			}
 
-			for (Iterator<Buss> it = Busses.iterator(); it.hasNext();)
+			for (Iterator<Buss> it = Busses.iterator(); it.hasNext(); )
 				if (s.getBuss(it.next()) == null)
 					it.remove();
 		}
 	}
 
 	public Buss getBuss(Buss ib) {
-        return getBuss(ib.SignLong);
+		return getBuss(ib.SignLong);
 	}
-    public Buss getBuss(String name) {
-        for (Buss b : Busses)
-            if (b != null && b.SignLong.compareTo(name) == 0)
-                return b;
-        return null;
-    }
+
+	public Buss getBuss(String name) {
+		for (Buss b : Busses)
+			if (b != null && b.SignLong.compareTo(name) == 0)
+				return b;
+		return null;
+	}
 }

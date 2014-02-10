@@ -32,7 +32,7 @@ import android.widget.ListView;
 /**
  * A {@link View.OnTouchListener} that makes any {@link View} dismissable when
  * the user swipes (drags her finger) horizontally across the view.
- * 
+ * <p/>
  * <p>
  * <em>For {@link ListView} list items that don't manage their own touch events
  * (i.e. you're using
@@ -40,11 +40,11 @@ import android.widget.ListView;
  * or an equivalent listener on {@link ListActivity} or
  * {@link ListFragment}, use {@link SwipeDismissListViewTouchListener} instead.</em>
  * </p>
- * 
+ * <p/>
  * <p>
  * Example usage:
  * </p>
- * 
+ * <p/>
  * <pre>
  * view.setOnTouchListener(new SwipeDismissTouchListener(view, null, // Optional
  * 																	// token/cookie
@@ -52,15 +52,15 @@ import android.widget.ListView;
  * 		new SwipeDismissTouchListener.OnDismissCallback() {
  * 			public void onDismiss(View view, Object token) {
  * 				parent.removeView(view);
- * 			}
- * 		}));
+ *            }
+ *        }));
  * </pre>
- * 
+ * <p/>
  * <p>
  * This class Requires API level 12 or later due to use of
  * {@link android.view.ViewPropertyAnimator}.
  * </p>
- * 
+ *
  * @see SwipeDismissListViewTouchListener
  */
 public class SwipeDismissTouchListener implements View.OnTouchListener {
@@ -98,29 +98,24 @@ public class SwipeDismissTouchListener implements View.OnTouchListener {
 		/**
 		 * Called when the user has indicated they she would like to dismiss the
 		 * view.
-		 * 
-		 * @param view
-		 *            The originating {@link View} to be dismissed.
-		 * @param token
-		 *            The optional token passed to this object's constructor.
+		 *
+		 * @param view  The originating {@link View} to be dismissed.
+		 * @param token The optional token passed to this object's constructor.
 		 */
 		void onDismiss(View view, Object token);
 	}
 
 	/**
 	 * Constructs a new swipe-to-dismiss touch listener for the given view.
-	 * 
-	 * @param view
-	 *            The view to make dismissable.
-	 * @param token
-	 *            An optional token/cookie object to be passed through to the
-	 *            callback.
-	 * @param callbacks
-	 *            The callback to trigger when the user has indicated that she
-	 *            would like to dismiss this view.
+	 *
+	 * @param view      The view to make dismissable.
+	 * @param token     An optional token/cookie object to be passed through to the
+	 *                  callback.
+	 * @param callbacks The callback to trigger when the user has indicated that she
+	 *                  would like to dismiss this view.
 	 */
 	public SwipeDismissTouchListener(View view, Object token,
-			DismissCallbacks callbacks) {
+	                                 DismissCallbacks callbacks) {
 		ViewConfiguration vc = ViewConfiguration.get(view.getContext());
 		mSlop = vc.getScaledTouchSlop();
 		mMinFlingVelocity = vc.getScaledMinimumFlingVelocity() * 16;
@@ -142,115 +137,115 @@ public class SwipeDismissTouchListener implements View.OnTouchListener {
 		}
 
 		switch (motionEvent.getActionMasked()) {
-		case MotionEvent.ACTION_DOWN: {
-			// TODO: ensure this is a finger, and set a flag
-			mDownX = motionEvent.getRawX();
-			mDownY = motionEvent.getRawY();
-			if (mCallbacks.canDismiss(mToken)) {
-				mVelocityTracker = VelocityTracker.obtain();
-				mVelocityTracker.addMovement(motionEvent);
+			case MotionEvent.ACTION_DOWN: {
+				// TODO: ensure this is a finger, and set a flag
+				mDownX = motionEvent.getRawX();
+				mDownY = motionEvent.getRawY();
+				if (mCallbacks.canDismiss(mToken)) {
+					mVelocityTracker = VelocityTracker.obtain();
+					mVelocityTracker.addMovement(motionEvent);
+				}
+				return false;
 			}
-			return false;
-		}
 
-		case MotionEvent.ACTION_UP: {
-			if (mVelocityTracker == null) {
+			case MotionEvent.ACTION_UP: {
+				if (mVelocityTracker == null) {
+					break;
+				}
+
+				float deltaX = motionEvent.getRawX() - mDownX;
+				mVelocityTracker.addMovement(motionEvent);
+				mVelocityTracker.computeCurrentVelocity(1000);
+				float velocityX = mVelocityTracker.getXVelocity();
+				float absVelocityX = Math.abs(velocityX);
+				float absVelocityY = Math.abs(mVelocityTracker.getYVelocity());
+				boolean dismiss = false;
+				boolean dismissRight = false;
+				if (Math.abs(deltaX) > mViewWidth / 2) {
+					dismiss = true;
+					dismissRight = deltaX > 0;
+				} else if (mMinFlingVelocity <= absVelocityX
+						&& absVelocityX <= mMaxFlingVelocity
+						&& absVelocityY < absVelocityX
+						&& absVelocityY < absVelocityX && mSwiping) {
+					// dismiss only if flinging in the same direction as dragging
+					dismiss = (velocityX < 0) == (deltaX < 0);
+					dismissRight = mVelocityTracker.getXVelocity() > 0;
+				}
+				if (dismiss) {
+					// dismiss
+					mView.animate()
+							.translationX(dismissRight ? mViewWidth : -mViewWidth)
+							.alpha(0).setDuration(mAnimationTime)
+							.setListener(new AnimatorListenerAdapter() {
+								@Override
+								public void onAnimationEnd(Animator animation) {
+									performDismiss();
+								}
+							});
+				} else if (mSwiping) {
+					// cancel
+					mView.animate().translationX(0).alpha(1)
+							.setDuration(mAnimationTime).setListener(null);
+				}
+				mVelocityTracker.recycle();
+				mVelocityTracker = null;
+				mTranslationX = 0;
+				mDownX = 0;
+				mDownY = 0;
+				mSwiping = false;
 				break;
 			}
 
-			float deltaX = motionEvent.getRawX() - mDownX;
-			mVelocityTracker.addMovement(motionEvent);
-			mVelocityTracker.computeCurrentVelocity(1000);
-			float velocityX = mVelocityTracker.getXVelocity();
-			float absVelocityX = Math.abs(velocityX);
-			float absVelocityY = Math.abs(mVelocityTracker.getYVelocity());
-			boolean dismiss = false;
-			boolean dismissRight = false;
-			if (Math.abs(deltaX) > mViewWidth / 2) {
-				dismiss = true;
-				dismissRight = deltaX > 0;
-			} else if (mMinFlingVelocity <= absVelocityX
-					&& absVelocityX <= mMaxFlingVelocity
-					&& absVelocityY < absVelocityX
-					&& absVelocityY < absVelocityX && mSwiping) {
-				// dismiss only if flinging in the same direction as dragging
-				dismiss = (velocityX < 0) == (deltaX < 0);
-				dismissRight = mVelocityTracker.getXVelocity() > 0;
-			}
-			if (dismiss) {
-				// dismiss
-				mView.animate()
-						.translationX(dismissRight ? mViewWidth : -mViewWidth)
-						.alpha(0).setDuration(mAnimationTime)
-						.setListener(new AnimatorListenerAdapter() {
-							@Override
-							public void onAnimationEnd(Animator animation) {
-								performDismiss();
-							}
-						});
-			} else if (mSwiping) {
-				// cancel
+			case MotionEvent.ACTION_CANCEL: {
+				if (mVelocityTracker == null) {
+					break;
+				}
+
 				mView.animate().translationX(0).alpha(1)
 						.setDuration(mAnimationTime).setListener(null);
-			}
-			mVelocityTracker.recycle();
-			mVelocityTracker = null;
-			mTranslationX = 0;
-			mDownX = 0;
-			mDownY = 0;
-			mSwiping = false;
-			break;
-		}
-
-		case MotionEvent.ACTION_CANCEL: {
-			if (mVelocityTracker == null) {
+				mVelocityTracker.recycle();
+				mVelocityTracker = null;
+				mTranslationX = 0;
+				mDownX = 0;
+				mDownY = 0;
+				mSwiping = false;
 				break;
 			}
 
-			mView.animate().translationX(0).alpha(1)
-					.setDuration(mAnimationTime).setListener(null);
-			mVelocityTracker.recycle();
-			mVelocityTracker = null;
-			mTranslationX = 0;
-			mDownX = 0;
-			mDownY = 0;
-			mSwiping = false;
-			break;
-		}
+			case MotionEvent.ACTION_MOVE: {
+				if (mVelocityTracker == null) {
+					break;
+				}
 
-		case MotionEvent.ACTION_MOVE: {
-			if (mVelocityTracker == null) {
+				mVelocityTracker.addMovement(motionEvent);
+				float deltaX = motionEvent.getRawX() - mDownX;
+				float deltaY = motionEvent.getRawY() - mDownY;
+				if (Math.abs(deltaX) > mSlop
+						&& Math.abs(deltaY) < Math.abs(deltaX) / 2) {
+					mSwiping = true;
+					mSwipingSlop = (deltaX > 0 ? mSlop : -mSlop);
+					mView.getParent().requestDisallowInterceptTouchEvent(true);
+
+					// Cancel listview's touch
+					MotionEvent cancelEvent = MotionEvent.obtain(motionEvent);
+					cancelEvent
+							.setAction(MotionEvent.ACTION_CANCEL
+									| (motionEvent.getActionIndex() << MotionEvent.ACTION_POINTER_INDEX_SHIFT));
+					mView.onTouchEvent(cancelEvent);
+					cancelEvent.recycle();
+				}
+
+				if (mSwiping) {
+					mTranslationX = deltaX;
+					mView.setTranslationX(deltaX - mSwipingSlop);
+					// TODO: use an ease-out interpolator or such
+					mView.setAlpha(Math.max(0f,
+							Math.min(1f, 1f - 2f * Math.abs(deltaX) / mViewWidth)));
+					return true;
+				}
 				break;
 			}
-
-			mVelocityTracker.addMovement(motionEvent);
-			float deltaX = motionEvent.getRawX() - mDownX;
-			float deltaY = motionEvent.getRawY() - mDownY;
-			if (Math.abs(deltaX) > mSlop
-					&& Math.abs(deltaY) < Math.abs(deltaX) / 2) {
-				mSwiping = true;
-				mSwipingSlop = (deltaX > 0 ? mSlop : -mSlop);
-				mView.getParent().requestDisallowInterceptTouchEvent(true);
-
-				// Cancel listview's touch
-				MotionEvent cancelEvent = MotionEvent.obtain(motionEvent);
-				cancelEvent
-						.setAction(MotionEvent.ACTION_CANCEL
-								| (motionEvent.getActionIndex() << MotionEvent.ACTION_POINTER_INDEX_SHIFT));
-				mView.onTouchEvent(cancelEvent);
-				cancelEvent.recycle();
-			}
-
-			if (mSwiping) {
-				mTranslationX = deltaX;
-				mView.setTranslationX(deltaX - mSwipingSlop);
-				// TODO: use an ease-out interpolator or such
-				mView.setAlpha(Math.max(0f,
-						Math.min(1f, 1f - 2f * Math.abs(deltaX) / mViewWidth)));
-				return true;
-			}
-			break;
-		}
 		}
 		return false;
 	}

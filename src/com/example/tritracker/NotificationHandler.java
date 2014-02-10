@@ -17,9 +17,9 @@ public class NotificationHandler {
 	private Context notContext;
 	private Timer timer;
 	private NotificationManager not;
-    private Buss trackedBuss;
-    private int arrival;
+	private int arrival;
 	private Stop trackedStop;
+	private Buss trackedBuss;
 	private int timeToWait;
 
 	public boolean IsSet = false;
@@ -37,18 +37,18 @@ public class NotificationHandler {
 		trackedBuss = b;
 		trackedStop = s;
 		notContext = c;
-        arrival = pos;
+		arrival = pos;
 		timeToWait = time;
 
 		timer.addCallBack("main", new Timer.onUpdate() {
 			public void run() {
 				Date est = null;
-                //TODO make this work with more
+				//TODO make this work with more
 				if (trackedBuss.times.get(arrival).Status.compareTo("estimated") == 0)
 					est = new Date(trackedBuss.times.get(arrival).EstimatedTime.getTime() - new Date().getTime());
 				else
 					est = new Date(trackedBuss.times.get(arrival).ScheduledTime.getTime() - new Date().getTime());
-				
+
 				long test = est.getTime() / 1000 / 60; //Util.getTimeFromDate(est, TimeType.Minute);
 				if (test <= timeToWait) {
 					doNotification();
@@ -58,7 +58,7 @@ public class NotificationHandler {
 				}
 			}
 		});
-		
+
 		timer.restartTimer();
 		IsSet = true;
 	}
@@ -79,10 +79,12 @@ public class NotificationHandler {
 	public Buss getBuss() {
 		return trackedBuss;
 	}
-	
-	public Stop	getStop() {
+
+	public Stop getStop() {
 		return trackedStop;
 	}
+
+	public Buss.TimeBox getBussTime() { return trackedBuss.times.get(arrival); }
 
 	private void doNotification() {
 		IsSet = false;
@@ -93,9 +95,9 @@ public class NotificationHandler {
 				.setContentTitle(trackedBuss.SignShort)
 				.setContentText(trackedStop.Name)
 				.setTicker("Buss Arrival Alert")
-                //TODO make this work for more
+						//TODO make this work for more
 				.setWhen(trackedBuss.times.get(arrival).EstimatedTime != null ?
-                trackedBuss.times.get(arrival).EstimatedTime.getTime() : trackedBuss.times.get(arrival).ScheduledTime.getTime())
+						trackedBuss.times.get(arrival).EstimatedTime.getTime() : trackedBuss.times.get(arrival).ScheduledTime.getTime())
 				.setDefaults(Notification.DEFAULT_VIBRATE | Notification.DEFAULT_SOUND)
 				.setAutoCancel(true).setLights(0xffFF8800, 1500, 1000);
 		// Creates an explicit intent for an Activity in your app
