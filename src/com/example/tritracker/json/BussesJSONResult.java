@@ -16,6 +16,7 @@ public class BussesJSONResult {
 			public double latitude;
 			public int bearing;
 			public int vehicleID;
+			public int blockID;
 		}
 	}
 

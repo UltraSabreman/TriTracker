@@ -209,8 +209,9 @@ public class MainService extends Service {
 	}
 
 	public void sub(String key, onUpdate func) {
-		if (!refreshList.containsKey(key))
-			refreshList.put(key, func);
+		if (refreshList.containsKey(key))
+			refreshList.remove(key);
+		refreshList.put(key, func);
 	}
 
 	public void unsub(String key) {

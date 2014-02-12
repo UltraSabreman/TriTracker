@@ -32,7 +32,7 @@ public class MarkerInfoWindowArrayAdaptor implements InfoWindowAdapter {
 		TextView StopID = (TextView) popup.findViewById(R.id.stopID);
 		TextView Names = (TextView) popup.findViewById(R.id.names);
 
-		if (marker.getTitle().compareTo("Search Location") == 0) {
+		if (marker.getTitle() == null) {
 			Title.setText(marker.getTitle());
 			Title.setSelected(true);
 			Title.setTextColor(context.getResources().getColor(R.color.Black));

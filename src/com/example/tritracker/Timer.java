@@ -15,6 +15,7 @@ public class Timer {
 	private Handler timerHandler = new Handler();
 	private Runnable timerRunnable = null;
 	private Map<String, onUpdate> updateList = new HashMap<String, onUpdate>();
+	private boolean kill = false;
 
 	public Timer(double d) {
 		this.interval = d;
@@ -55,9 +56,8 @@ public class Timer {
 					}
 				}
 
-				if (interval > 0) {
+				if (interval > 0 && !kill) {
 					Lock lock = new ReentrantLock();
-
 
 					try {
 						lock.tryLock(100, TimeUnit.MILLISECONDS);
@@ -68,16 +68,20 @@ public class Timer {
 						lock.unlock();
 					}
 				}
+				if (kill)
+					kill = false;
 			}
 		};
 
 		if (interval > 0)
-			timerHandler.post(timerRunnable);
+			timerHandler.postDelayed(timerRunnable, (int) (interval * 1000));
 	}
 
 	public void stopTimer() {
 		if (timerRunnable != null)
 			timerHandler.removeCallbacks(timerRunnable);
+		kill = true;
+		timerRunnable = null;
 	}
 
 	public interface onUpdate {

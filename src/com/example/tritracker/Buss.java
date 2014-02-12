@@ -10,6 +10,7 @@ public class Buss {
 	public boolean Detouring;
 	public String SignShort;
 	public String SignLong;
+	public int BlockID = -1;
 
 	public ArrayList<TimeBox> times = new ArrayList<TimeBox>();
 
@@ -33,6 +34,8 @@ public class Buss {
 
 		SignShort = a.shortSign;
 		SignLong = a.fullSign;
+
+		BlockID = a.block;
 
 		times.add(new TimeBox(Util.dateFromString(a.estimated), Util.dateFromString(a.scheduled), a.status));
 	}
@@ -58,6 +61,7 @@ public class Buss {
 		Detouring = b.Detouring;
 		SignShort = new String(b.SignShort);
 		SignLong = new String(b.SignLong);
+		BlockID = b.BlockID;
 
 		if (b.times != null) {
 			times.clear();

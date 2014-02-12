@@ -26,6 +26,7 @@ public class ArrivalJSONResult {
 			public int route;
 			public int locid;
 			public String fullSign;
+			public int block;
 		}
 
 		public class errorMessage {

@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.tritracker.Buss;
+import com.example.tritracker.MapWorker;
 import com.example.tritracker.NotificationHandler;
 import com.example.tritracker.R;
 import com.example.tritracker.Stop;
@@ -21,6 +22,7 @@ import com.example.tritracker.Timer;
 import com.example.tritracker.Util;
 import com.example.tritracker.arrayadaptors.BussOverviewSpinnerAdaptor;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.UiSettings;
 
 public class BussLineOverviewActivity extends Activity {
 	MainService theService = null;
@@ -29,6 +31,8 @@ public class BussLineOverviewActivity extends Activity {
 	int selection = 0;
 	int specificBuss = 0;
 	BussOverviewSpinnerAdaptor adaptor = null;
+
+	MapWorker test = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -53,11 +57,25 @@ public class BussLineOverviewActivity extends Activity {
 		final Button alert = (Button) findViewById(R.id.AlertButton);
 		Button remind = (Button) findViewById(R.id.ReminderButton);
 
-		//TODO: makeit display current buss position and stop positions. On click, take to large map with more info
-		//TODO: centerlize as muhc map functionality into a generci helper class that works on frags as possible
-		//TODO: Make map actualy safe and not crash if auth failer/connection failer
-		//TODO: add loading indecator on map
 		MapFragment mapFrag = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
+		UiSettings set = mapFrag.getMap().getUiSettings();
+			set.setZoomControlsEnabled(false);
+			set.setCompassEnabled(false);
+			set.setMyLocationButtonEnabled(false);
+			set.setAllGesturesEnabled(false);
+
+
+		test = new MapWorker(mapFrag, getApplicationContext(), this, MapWorker.MapType.Overview);
+		final Timer delay = new Timer(0.1);
+			delay.addCallBack("", new Timer.onUpdate(){
+			@Override
+			public void run() {
+				if (!test.isConnected()) return;
+				delay.stopTimer();
+				test.DrawOverviewTransition(curStop, curBuss.Route, curBuss.BlockID);
+			}
+		});
+		delay.restartTimer();
 
 		adaptor = new BussOverviewSpinnerAdaptor(this, curStop, curBuss, curBuss.times);
 		spin.setAdapter(adaptor);
@@ -88,7 +106,6 @@ public class BussLineOverviewActivity extends Activity {
 				else
 					alert.setEnabled(false);
 
-
 				specificBuss = pos;
 
 				update();
@@ -105,6 +122,8 @@ public class BussLineOverviewActivity extends Activity {
 		//TODO: rebuild map for new buss, refresh times.
 		adaptor.notifyDataSetChanged();
 		((Spinner) findViewById(R.id.spinner)).requestLayout();
+
+		test.update(curBuss.BlockID);
 	}
 
 	@Override
