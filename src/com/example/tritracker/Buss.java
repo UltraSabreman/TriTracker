@@ -10,18 +10,19 @@ public class Buss {
 	public boolean Detouring;
 	public String SignShort;
 	public String SignLong;
-	public int BlockID = -1;
 
 	public ArrayList<TimeBox> times = new ArrayList<TimeBox>();
 
 	public class TimeBox {
+		public int BlockID = -1;
 		public String Status = "";
 		public Date EstimatedTime = null;
 		public Date ScheduledTime = null;
 
-		public TimeBox(Date e, Date s, String st) {
+		public TimeBox(Date e, Date s, String st, int b) {
 			EstimatedTime = e;
 			ScheduledTime = s;
+			BlockID = b;
 			if (st != null)
 				Status = st;
 		}
@@ -35,13 +36,11 @@ public class Buss {
 		SignShort = a.shortSign;
 		SignLong = a.fullSign;
 
-		BlockID = a.block;
-
-		times.add(new TimeBox(Util.dateFromString(a.estimated), Util.dateFromString(a.scheduled), a.status));
+		times.add(new TimeBox(Util.dateFromString(a.estimated), Util.dateFromString(a.scheduled), a.status, a.block));
 	}
 
 	public void AddTime(ArrivalJSONResult.ResultSet.Arrival a) {
-		times.add(new TimeBox(Util.dateFromString(a.estimated), Util.dateFromString(a.scheduled), a.status));
+		times.add(new TimeBox(Util.dateFromString(a.estimated), Util.dateFromString(a.scheduled), a.status, a.block));
 	}
 
 	public Buss(Buss b) {
@@ -61,7 +60,6 @@ public class Buss {
 		Detouring = b.Detouring;
 		SignShort = new String(b.SignShort);
 		SignLong = new String(b.SignLong);
-		BlockID = b.BlockID;
 
 		if (b.times != null) {
 			times.clear();

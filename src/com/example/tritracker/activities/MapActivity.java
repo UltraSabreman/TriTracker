@@ -7,17 +7,19 @@ import android.support.v4.app.NavUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.example.tritracker.MapWorker;
+import com.example.tritracker.map.Map;
 import com.example.tritracker.R;
 import com.example.tritracker.Timer;
 import com.example.tritracker.Util;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
 
+import java.net.ConnectException;
+
 
 public class MapActivity extends Activity  {
 	MainService theService = null;
-	MapWorker test = null;
+	Map test = null;
 
 
 	@Override
@@ -32,7 +34,7 @@ public class MapActivity extends Activity  {
 		theService = MainService.getService();
 		MapFragment frag = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
 
-		test = new MapWorker(frag, getApplicationContext(), this, MapWorker.MapType.Search);
+		test = new Map(frag, getApplicationContext(), this);
 
 		final Bundle extras = getIntent().getExtras();
 
@@ -42,9 +44,11 @@ public class MapActivity extends Activity  {
 			delay.addCallBack("", new Timer.onUpdate() {
 				@Override
 				public void run() {
-					if (!test.isConnected()) return;
-					delay.stopTimer();
-					test.DrawSearchLayer(targetPos);
+					try {
+						test.setSearchLayerEnabled(true);
+						test.showStops(null);
+						delay.stopTimer();
+					} catch (ConnectException e) {}
 				}
 			});
 		delay.restartTimer();

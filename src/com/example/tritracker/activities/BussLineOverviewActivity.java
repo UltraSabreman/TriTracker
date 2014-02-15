@@ -14,7 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.tritracker.Buss;
-import com.example.tritracker.MapWorker;
+import com.example.tritracker.map.Map;
 import com.example.tritracker.NotificationHandler;
 import com.example.tritracker.R;
 import com.example.tritracker.Stop;
@@ -24,15 +24,17 @@ import com.example.tritracker.arrayadaptors.BussOverviewSpinnerAdaptor;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.UiSettings;
 
+import java.net.ConnectException;
+
 public class BussLineOverviewActivity extends Activity {
 	MainService theService = null;
 	Stop curStop = null;
 	Buss curBuss = null;
 	int selection = 0;
-	int specificBuss = 0;
+	int curArival = 0;
 	BussOverviewSpinnerAdaptor adaptor = null;
 
-	MapWorker test = null;
+	Map test = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -65,14 +67,17 @@ public class BussLineOverviewActivity extends Activity {
 			set.setAllGesturesEnabled(false);
 
 
-		test = new MapWorker(mapFrag, getApplicationContext(), this, MapWorker.MapType.Overview);
+		test = new Map(mapFrag, getApplicationContext(), this);
 		final Timer delay = new Timer(0.1);
-			delay.addCallBack("", new Timer.onUpdate(){
+		delay.addCallBack("", new Timer.onUpdate(){
 			@Override
 			public void run() {
 				if (!test.isConnected()) return;
-				delay.stopTimer();
-				test.DrawOverviewTransition(curStop, curBuss.Route, curBuss.BlockID);
+				try {
+					test.setTrackingLayerEnabled(true);
+					test.TrackingLayerDraw(curStop, curBuss.Route, curBuss.times.get(curArival).BlockID);
+					delay.stopTimer();
+				} catch (ConnectException e) {}
 			}
 		});
 		delay.restartTimer();
@@ -80,6 +85,12 @@ public class BussLineOverviewActivity extends Activity {
 		adaptor = new BussOverviewSpinnerAdaptor(this, curStop, curBuss, curBuss.times);
 		spin.setAdapter(adaptor);
 		adaptor.notifyDataSetChanged();
+
+		if (theService.doesBussHaveAlerts(curBuss))
+			alert.setEnabled(true);
+		else
+			alert.setEnabled(false);
+
 
 		alert.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -101,12 +112,7 @@ public class BussLineOverviewActivity extends Activity {
 		spin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 			@Override
 			public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long l) {
-				if (theService.doesBussHaveAlerts(curBuss))
-					alert.setEnabled(true);
-				else
-					alert.setEnabled(false);
-
-				specificBuss = pos;
+				curArival = pos;
 
 				update();
 			}
@@ -123,7 +129,9 @@ public class BussLineOverviewActivity extends Activity {
 		adaptor.notifyDataSetChanged();
 		((Spinner) findViewById(R.id.spinner)).requestLayout();
 
-		test.update(curBuss.BlockID);
+		if (test.isConnected() && curBuss != null)
+			test.TrackingLayerSwitchBuss(curBuss.times.get(curArival).BlockID);
+		//test.update(curBuss.BlockID);
 	}
 
 	@Override
@@ -171,7 +179,7 @@ public class BussLineOverviewActivity extends Activity {
 					rem.editNotification(b.getValue());
 					Util.showToast("Reminder Updated", Toast.LENGTH_SHORT);
 				} else {
-					theService.addReminder(new NotificationHandler(getApplicationContext(), getIntent(), curStop, curBuss, specificBuss, b.getValue()));
+					theService.addReminder(new NotificationHandler(getApplicationContext(), getIntent(), curStop, curBuss, curArival, b.getValue()));
 					Util.showToast("Reminder Set", Toast.LENGTH_SHORT);
 				}
 				theService.doUpdate(false);
