@@ -11,7 +11,6 @@ import android.graphics.Rect;
 
 import com.example.tritracker.R;
 import com.example.tritracker.Stop;
-import com.example.tritracker.Timer;
 import com.example.tritracker.activities.MainService;
 import com.example.tritracker.json.BussesJSONResult;
 import com.example.tritracker.json.Request;
@@ -35,8 +34,6 @@ public class MapOverlayTracking {
 	private Stop curStop = null;
 	private int curBlock = -1;
 
-	private boolean updating = false;
-
 	private ArrayList<BusMarker> buses = new ArrayList<BusMarker>();
 
 	public MapOverlayTracking(Map parentMap, Context c, Activity a) {
@@ -54,18 +51,7 @@ public class MapOverlayTracking {
 		curBlock = blockid;
 		if (moveToCurBuss()) return;
 		//if the buss that we wanted to look at moved, we'll update them and try again.
-		updating = true;
 		DrawLayer(null);
-
-		final Timer test = new Timer(0.1);
-			test.addCallBack("", new Timer.onUpdate() {
-				@Override
-				public void run() {
-					test.stopTimer();
-					moveToCurBuss();
-				}
-			});
-		test.restartTimer();
 	}
 
 	public void clearAll() {
@@ -81,18 +67,6 @@ public class MapOverlayTracking {
 		curStop = s;
 
 		DrawLayer(String.valueOf(route));
-
-		final Timer drawDelay = new Timer(2);
-		drawDelay.addCallBack("moveCam", new Timer.onUpdate() {
-			@Override
-			public void run() {
-				if (updating) return;
-				drawDelay.stopTimer();
-				moveToCurBuss();
-			}
-		});
-
-		drawDelay.restartTimer();
 	}
 
 	private boolean moveToCurBuss() {
@@ -117,6 +91,7 @@ public class MapOverlayTracking {
 							@Override
 							public void run() {
 								parseBusses(r);
+								moveToCurBuss();
 							}
 						});
 					}
@@ -176,6 +151,7 @@ public class MapOverlayTracking {
 				buses.add(tempBuss);
 			} else {
 				bus.maker.setPosition(pos);
+				bus.maker.setRotation((float) v.bearing);
 				bus.updated = true;
 				bus.blockid = v.blockID;
 			}
@@ -189,7 +165,6 @@ public class MapOverlayTracking {
 			else
 				temp.updated = false;
 		}
-		updating = false;
 	}
 
 	private Bitmap drawBussCircle(String ID, int col) {
