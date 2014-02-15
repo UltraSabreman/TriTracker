@@ -153,7 +153,7 @@ public class MapOverlaySearch {
 		else
 			thePos = searchMarker.getPosition();
 
-		parentMap.setCameraPos(new LatLng(s.Latitude, s.Longitude), parentMap.zoomLevel);
+		parentMap.setCameraPos(thePos, parentMap.zoomLevel);
 
 		if (!active)
 			Util.createSpinner(activity);

@@ -74,9 +74,9 @@ public class BussLineOverviewActivity extends Activity {
 			public void run() {
 				if (!test.isConnected()) return;
 				try {
+					delay.stopTimer();
 					test.setTrackingLayerEnabled(true);
 					test.TrackingLayerDraw(curStop, curBuss.Route, curBuss.times.get(curArival).BlockID);
-					delay.stopTimer();
 				} catch (ConnectException e) {}
 			}
 		});
@@ -104,7 +104,6 @@ public class BussLineOverviewActivity extends Activity {
 		remind.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				//TODO force update on compleation.
 				buildDialouge();
 			}
 		});
@@ -115,6 +114,9 @@ public class BussLineOverviewActivity extends Activity {
 				curArival = pos;
 
 				update();
+
+				if (test.isConnected())
+					test.TrackingLayerSwitchBuss(curBuss.times.get(curArival).BlockID);
 			}
 
 			@Override
@@ -125,12 +127,12 @@ public class BussLineOverviewActivity extends Activity {
 	}
 
 	public void update() {
-		//TODO: rebuild map for new buss, refresh times.
+		curStop = theService.getStop(curStop);
+		curBuss = curStop.Busses.get(selection);
+
 		adaptor.notifyDataSetChanged();
 		((Spinner) findViewById(R.id.spinner)).requestLayout();
 
-		if (test.isConnected() && curBuss != null)
-			test.TrackingLayerSwitchBuss(curBuss.times.get(curArival).BlockID);
 		//test.update(curBuss.BlockID);
 	}
 

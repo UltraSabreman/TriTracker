@@ -30,6 +30,11 @@ public class Util {
 
 	;
 
+
+	public static void print(String s) {
+		System.out.println(s);
+	}
+
 	public static long getTimeFromDate(Date d, TimeType type) {
 		if (type == TimeType.Second) {
 			long time = (d.getTime() / 1000);

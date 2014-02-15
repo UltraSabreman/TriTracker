@@ -35,6 +35,7 @@ public class MapOverlayTracking {
 	private Stop curStop = null;
 	private int curBlock = -1;
 
+	private boolean updating = false;
 
 	private ArrayList<BusMarker> buses = new ArrayList<BusMarker>();
 
@@ -46,17 +47,25 @@ public class MapOverlayTracking {
 	}
 
 	public void update() {
-		DrawLayer(null);
-		//TODO interpolate marker positions using route?
+		DrawLayer(bussRouteFilter);
 	}
 
 	public void switchBuss(int blockid) {
 		curBlock = blockid;
 		if (moveToCurBuss()) return;
 		//if the buss that we wanted to look at moved, we'll update them and try again.
+		updating = true;
 		DrawLayer(null);
 
-		moveToCurBuss();
+		final Timer test = new Timer(0.1);
+			test.addCallBack("", new Timer.onUpdate() {
+				@Override
+				public void run() {
+					test.stopTimer();
+					moveToCurBuss();
+				}
+			});
+		test.restartTimer();
 	}
 
 	public void clearAll() {
@@ -77,6 +86,7 @@ public class MapOverlayTracking {
 		drawDelay.addCallBack("moveCam", new Timer.onUpdate() {
 			@Override
 			public void run() {
+				if (updating) return;
 				drawDelay.stopTimer();
 				moveToCurBuss();
 			}
@@ -95,7 +105,7 @@ public class MapOverlayTracking {
 		return false;
 	}
 
-	private void DrawLayer(String InBussRouteFilter) {
+	private void DrawLayer(final String InBussRouteFilter) {
 		if (InBussRouteFilter != null)
 			bussRouteFilter = InBussRouteFilter;
 
@@ -106,7 +116,7 @@ public class MapOverlayTracking {
 						activity.runOnUiThread(new Runnable() {
 							@Override
 							public void run() {
-								parseBusses(r, false);
+								parseBusses(r);
 							}
 						});
 					}
@@ -115,7 +125,7 @@ public class MapOverlayTracking {
 						+ "&appID=" + activity.getString(R.string.appid)).start();
 	}
 
-	private void parseBusses(BussesJSONResult r, boolean onlyUpdate) {
+	private void parseBusses(BussesJSONResult r) {
 		if (r == null) return;
 
 		Random rand = new Random();
@@ -124,12 +134,11 @@ public class MapOverlayTracking {
 			String id;
 
 			BusMarker bus = null;
-			if (onlyUpdate)
-				for (BusMarker m: buses)
-					if (m.vehicleID == v.vehicleID) {
-						bus = m;
-						break;
-					}
+			for (BusMarker m: buses)
+				if (m.vehicleID == v.vehicleID) {
+					bus = m;
+					break;
+				}
 
 			if (bus == null) {
 				if (v.signMessage != null) {
@@ -171,14 +180,16 @@ public class MapOverlayTracking {
 				bus.blockid = v.blockID;
 			}
 
-			for (Iterator<BusMarker> it = buses.iterator(); it.hasNext();) {
-				BusMarker temp = it.next();
-				if (!temp.updated)
-					it.remove();
-				else
-					temp.updated = false;
-			}
 		}
+
+		for (Iterator<BusMarker> it = buses.iterator(); it.hasNext();) {
+			BusMarker temp = it.next();
+			if (!temp.updated)
+				it.remove();
+			else
+				temp.updated = false;
+		}
+		updating = false;
 	}
 
 	private Bitmap drawBussCircle(String ID, int col) {
