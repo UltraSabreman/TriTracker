@@ -22,6 +22,7 @@ import com.example.tritracker.json.DetourJSONResult.ResultSet;
 import com.example.tritracker.json.Request;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+import com.thoughtworks.xstream.XStream;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -412,6 +413,8 @@ public class MainService extends Service {
 
 			String data = new Gson().toJson(stopData);
 
+			DataStore lol = (DataStore) new XStream().fromXML("lol");
+
 			outputStream.write(data.getBytes());
 			outputStream.close();
 		} catch (JsonSyntaxException e) {
@@ -442,6 +445,18 @@ public class MainService extends Service {
 		} finally {
 			if (stopData == null)
 				stopData = new DataStore();
+		}
+	}
+
+	private class test {
+		public document Document;
+
+		public class document {
+			public placemark [] Placemark;
+
+			public class placemark {
+
+			}
 		}
 	}
 
