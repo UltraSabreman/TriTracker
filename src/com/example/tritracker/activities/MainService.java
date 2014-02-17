@@ -47,7 +47,7 @@ public class MainService extends Service {
 
 	private Timer refreshTime = null;
 	private DataStore stopData;
-	private ArrayList<BussRoute> routes;
+	private ArrayList<BussRoute> routes = new ArrayList<BussRoute>();
 	private Map<String, onUpdate> refreshList = new HashMap<String, onUpdate>();
 	private final IBinder mBinder = new LocalBinder();
 	private ArrayList<NotificationHandler> reminders = new ArrayList<NotificationHandler>();
@@ -88,7 +88,7 @@ public class MainService extends Service {
 			);
 			refreshTime.restartTimer();
 			doUpdate(true);
-			//retrieveLargeObjects();
+			retrieveLargeObjects();
 			//updateAvalibleRoutes();
 
 		}
@@ -374,7 +374,7 @@ public class MainService extends Service {
 		if (days > 7) {
 			//TODO warn that this is happeing, give option to opt out, show visual indicator when doing it (not intrucive but there)
 			// and ofcorse provide a way to manauly call.
-			retrieveLargeObjects();
+			//retrieveLargeObjects();
 			stopData.lastRouteUpdate = now;
 		}
 	}
@@ -438,9 +438,9 @@ public class MainService extends Service {
 			stopData = new Gson().fromJson(r, DataStore.class);
 			r.close();
 
-			r = new BufferedReader(new InputStreamReader(c.openFileInput("routes.json")));
-			routes = new Gson().fromJson(r, RouteWrapper.class).routes;
-			r.close();
+			//r = new BufferedReader(new InputStreamReader(c.openFileInput("routes.json")));
+			//routes = new Gson().fromJson(r, RouteWrapper.class).routes;
+			//r.close();
 
 		} catch (JsonSyntaxException e) {
 			e.printStackTrace();
@@ -472,14 +472,19 @@ public class MainService extends Service {
 
 	private void parseRouteData(XmlRequest r, String s) {
 		Util.print("start");
+		if (r == null) {
+			Util.print("OH NOES");
+			return;
+		}
+
 		for (XmlRequest.document.placemark p : r.Document.BusRoutes) {
 			BussRoute temp = new BussRoute();
-			Util.print("Route: " + p.getDataByName("route_number").Value.replaceAll("\\s+", ""));
-			temp.Route = Integer.valueOf(p.getDataByName("route_number").Value.replaceAll("\\s+", ""));
-			temp.Description = p.getDataByName("route_description").Value;
-			temp.Direction = Integer.valueOf(p.getDataByName("direction").Value.replaceAll("\\s+",""));
-			temp.DirectionDesc = p.getDataByName("direction_description").Value;
-			temp.Type = p.getDataByName("type").Value;
+				Util.print("Route: " + p.getDataByName("route_number").Value.replaceAll("\\s+", ""));
+				temp.Route = Integer.valueOf(p.getDataByName("route_number").Value.replaceAll("\\s+", ""));
+				temp.Description = p.getDataByName("route_description").Value;
+				temp.Direction = Integer.valueOf(p.getDataByName("direction").Value.replaceAll("\\s+",""));
+				temp.DirectionDesc = p.getDataByName("direction_description").Value;
+				temp.Type = p.getDataByName("type").Value;
 
 			for (XmlRequest.document.placemark.MulGeo.LineString l : p.RouteCoordinates.RouteSections) {
 				BussRoute.RoutePart tempPart = temp.new RoutePart();
@@ -489,9 +494,10 @@ public class MainService extends Service {
 				for (String c: coords) {
 					if (c == null || c.isEmpty()) continue;
 					int mid = c.indexOf(",");
+					if (mid == -1) continue;
 					String lat = c.substring(0,mid);
-					String lng = c.substring(mid);
-					tempPart.coords.add(new LatLng(Long.valueOf(lat), Long.valueOf(lng)));
+					String lng = c.substring(mid + 1);
+					tempPart.coords.add(new LatLng(Double.valueOf(lat), Double.valueOf(lng)));
 				}
 
 				temp.parts.add(tempPart);

@@ -1,6 +1,5 @@
 package com.example.tritracker.json;
 
-import com.example.tritracker.Util;
 import com.google.gson.Gson;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
@@ -32,7 +31,7 @@ public class Request<T> extends Thread {
 	}
 
 	public void run() {
-		Util.print("HTTP start: " + type.toString());
+		//Util.print("HTTP start: " + type.toString());
 
 		String responseString = null;
 		final HttpParams httpParams = new BasicHttpParams();
@@ -64,17 +63,17 @@ public class Request<T> extends Thread {
 			error = 4;
 		}
 
-		Util.print("HTTP Done: " + type.toString());
+		//Util.print("HTTP Done: " + type.toString());
 		if (callback != null) {
 			T result = null;
-			Util.print("test");
+			//Util.print("test");
 
 			if (type == XmlRequest.class) {
 				XStream testStream = new XStream(new DomDriver());
 				testStream.setClassLoader(XmlRequest.class.getClassLoader());
 				testStream.processAnnotations(XmlRequest.class);
 
-				Util.print("Recived");
+				//Util.print("Recived");
 
 				if (responseString != null)
 					result = (T) testStream.fromXML(responseString);
