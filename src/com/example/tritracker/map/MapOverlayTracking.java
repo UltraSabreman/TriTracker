@@ -86,7 +86,7 @@ public class MapOverlayTracking {
 		new Request<BussesJSONResult>(BussesJSONResult.class,
 				new Request.JSONcallback<BussesJSONResult>() {
 					@Override
-					public void run(final BussesJSONResult r, final int error) {
+					public void run(final BussesJSONResult r, String s,  final int error) {
 						activity.runOnUiThread(new Runnable() {
 							@Override
 							public void run() {

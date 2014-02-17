@@ -31,7 +31,7 @@ public class ForgroundRequestManager extends Thread {
 		try {
 			Request<ArrivalJSONResult> tempF = new Request<ArrivalJSONResult>(ArrivalJSONResult.class,
 					new Request.JSONcallback<ArrivalJSONResult>() {
-						public void run(ArrivalJSONResult r, int error) {
+						public void run(ArrivalJSONResult r, String s,  int error) {
 							parse(r, error);
 						}
 					},

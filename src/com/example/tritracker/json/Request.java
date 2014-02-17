@@ -1,6 +1,9 @@
 package com.example.tritracker.json;
 
+import com.example.tritracker.Util;
 import com.google.gson.Gson;
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.DomDriver;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -25,15 +28,19 @@ public class Request<T> extends Thread {
 	private final Class<T> type;
 
 	public interface JSONcallback<T> {
-		public void run(T r, int error);
+		public void run(T r, String s, int error);
 	}
 
 	public void run() {
+		Util.print("HTTP start: " + type.toString());
+
+		String responseString = null;
 		final HttpParams httpParams = new BasicHttpParams();
 		HttpConnectionParams.setConnectionTimeout(httpParams, 30000);
 		HttpClient httpclient = new DefaultHttpClient(httpParams);
 		HttpResponse response;
-		String responseString = null;
+
+
 		try {
 			response = httpclient.execute(new HttpGet(url));
 			StatusLine statusLine = response.getStatusLine();
@@ -57,13 +64,25 @@ public class Request<T> extends Thread {
 			error = 4;
 		}
 
+		Util.print("HTTP Done: " + type.toString());
 		if (callback != null) {
 			T result = null;
+			Util.print("test");
 
-			if (responseString != null)
-				result = new Gson().fromJson(responseString, type);
+			if (type == XmlRequest.class) {
+				XStream testStream = new XStream(new DomDriver());
+				testStream.setClassLoader(XmlRequest.class.getClassLoader());
+				testStream.processAnnotations(XmlRequest.class);
 
-			callback.run(result, error);
+				Util.print("Recived");
+
+				if (responseString != null)
+					result = (T) testStream.fromXML(responseString);
+			} else
+				if (responseString != null)
+					result = new Gson().fromJson(responseString, type);
+
+			callback.run(result, responseString, error);
 		}
 	}
 

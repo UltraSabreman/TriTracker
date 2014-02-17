@@ -13,6 +13,7 @@ import com.example.tritracker.R;
 import com.example.tritracker.Stop;
 import com.example.tritracker.Timer;
 import com.example.tritracker.Timer.onUpdate;
+import com.example.tritracker.Util;
 import com.example.tritracker.Util.ListType;
 import com.example.tritracker.json.AllRoutesJSONResult;
 import com.example.tritracker.json.AllRoutesJSONResult.ResultSet.Route;
@@ -20,9 +21,10 @@ import com.example.tritracker.json.ArrivalJSONResult;
 import com.example.tritracker.json.DetourJSONResult;
 import com.example.tritracker.json.DetourJSONResult.ResultSet;
 import com.example.tritracker.json.Request;
+import com.example.tritracker.json.XmlRequest;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
-import com.thoughtworks.xstream.XStream;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -45,6 +47,7 @@ public class MainService extends Service {
 
 	private Timer refreshTime = null;
 	private DataStore stopData;
+	private ArrayList<BussRoute> routes;
 	private Map<String, onUpdate> refreshList = new HashMap<String, onUpdate>();
 	private final IBinder mBinder = new LocalBinder();
 	private ArrayList<NotificationHandler> reminders = new ArrayList<NotificationHandler>();
@@ -85,6 +88,7 @@ public class MainService extends Service {
 			);
 			refreshTime.restartTimer();
 			doUpdate(true);
+			//retrieveLargeObjects();
 			//updateAvalibleRoutes();
 
 		}
@@ -297,7 +301,7 @@ public class MainService extends Service {
 		isUpdating = true;
 		new Request<AllRoutesJSONResult>(AllRoutesJSONResult.class,
 				new Request.JSONcallback<AllRoutesJSONResult>() {
-					public void run(AllRoutesJSONResult res, int error) {
+					public void run(AllRoutesJSONResult res, String s, int error) {
 						Lock lock = new ReentrantLock();
 
 						try {
@@ -322,7 +326,7 @@ public class MainService extends Service {
 	private void updateDetours() {
 		new Request<DetourJSONResult>(DetourJSONResult.class,
 				new Request.JSONcallback<DetourJSONResult>() {
-					public void run(DetourJSONResult r, int error) {
+					public void run(DetourJSONResult r, String s,  int error) {
 						if (error != 0) return;
 						MainService.this.stopData.Alerts.clear();
 
@@ -351,7 +355,7 @@ public class MainService extends Service {
 
 			new Request<ArrivalJSONResult>(ArrivalJSONResult.class,
 					new Request.JSONcallback<ArrivalJSONResult>() {
-						public void run(ArrivalJSONResult r, int error) {
+						public void run(ArrivalJSONResult r, String s, int error) {
 							if (error == 0)
 								proccessArrivals(r);
 						}
@@ -368,7 +372,9 @@ public class MainService extends Service {
 		long days = (now - last) / 1000 / 60 / 60 / 24;
 
 		if (days > 7) {
-			updateAvalibleRoutes();
+			//TODO warn that this is happeing, give option to opt out, show visual indicator when doing it (not intrucive but there)
+			// and ofcorse provide a way to manauly call.
+			retrieveLargeObjects();
 			stopData.lastRouteUpdate = now;
 		}
 	}
@@ -413,8 +419,6 @@ public class MainService extends Service {
 
 			String data = new Gson().toJson(stopData);
 
-			DataStore lol = (DataStore) new XStream().fromXML("lol");
-
 			outputStream.write(data.getBytes());
 			outputStream.close();
 		} catch (JsonSyntaxException e) {
@@ -434,6 +438,10 @@ public class MainService extends Service {
 			stopData = new Gson().fromJson(r, DataStore.class);
 			r.close();
 
+			r = new BufferedReader(new InputStreamReader(c.openFileInput("routes.json")));
+			routes = new Gson().fromJson(r, RouteWrapper.class).routes;
+			r.close();
+
 		} catch (JsonSyntaxException e) {
 			e.printStackTrace();
 		} catch (FileNotFoundException e) {
@@ -446,17 +454,87 @@ public class MainService extends Service {
 			if (stopData == null)
 				stopData = new DataStore();
 		}
+
+
+	}
+	private void retrieveLargeObjects() {
+		updateAvalibleRoutes();
+		Util.print("send");
+		/*new Request<XmlRequest>(XmlRequest.class,
+				new Request.JSONcallback<XmlRequest>() {
+					public void run(XmlRequest r, String s, int error) {
+						parseRouteData(r, s);
+					}
+				},
+				"http://developer.trimet.org/gis/data/tm_routes.kml").start();*/
 	}
 
-	private class test {
-		public document Document;
 
-		public class document {
-			public placemark [] Placemark;
+	private void parseRouteData(XmlRequest r, String s) {
+		Util.print("start");
+		for (XmlRequest.document.placemark p : r.Document.BusRoutes) {
+			BussRoute temp = new BussRoute();
+			Util.print("Route: " + p.getDataByName("route_number").Value.replaceAll("\\s+", ""));
+			temp.Route = Integer.valueOf(p.getDataByName("route_number").Value.replaceAll("\\s+", ""));
+			temp.Description = p.getDataByName("route_description").Value;
+			temp.Direction = Integer.valueOf(p.getDataByName("direction").Value.replaceAll("\\s+",""));
+			temp.DirectionDesc = p.getDataByName("direction_description").Value;
+			temp.Type = p.getDataByName("type").Value;
 
-			public class placemark {
+			for (XmlRequest.document.placemark.MulGeo.LineString l : p.RouteCoordinates.RouteSections) {
+				BussRoute.RoutePart tempPart = temp.new RoutePart();
 
+				String [] coords = l.Coordinates.split(" ");
+
+				for (String c: coords) {
+					if (c == null || c.isEmpty()) continue;
+					int mid = c.indexOf(",");
+					String lat = c.substring(0,mid);
+					String lng = c.substring(mid);
+					tempPart.coords.add(new LatLng(Long.valueOf(lat), Long.valueOf(lng)));
+				}
+
+				temp.parts.add(tempPart);
 			}
+
+			routes.add(temp);
+		}
+
+		try {
+			Context c = getApplicationContext();
+			FileOutputStream outputStream = c.openFileOutput("routes.xml", Context.MODE_PRIVATE);
+
+			RouteWrapper temp = new RouteWrapper();
+				temp.routes = routes;
+			String data = new Gson().toJson(temp);
+
+			outputStream.write(data.getBytes());
+			outputStream.close();
+		} catch (JsonSyntaxException e) {
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		Util.print("done");
+	}
+
+	public class RouteWrapper {
+		public ArrayList<BussRoute> routes = new ArrayList<BussRoute>();
+	}
+
+	public class BussRoute {
+		public int Route;
+		public String Description;
+		public int Direction;
+		public String DirectionDesc;
+		public String Type;
+
+		public ArrayList<RoutePart> parts = new ArrayList<RoutePart>();
+
+		public class RoutePart {
+			public ArrayList<LatLng> coords = new ArrayList<LatLng>();
 		}
 	}
 

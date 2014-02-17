@@ -160,7 +160,7 @@ public class MapOverlaySearch {
 		new Request<MapJSONResult>(MapJSONResult.class,
 				new Request.JSONcallback<MapJSONResult>() {
 					@Override
-					public void run(final MapJSONResult r, final int error) {
+					public void run(final MapJSONResult r, final String str,  final int error) {
 						activity.runOnUiThread(new Runnable() {
 							@Override
 							public void run() {
