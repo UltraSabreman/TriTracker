@@ -48,9 +48,8 @@ public class SearchRoutesActivity extends Activity {
 	private TextWatcher sw = null;
 	private RouteStopListArrayAdaptor stopAdaptor;
 
-	public enum DisplayMode {Routes, Dirs, Stops}
+	public enum DisplayMode {Routes, Dirs, Stops};
 
-	;
 	private DisplayMode mode = DisplayMode.Routes;
 	private Timer test;
 

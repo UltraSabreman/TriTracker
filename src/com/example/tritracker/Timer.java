@@ -43,16 +43,13 @@ public class Timer {
 
 		timerRunnable = new Runnable() {
 			@Override
-			public void run() {
+            synchronized public void run() {
 				if (updateList != null && updateList.size() != 0) {
 					Iterator<Entry<String, onUpdate>> it = updateList.entrySet().iterator();
 					while (it.hasNext()) {
 						Map.Entry<String, onUpdate> pairs = (Map.Entry<String, onUpdate>) it.next();
-						if (pairs != null && pairs.getValue() != null) {
-							synchronized(pairs) {
-								((onUpdate) pairs.getValue()).run();
-							}
-						}
+						if (pairs != null && pairs.getValue() != null)
+                            ((onUpdate) pairs.getValue()).run();
 					}
 				}
 
@@ -85,7 +82,7 @@ public class Timer {
 	}
 
 	public interface onUpdate {
-		public void run();
+        public void run();
 	}
 
 }

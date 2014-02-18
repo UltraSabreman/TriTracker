@@ -31,8 +31,6 @@ public class Request<T> extends Thread {
 	}
 
 	public void run() {
-		//Util.print("HTTP start: " + type.toString());
-
 		String responseString = null;
 		final HttpParams httpParams = new BasicHttpParams();
 		HttpConnectionParams.setConnectionTimeout(httpParams, 30000);
@@ -63,17 +61,14 @@ public class Request<T> extends Thread {
 			error = 4;
 		}
 
-		//Util.print("HTTP Done: " + type.toString());
 		if (callback != null) {
 			T result = null;
-			//Util.print("test");
 
 			if (type == XmlRequest.class) {
 				XStream testStream = new XStream(new DomDriver());
 				testStream.setClassLoader(XmlRequest.class.getClassLoader());
 				testStream.processAnnotations(XmlRequest.class);
 
-				//Util.print("Recived");
 
 				if (responseString != null)
 					result = (T) testStream.fromXML(responseString);

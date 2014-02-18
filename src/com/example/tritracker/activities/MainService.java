@@ -22,27 +22,14 @@ import com.example.tritracker.json.DetourJSONResult;
 import com.example.tritracker.json.DetourJSONResult.ResultSet;
 import com.example.tritracker.json.Request;
 import com.example.tritracker.json.XmlRequest;
+
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.DomDriver;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.NoHttpResponseException;
-import org.apache.http.StatusLine;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.conn.ConnectTimeoutException;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.params.HttpParams;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
+
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -110,8 +97,8 @@ public class MainService extends Service {
 			);
 			refreshTime.restartTimer();
 			doUpdate(true);
-			retrieveLargeObjects();
-			//updateAvalibleRoutes();
+			//updateMapRoutes();
+			//updateSearchRoutes();
 
 		}
 		theService = this;
@@ -149,14 +136,13 @@ public class MainService extends Service {
 		return searchRoutes;
 	}
 
-	public Route getRouteByNumber(int route) {
-		for (Route r : searchRoutes)
-			if (r.route == route)
-				return r;
-		return null;
-	}
 
-
+    public MapRouteData getMapRoute(int route) {
+        for (MapRouteData r : mapRoutes)
+            if (r.Route == route)
+                return r;
+        return null;
+    }
 	public void addReminder(NotificationHandler not) {
 		if (!reminders.contains(not)) {
 			reminders.add(not);
@@ -319,7 +305,7 @@ public class MainService extends Service {
 		return false;
 	}
 
-	private void updateAvalibleRoutes() {
+	private void updateSearchRoutes() {
         updatingSearchRoutes = true;
 		new Request<AllRoutesJSONResult>(AllRoutesJSONResult.class,
 				new Request.JSONcallback<AllRoutesJSONResult>() {
@@ -335,6 +321,7 @@ public class MainService extends Service {
 							} finally {
 								lock.unlock();
 							}
+                            doUpdate(false);
 						} catch (InterruptedException e) {
 							e.printStackTrace();
 						}
@@ -396,7 +383,9 @@ public class MainService extends Service {
 		if (days > 7) {
 			//TODO warn that this is happeing, give option to opt out, show visual indicator when doing it (not intrucive but there)
 			// and ofcorse provide a way to manauly call.
-			updateAvalibleRoutes();
+            updateSearchRoutes();
+            updateMapRoutes();
+            //TODO: make this only manualy trigarable.
             changedSearchRoutes = true;
 			stopData.lastRouteUpdate = now;
 		}
@@ -474,7 +463,7 @@ public class MainService extends Service {
                     try {
                         FileOutputStream outputStream = c.openFileOutput("mapRoutes.json", Context.MODE_PRIVATE);
                         wrapper w = new wrapper();
-                        w.list = mapRoutes;
+                            w.list = mapRoutes;
 
                         String data = new Gson().toJson(w);
 
@@ -512,16 +501,23 @@ public class MainService extends Service {
             Thread getSearchRoutes  = new Thread() {
                 synchronized public void run() {
                     BufferedReader r = null;
-                    try {
-                        r = new BufferedReader(new InputStreamReader(c.openFileInput("searchRoutes.json")));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
                     class wrapper {
                         ArrayList<Route> list = new ArrayList<Route>();
                     }
 
-                    searchRoutes = new Gson().fromJson(r, wrapper.class).list;
+                    try {
+                        r = new BufferedReader(new InputStreamReader(c.openFileInput("searchRoutes.json")));
+                        if (r == null) return;
+                        wrapper temp = new Gson().fromJson(r, wrapper.class);
+                        if (temp != null) {
+                            searchRoutes = temp.list;
+                            Util.print("Read in search Routes");
+                        }
+                    } catch (NullPointerException e) {
+                        e.printStackTrace();
+                    }  catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             };
             getSearchRoutes.start();
@@ -529,16 +525,24 @@ public class MainService extends Service {
             Thread getMapRoutes  = new Thread() {
                 synchronized public void run() {
                     BufferedReader r = null;
-                    try {
-                        r = new BufferedReader(new InputStreamReader(c.openFileInput("mapRoutes.json")));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
                     class wrapper {
                         ArrayList<MapRouteData> list = new ArrayList<MapRouteData>();
                     }
 
-                    mapRoutes = new Gson().fromJson(r, wrapper.class).list;
+                    try {
+                        r = new BufferedReader(new InputStreamReader(c.openFileInput("mapRoutes.json")));
+                        if (r == null) return;
+                        wrapper temp = new Gson().fromJson(r, wrapper.class);
+                        if (temp != null) {
+                            mapRoutes = temp.list;
+                            Util.print("Read in map Routes");
+                        }
+
+                        } catch (NullPointerException e) {
+                        e.printStackTrace();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             };
             getMapRoutes.start();
@@ -559,71 +563,107 @@ public class MainService extends Service {
 
 
 	}
-	private void retrieveLargeObjects() {
-		Util.print("send");
-        /*updatingMapRoutes = true;
+	private void updateMapRoutes() {
+        updatingMapRoutes = true;
 		new Request<XmlRequest>(XmlRequest.class,
 				new Request.JSONcallback<XmlRequest>() {
 					public void run(XmlRequest r, String s, int error) {
 						parseRouteData(r, s);
 						updatingMapRoutes = false;
+                        doUpdate(false);
 					}
 				},
-				"http://developer.trimet.org/gis/data/tm_routes.kml").start();*/
+				"http://developer.trimet.org/gis/data/tm_routes.kml").start();
 	}
 
 
 	private void parseRouteData(XmlRequest r, String s) {
-		Util.print("start");
 		if (r == null)
 			return;
 
 		for (XmlRequest.document.placemark p : r.Document.BusRoutes) {
 			MapRouteData temp = new MapRouteData();
-				Util.print("Route: " + p.getDataByName("route_number").Value.replaceAll("\\s+", ""));
-				temp.Route = Integer.valueOf(p.getDataByName("route_number").Value.replaceAll("\\s+", ""));
-				temp.Description = p.getDataByName("route_description").Value;
-				temp.Direction = Integer.valueOf(p.getDataByName("direction").Value.replaceAll("\\s+",""));
-				temp.DirectionDesc = p.getDataByName("direction_description").Value;
-				temp.Type = p.getDataByName("type").Value;
+                temp.Route = Integer.valueOf(p.getDataByName("route_number").Value.replaceAll("\\s+", ""));
+                temp.Description = p.getDataByName("route_description").Value;
+                temp.Type = p.getDataByName("type").Value;
+
+            int dir = Integer.valueOf(p.getDataByName("direction").Value.replaceAll("\\s+",""));
+            String dirDesc = p.getDataByName("direction_description").Value;
+
+            if (temp.getDir(dir) == null) {
+                MapRouteData.RouteDir tr = temp.new RouteDir();
+                    tr.Direction = dir;
+                    tr.DirectionDesc = dirDesc;
+
+                temp.Directions.add(tr);
+            }
 
 			for (XmlRequest.document.placemark.MulGeo.LineString l : p.RouteCoordinates.RouteSections) {
-                MapRouteData.RoutePart tempPart = temp.new RoutePart();
+                MapRouteData.RouteDir.RoutePart tempPart = temp.getDir(dir).new RoutePart();
 
-				String [] coords = l.Coordinates.split(" ");
+                boolean inLat = true;
+                String lat = null;
+                String lng = null;
+                for (int i = 0; i < l.Coordinates.length(); i ++) {
+                    char curChar = l.Coordinates.charAt(i);
 
-				for (String c: coords) {
-					if (c == null || c.isEmpty()) continue;
-					int mid = c.indexOf(",");
-					if (mid == -1) continue;
-					String lat = c.substring(0,mid);
-					String lng = c.substring(mid + 1);
-					tempPart.coords.add(new LatLng(Double.valueOf(lat), Double.valueOf(lng)));
-				}
+                    if (curChar == ' ') {
+                        if (lng != null) {
+                            tempPart.coords.add(new LatLng(Double.valueOf(lat), Double.valueOf(lng)));
+                            lng = null;
+                            lat = null;
+                            inLat = true;
+                        } else
+                            break; //string is fucked, save what we cann
+                            //TODO improve error handeling.
+                    } else if (curChar == ',')
+                        inLat = false;
+                    else {
+                        if (inLat) {
+                            if (lat == null)
+                                lat = new String();
+                            lat += curChar;
+                        } else {
+                            if (lng == null)
+                                lng = new String();
+                            lng += curChar;
+                        }
+                    }
+                }
 
-				temp.parts.add(tempPart);
+				temp.getDir(dir).parts.add(tempPart);
 			}
 
 			mapRoutes.add(temp);
 		}
 
         changedMapRoutes = true;
-		Util.print("done");
 	}
 
 
 	public class MapRouteData {
 		public int Route;
 		public String Description;
-		public int Direction;
-		public String DirectionDesc;
 		public String Type;
 
-		public ArrayList<RoutePart> parts = new ArrayList<RoutePart>();
+        public ArrayList<RouteDir> Directions = new ArrayList<RouteDir>();
+        public RouteDir getDir(int i) {
+            for (RouteDir r : Directions)
+                if (r.Direction == i)
+                    return r;
+            return null;
+        }
 
-		public class RoutePart {
-			public ArrayList<LatLng> coords = new ArrayList<LatLng>();
-		}
+        public class RouteDir {
+            public int Direction;
+            public String DirectionDesc;
+            public ArrayList<RoutePart> parts = new ArrayList<RoutePart>();
+
+
+            public class RoutePart {
+                public ArrayList<LatLng> coords = new ArrayList<LatLng>();
+            }
+        }
 	}
 
 	private class DataStore {

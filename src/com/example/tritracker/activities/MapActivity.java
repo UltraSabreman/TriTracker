@@ -45,7 +45,9 @@ public class MapActivity extends Activity  {
 				@Override
 				public void run() {
 					try {
+                        if (!test.isConnected()) return;
 						test.setSearchLayerEnabled(true);
+                        test.setRouteLayerEnabled(true);
 						test.showStops(null);
 						delay.stopTimer();
 					} catch (ConnectException e) {}

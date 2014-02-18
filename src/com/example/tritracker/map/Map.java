@@ -30,6 +30,7 @@ public class Map implements GooglePlayServicesClient.ConnectionCallbacks, Google
 
 	private MapOverlaySearch searchLayer = null;
 	private MapOverlayTracking trackingLayer = null;
+    private MapOverlayRoutes routeLayer = null;
 
 	private boolean connected = false;
 
@@ -105,6 +106,16 @@ public class Map implements GooglePlayServicesClient.ConnectionCallbacks, Google
 			trackingLayer = null;
 		}
 	}
+
+    public void setRouteLayerEnabled(boolean should) throws ConnectException {
+        if (!connected) throw new ConnectException("Not connected to play services. Please wait.");
+        if (should && routeLayer == null)
+            routeLayer = new MapOverlayRoutes(this, cont, act);
+        else if(!should && trackingLayer != null) {
+            //routeLayer.clearAll();
+            routeLayer = null;
+        }
+    }
 
 
 	public void setCameraPos(LatLng pos, int zoom) {
