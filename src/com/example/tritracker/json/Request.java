@@ -65,7 +65,7 @@ public class Request<T> extends Thread {
 			T result = null;
 
 			if (type == XmlRequest.class) {
-				XStream testStream = new XStream(new DomDriver());
+				XStream testStream = new XStream();
 				testStream.setClassLoader(XmlRequest.class.getClassLoader());
 				testStream.processAnnotations(XmlRequest.class);
 
