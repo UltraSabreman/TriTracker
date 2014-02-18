@@ -25,8 +25,24 @@ import com.example.tritracker.json.XmlRequest;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.DomDriver;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.NoHttpResponseException;
+import org.apache.http.StatusLine;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.conn.ConnectTimeoutException;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -43,17 +59,23 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class MainService extends Service {
-	public boolean isUpdating = false;
-
 	private Timer refreshTime = null;
 	private DataStore stopData;
-	private ArrayList<BussRoute> routes = new ArrayList<BussRoute>();
+
+	private ArrayList<MapRouteData> mapRoutes = new ArrayList<MapRouteData>();
+    public ArrayList<Route> searchRoutes = new ArrayList<Route>();
+
 	private Map<String, onUpdate> refreshList = new HashMap<String, onUpdate>();
 	private final IBinder mBinder = new LocalBinder();
 	private ArrayList<NotificationHandler> reminders = new ArrayList<NotificationHandler>();
 
 	private static boolean started = false;
 	private static MainService theService;
+
+    private boolean changedMapRoutes = false;
+    public boolean updatingMapRoutes = false;
+    private boolean changedSearchRoutes = false;
+    public boolean updatingSearchRoutes = false;
 
 	public static MainService getService() {
 		return theService;
@@ -124,11 +146,11 @@ public class MainService extends Service {
 	}
 
 	public ArrayList<Route> getRoutes() {
-		return stopData.AvalibleRoutes;
+		return searchRoutes;
 	}
 
 	public Route getRouteByNumber(int route) {
-		for (Route r : stopData.AvalibleRoutes)
+		for (Route r : searchRoutes)
 			if (r.route == route)
 				return r;
 		return null;
@@ -298,7 +320,7 @@ public class MainService extends Service {
 	}
 
 	private void updateAvalibleRoutes() {
-		isUpdating = true;
+        updatingSearchRoutes = true;
 		new Request<AllRoutesJSONResult>(AllRoutesJSONResult.class,
 				new Request.JSONcallback<AllRoutesJSONResult>() {
 					public void run(AllRoutesJSONResult res, String s, int error) {
@@ -307,9 +329,9 @@ public class MainService extends Service {
 						try {
 							while (!lock.tryLock(100, TimeUnit.MILLISECONDS)) ;
 							try {
-								stopData.AvalibleRoutes.clear();
-								Collections.addAll(stopData.AvalibleRoutes, res.resultSet.route);
-								isUpdating = false;
+                                searchRoutes.clear();
+								Collections.addAll(searchRoutes, res.resultSet.route);
+                                updatingSearchRoutes = false;
 							} finally {
 								lock.unlock();
 							}
@@ -374,7 +396,8 @@ public class MainService extends Service {
 		if (days > 7) {
 			//TODO warn that this is happeing, give option to opt out, show visual indicator when doing it (not intrucive but there)
 			// and ofcorse provide a way to manauly call.
-			//retrieveLargeObjects();
+			updateAvalibleRoutes();
+            changedSearchRoutes = true;
 			stopData.lastRouteUpdate = now;
 		}
 	}
@@ -413,7 +436,59 @@ public class MainService extends Service {
 
 	synchronized private void dumpData() {
 		try {
-			Context c = getApplicationContext();
+			final Context c = getApplicationContext();
+
+            Thread dumpSearchRoutes  = new Thread() {
+                synchronized public void run() {
+                    BufferedReader r = null;
+                    class wrapper {
+                        ArrayList<Route> list = new ArrayList<Route>();
+                    }
+
+                    try {
+                        FileOutputStream outputStream = c.openFileOutput("searchRoutes.json", Context.MODE_PRIVATE);
+                        wrapper w = new wrapper();
+                            w.list = searchRoutes;
+
+                        String data = new Gson().toJson(w);
+
+                        outputStream.write(data.getBytes());
+                        outputStream.close();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    changedSearchRoutes = false;
+                }
+            };
+            if (changedSearchRoutes)
+                dumpSearchRoutes.start();
+
+            Thread dumpMapRoutes  = new Thread() {
+                synchronized public void run() {
+                    BufferedReader r = null;
+                    class wrapper {
+                        ArrayList<MapRouteData> list = new ArrayList<MapRouteData>();
+                    }
+
+                    try {
+                        FileOutputStream outputStream = c.openFileOutput("mapRoutes.json", Context.MODE_PRIVATE);
+                        wrapper w = new wrapper();
+                        w.list = mapRoutes;
+
+                        String data = new Gson().toJson(w);
+
+                        outputStream.write(data.getBytes());
+                        outputStream.close();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    changedMapRoutes = false;
+                }
+            };
+            if (changedMapRoutes)
+                dumpMapRoutes.start();
+
 			String path = c.getString(R.string.data_path);
 			FileOutputStream outputStream = c.openFileOutput(path, Context.MODE_PRIVATE);
 
@@ -432,22 +507,49 @@ public class MainService extends Service {
 
 	synchronized private void readData() {
 		try {
-			Context c = getApplicationContext();
+			final Context c = getApplicationContext();
+
+            Thread getSearchRoutes  = new Thread() {
+                synchronized public void run() {
+                    BufferedReader r = null;
+                    try {
+                        r = new BufferedReader(new InputStreamReader(c.openFileInput("searchRoutes.json")));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    class wrapper {
+                        ArrayList<Route> list = new ArrayList<Route>();
+                    }
+
+                    searchRoutes = new Gson().fromJson(r, wrapper.class).list;
+                }
+            };
+            getSearchRoutes.start();
+
+            Thread getMapRoutes  = new Thread() {
+                synchronized public void run() {
+                    BufferedReader r = null;
+                    try {
+                        r = new BufferedReader(new InputStreamReader(c.openFileInput("mapRoutes.json")));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    class wrapper {
+                        ArrayList<MapRouteData> list = new ArrayList<MapRouteData>();
+                    }
+
+                    mapRoutes = new Gson().fromJson(r, wrapper.class).list;
+                }
+            };
+            getMapRoutes.start();
+
+
 
 			BufferedReader r = new BufferedReader(new InputStreamReader(c.openFileInput(c.getString(R.string.data_path))));
 			stopData = new Gson().fromJson(r, DataStore.class);
 			r.close();
 
-			//r = new BufferedReader(new InputStreamReader(c.openFileInput("routes.json")));
-			//routes = new Gson().fromJson(r, RouteWrapper.class).routes;
-			//r.close();
 
-		} catch (JsonSyntaxException e) {
-			e.printStackTrace();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -458,12 +560,13 @@ public class MainService extends Service {
 
 	}
 	private void retrieveLargeObjects() {
-		updateAvalibleRoutes();
 		Util.print("send");
-		/*new Request<XmlRequest>(XmlRequest.class,
+        /*updatingMapRoutes = true;
+		new Request<XmlRequest>(XmlRequest.class,
 				new Request.JSONcallback<XmlRequest>() {
 					public void run(XmlRequest r, String s, int error) {
 						parseRouteData(r, s);
+						updatingMapRoutes = false;
 					}
 				},
 				"http://developer.trimet.org/gis/data/tm_routes.kml").start();*/
@@ -472,13 +575,11 @@ public class MainService extends Service {
 
 	private void parseRouteData(XmlRequest r, String s) {
 		Util.print("start");
-		if (r == null) {
-			Util.print("OH NOES");
+		if (r == null)
 			return;
-		}
 
 		for (XmlRequest.document.placemark p : r.Document.BusRoutes) {
-			BussRoute temp = new BussRoute();
+			MapRouteData temp = new MapRouteData();
 				Util.print("Route: " + p.getDataByName("route_number").Value.replaceAll("\\s+", ""));
 				temp.Route = Integer.valueOf(p.getDataByName("route_number").Value.replaceAll("\\s+", ""));
 				temp.Description = p.getDataByName("route_description").Value;
@@ -487,7 +588,7 @@ public class MainService extends Service {
 				temp.Type = p.getDataByName("type").Value;
 
 			for (XmlRequest.document.placemark.MulGeo.LineString l : p.RouteCoordinates.RouteSections) {
-				BussRoute.RoutePart tempPart = temp.new RoutePart();
+                MapRouteData.RoutePart tempPart = temp.new RoutePart();
 
 				String [] coords = l.Coordinates.split(" ");
 
@@ -503,34 +604,15 @@ public class MainService extends Service {
 				temp.parts.add(tempPart);
 			}
 
-			routes.add(temp);
+			mapRoutes.add(temp);
 		}
 
-		try {
-			Context c = getApplicationContext();
-			FileOutputStream outputStream = c.openFileOutput("routes.xml", Context.MODE_PRIVATE);
-
-			RouteWrapper temp = new RouteWrapper();
-				temp.routes = routes;
-			String data = new Gson().toJson(temp);
-
-			outputStream.write(data.getBytes());
-			outputStream.close();
-		} catch (JsonSyntaxException e) {
-			e.printStackTrace();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+        changedMapRoutes = true;
 		Util.print("done");
 	}
 
-	public class RouteWrapper {
-		public ArrayList<BussRoute> routes = new ArrayList<BussRoute>();
-	}
 
-	public class BussRoute {
+	public class MapRouteData {
 		public int Route;
 		public String Description;
 		public int Direction;
@@ -553,10 +635,7 @@ public class MainService extends Service {
 		public int menu = 0;
 
 		public ArrayList<Stop> StopList = new ArrayList<Stop>();
-		public ArrayList<Route> AvalibleRoutes = new ArrayList<Route>();
 		public ArrayList<Alert> Alerts = new ArrayList<Alert>();
 		public long lastRouteUpdate = 0;
 	}
-
-
 }

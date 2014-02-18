@@ -64,7 +64,7 @@ public class SearchRoutesActivity extends Activity {
 
 		theService = MainService.getService();
 
-		if (!theService.isUpdating)
+		if (!theService.updatingSearchRoutes)
 			initRoutes();
 		else {
 			Util.createSpinner(this);
@@ -72,7 +72,7 @@ public class SearchRoutesActivity extends Activity {
 			test.addCallBack("check valid", new Timer.onUpdate() {
 				@Override
 				public void run() {
-					if (!theService.isUpdating) {
+					if (!theService.updatingSearchRoutes) {
 						initRoutes();
 						Util.hideSpinner();
 						SearchRoutesActivity.this.test.stopTimer();
