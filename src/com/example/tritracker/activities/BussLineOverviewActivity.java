@@ -133,9 +133,16 @@ public class BussLineOverviewActivity extends Activity {
 		curStop = theService.getStop(curStop);
 		curBuss = curStop.Busses.get(selection);
 
-		adaptor.notifyDataSetChanged();
-		((Spinner) findViewById(R.id.spinner)).requestLayout();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (selection > curBuss.times.size())
+                    selection = 0;
 
+                adaptor.notifyDataSetChanged();
+                ((Spinner) findViewById(R.id.spinner)).requestLayout();
+            }
+        });
 		//test.update(curBuss.BlockID);
 	}
 

@@ -48,6 +48,14 @@ public class StopDetailsActivity extends Activity {
 		Util.parents.push(getClass());
 
 		theService = MainService.getService();
+        while(theService == null) {
+            try {
+                Thread.sleep((long) 0.01);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            theService = MainService.getService();
+        }
 
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 

@@ -24,6 +24,7 @@ public class AlertListActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
 		setContentView(R.layout.alerts);
 		Util.parents.push(getClass());
 

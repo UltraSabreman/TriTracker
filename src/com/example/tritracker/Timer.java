@@ -43,7 +43,7 @@ public class Timer {
 
 		timerRunnable = new Runnable() {
 			@Override
-            synchronized public void run() {
+            public void run() {
 				if (updateList != null && updateList.size() != 0) {
 					Iterator<Entry<String, onUpdate>> it = updateList.entrySet().iterator();
 					while (it.hasNext()) {

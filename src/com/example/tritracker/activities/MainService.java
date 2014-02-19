@@ -287,28 +287,34 @@ public class MainService extends Service {
 	public ArrayList<Alert> getStopAlerts(Stop s) {
 		if (s == null) return null;
 		ArrayList<Alert> retList = new ArrayList<Alert>();
-		for (Alert a : stopData.Alerts)
-			if (a.affectsStop(s))
-				if (!retList.contains(a))
-					retList.add(a);
-		return retList;
+        synchronized (stopData.Alerts) {
+            for (Alert a : stopData.Alerts)
+                if (a.affectsStop(s))
+                    if (!retList.contains(a))
+                        retList.add(a);
+        }
+        return retList;
 	}
 
 	public boolean doesBussHaveAlerts(Buss b) {
 		if (b == null) return false;
 
-		for (Alert a : stopData.Alerts)
-			for (int i : a.AffectedLines)
-				if (i == b.Route)
-					return true;
+        synchronized (stopData.Alerts) {
+            for (Alert a : stopData.Alerts)
+                for (int i : a.AffectedLines)
+                    if (i == b.Route)
+                        return true;
+        }
 		return false;
 	}
 
 	public boolean routeHasAlert(int route) {
-		for (Alert a : stopData.Alerts)
-			for (Integer i : a.AffectedLines)
-				if (i == route)
-					return true;
+        synchronized (stopData.Alerts) {
+            for (Alert a : stopData.Alerts)
+                for (Integer i : a.AffectedLines)
+                    if (i == route)
+                        return true;
+        }
 		return false;
 	}
 
@@ -345,13 +351,13 @@ public class MainService extends Service {
 				new Request.JSONcallback<DetourJSONResult>() {
 					public void run(DetourJSONResult r, String s,  int error) {
 						if (error != 0) return;
-						MainService.this.stopData.Alerts.clear();
+                        synchronized (stopData.Alerts) {
+						    MainService.this.stopData.Alerts.clear();
 
-						if (r.resultSet != null && r.resultSet.detour != null)
-							for (ResultSet.Detour d : r.resultSet.detour)
-								stopData.Alerts.add(new Alert(d));
-
-
+                            if (r.resultSet != null && r.resultSet.detour != null)
+                                for (ResultSet.Detour d : r.resultSet.detour)
+                                    stopData.Alerts.add(new Alert(d));
+                        }
 					}
 				},
 				"http://developer.trimet.org/ws/V1/detours?json=true&appID="
@@ -424,13 +430,15 @@ public class MainService extends Service {
 				}
 				//TODO fix this stupidity
 				Stop tempStop = getStop(temp);
-				if (tempStop != null)
-					tempStop.Update(temp, false);
+				if (tempStop != null) {
+                    synchronized (tempStop) {
+    					tempStop.Update(temp, false);
+                    }
+                }
 			}
 		}
 	}
 
-	//TODO: make this dump the raw XML.
 	synchronized private void dumpData() {
 		try {
 			final Context c = getApplicationContext();
@@ -444,12 +452,13 @@ public class MainService extends Service {
                         OutputStreamWriter ow = new OutputStreamWriter(c.openFileOutput("searchRoutes.json", Context.MODE_PRIVATE));
 	                    wrapperSearch w = new wrapperSearch();
                             w.list = searchRoutes;
-
-                        String data = new Gson().toJson(w);
-
+                        String data;
+                        synchronized (w) {
+                            data = new Gson().toJson(w);
+                        }
 	                    ow.write(data);
 	                    ow.close();
-                    } catch (FileNotFoundException e) {//todo make this better and merge with above
+                    } catch (FileNotFoundException e) {
 	                    e.printStackTrace();
                     } catch (IOException e) {
 	                    e.printStackTrace();
@@ -462,7 +471,10 @@ public class MainService extends Service {
 			String path = c.getString(R.string.data_path);
 			FileOutputStream outputStream = c.openFileOutput(path, Context.MODE_PRIVATE);
 
-			String data = new Gson().toJson(stopData);
+            String data;
+            synchronized (stopData) {
+			     data = new Gson().toJson(stopData);
+            }
 
 			outputStream.write(data.getBytes());
 			outputStream.close();
@@ -492,7 +504,9 @@ public class MainService extends Service {
 	                    wrapperSearch temp = new Gson().fromJson(r, wrapperSearch.class);
 
                         if (temp != null)
-	                        searchRoutes = temp.list;
+                            synchronized (searchRoutes) {
+    	                        searchRoutes = temp.list;
+                            }
                     } catch (NullPointerException e) {
 	                    e.printStackTrace();
                     }  catch (Exception e) {
@@ -622,7 +636,9 @@ public class MainService extends Service {
 				temp.getDir(dir).parts.add(tempPart);
 			}
 
-			mapRoutes.add(temp);
+            synchronized (mapRoutes) {
+			    mapRoutes.add(temp);
+            }
 		}
 
 		if (XMLString != null) {

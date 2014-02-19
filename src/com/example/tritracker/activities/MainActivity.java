@@ -91,6 +91,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
 
 			theService.sub("Main", new Timer.onUpdate() {
 				public void run() {
+
 				}
 			});
 
