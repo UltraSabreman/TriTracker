@@ -80,6 +80,7 @@ public class MainService extends Service {
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
+		theService = this;
 		if (refreshTime == null) {
 			if (!started) {
 				readData();
@@ -100,7 +101,6 @@ public class MainService extends Service {
 			//updateSearchRoutes();
 
 		}
-		theService = this;
 		return START_STICKY;
 	}
 
@@ -146,7 +146,6 @@ public class MainService extends Service {
 	        for (MapRouteData r : mapRoutes)
 	            if (r.Route == curRoute) {
 		            ret.add(r);
-		            break;
 	            }
 	    }
         return ret;
@@ -562,6 +561,7 @@ public class MainService extends Service {
 				},
 				"http://developer.trimet.org/gis/data/tm_routes.kml").start();
 	}
+
 
 	private void parseRouteData(XmlRequest r, String XMLString) {
 		if (r == null)

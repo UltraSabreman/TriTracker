@@ -43,6 +43,7 @@ public class Map implements GooglePlayServicesClient.ConnectionCallbacks, Google
 		map = frag.getMap();
 		cont = c;
 		act = a;
+
 		theService = MainService.getService();
 
 		// Get a handle to the Map Fragment

@@ -60,8 +60,8 @@ public class MapActivity extends Activity  {
 						if (stopId != -1)
 							test.showStops(theService.getStop(stopId));
 
-						test.RouteLayerDraw("4");
-						test.TrackingLayerDraw("4");
+						test.RouteLayerDraw("33");
+						test.TrackingLayerDraw("33");
 						test.showStops(null);
 						Util.hideSpinner();
 					} catch (ConnectException e) {}
