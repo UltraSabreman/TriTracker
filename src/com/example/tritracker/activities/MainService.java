@@ -22,18 +22,16 @@ import com.example.tritracker.json.DetourJSONResult;
 import com.example.tritracker.json.DetourJSONResult.ResultSet;
 import com.example.tritracker.json.Request;
 import com.example.tritracker.json.XmlRequest;
-
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
-
 import java.io.BufferedReader;
-
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -137,11 +135,20 @@ public class MainService extends Service {
 	}
 
 
-    public MapRouteData getMapRoute(int route) {
-        for (MapRouteData r : mapRoutes)
-            if (r.Route == route)
-                return r;
-        return null;
+    public ArrayList<MapRouteData> getMapRoutes(String routes) {
+	    if (routes == null || routes.isEmpty()) return mapRoutes;
+
+	    String [] list = routes.split(",");
+	    ArrayList<MapRouteData> ret = new ArrayList<MapRouteData>();
+	    for (String s: list) {
+		    int curRoute = Integer.valueOf(s);
+	        for (MapRouteData r : mapRoutes)
+	            if (r.Route == curRoute) {
+		            ret.add(r);
+		            break;
+	            }
+	    }
+        return ret;
     }
 	public void addReminder(NotificationHandler not) {
 		if (!reminders.contains(not)) {
@@ -321,6 +328,7 @@ public class MainService extends Service {
 							} finally {
 								lock.unlock();
 							}
+							changedSearchRoutes = true;
                             doUpdate(false);
 						} catch (InterruptedException e) {
 							e.printStackTrace();
@@ -386,7 +394,6 @@ public class MainService extends Service {
             updateSearchRoutes();
             updateMapRoutes();
             //TODO: make this only manualy trigarable.
-            changedSearchRoutes = true;
 			stopData.lastRouteUpdate = now;
 		}
 	}
@@ -423,31 +430,30 @@ public class MainService extends Service {
 		}
 	}
 
+	//TODO: make this dump the raw XML.
 	synchronized private void dumpData() {
 		try {
 			final Context c = getApplicationContext();
 
             Thread dumpSearchRoutes  = new Thread() {
                 synchronized public void run() {
+	                changedSearchRoutes = false;
                     BufferedReader r = null;
-                    class wrapper {
-                        ArrayList<Route> list = new ArrayList<Route>();
-                    }
 
                     try {
-                        FileOutputStream outputStream = c.openFileOutput("searchRoutes.json", Context.MODE_PRIVATE);
-                        wrapper w = new wrapper();
+                        OutputStreamWriter ow = new OutputStreamWriter(c.openFileOutput("searchRoutes.json", Context.MODE_PRIVATE));
+	                    wrapperSearch w = new wrapperSearch();
                             w.list = searchRoutes;
 
                         String data = new Gson().toJson(w);
 
-                        outputStream.write(data.getBytes());
-                        outputStream.close();
-                    } catch (Exception e) {
-                        e.printStackTrace();
+	                    ow.write(data);
+	                    ow.close();
+                    } catch (FileNotFoundException e) {//todo make this better and merge with above
+	                    e.printStackTrace();
+                    } catch (IOException e) {
+	                    e.printStackTrace();
                     }
-
-                    changedSearchRoutes = false;
                 }
             };
             if (changedSearchRoutes)
@@ -455,24 +461,27 @@ public class MainService extends Service {
 
             Thread dumpMapRoutes  = new Thread() {
                 synchronized public void run() {
+	                changedMapRoutes = false;
                     BufferedReader r = null;
-                    class wrapper {
-                        ArrayList<MapRouteData> list = new ArrayList<MapRouteData>();
-                    }
 
                     try {
-                        FileOutputStream outputStream = c.openFileOutput("mapRoutes.json", Context.MODE_PRIVATE);
-                        wrapper w = new wrapper();
+	                    OutputStreamWriter ow = new OutputStreamWriter(c.openFileOutput("mapRoutes.json", Context.MODE_PRIVATE));
+	                    wrapperMap w = new wrapperMap();
                             w.list = mapRoutes;
+
+	                    Util.print("dump");
 
                         String data = new Gson().toJson(w);
 
-                        outputStream.write(data.getBytes());
-                        outputStream.close();
-                    } catch (Exception e) {
+	                    Util.print("dump text");
+	                    ow.write(data);
+                        ow.close();
+	                    Util.print("dump done");
+                    } catch (FileNotFoundException e) {//todo make this better and merge with above
                         e.printStackTrace();
+                    } catch (IOException e) {
+	                    e.printStackTrace();
                     }
-                    changedMapRoutes = false;
                 }
             };
             if (changedMapRoutes)
@@ -501,20 +510,17 @@ public class MainService extends Service {
             Thread getSearchRoutes  = new Thread() {
                 synchronized public void run() {
                     BufferedReader r = null;
-                    class wrapper {
-                        ArrayList<Route> list = new ArrayList<Route>();
-                    }
 
                     try {
                         r = new BufferedReader(new InputStreamReader(c.openFileInput("searchRoutes.json")));
                         if (r == null) return;
-                        wrapper temp = new Gson().fromJson(r, wrapper.class);
-                        if (temp != null) {
-                            searchRoutes = temp.list;
-                            Util.print("Read in search Routes");
-                        }
+
+	                    wrapperSearch temp = new Gson().fromJson(r, wrapperSearch.class);
+
+                        if (temp != null)
+	                        searchRoutes = temp.list;
                     } catch (NullPointerException e) {
-                        e.printStackTrace();
+	                    e.printStackTrace();
                     }  catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -525,18 +531,17 @@ public class MainService extends Service {
             Thread getMapRoutes  = new Thread() {
                 synchronized public void run() {
                     BufferedReader r = null;
-                    class wrapper {
-                        ArrayList<MapRouteData> list = new ArrayList<MapRouteData>();
-                    }
 
                     try {
                         r = new BufferedReader(new InputStreamReader(c.openFileInput("mapRoutes.json")));
                         if (r == null) return;
-                        wrapper temp = new Gson().fromJson(r, wrapper.class);
-                        if (temp != null) {
+	                    wrapperMap temp = new Gson().fromJson(r, wrapperMap.class);
+	                    if (temp == null)
+		                    Util.print("dfgdfgd");
+	                    else
+	                        Util.print("--------");
+                        if (temp != null)
                             mapRoutes = temp.list;
-                            Util.print("Read in map Routes");
-                        }
 
                         } catch (NullPointerException e) {
                         e.printStackTrace();
@@ -576,19 +581,18 @@ public class MainService extends Service {
 				"http://developer.trimet.org/gis/data/tm_routes.kml").start();
 	}
 
-
 	private void parseRouteData(XmlRequest r, String s) {
 		if (r == null)
 			return;
 
 		for (XmlRequest.document.placemark p : r.Document.BusRoutes) {
 			MapRouteData temp = new MapRouteData();
-                temp.Route = Integer.valueOf(p.getDataByName("route_number").Value.replaceAll("\\s+", ""));
-                temp.Description = p.getDataByName("route_description").Value;
-                temp.Type = p.getDataByName("type").Value;
+                temp.Route = Integer.valueOf(p.getDataByName("route_number").Value.trim());
+                temp.Description = p.getDataByName("route_description").Value.trim();
+                temp.Type = p.getDataByName("type").Value.trim();
 
-            int dir = Integer.valueOf(p.getDataByName("direction").Value.replaceAll("\\s+",""));
-            String dirDesc = p.getDataByName("direction_description").Value;
+            int dir = Integer.valueOf(p.getDataByName("direction").Value.trim());
+            String dirDesc = p.getDataByName("direction_description").Value.trim();
 
             if (temp.getDir(dir) == null) {
                 MapRouteData.RouteDir tr = temp.new RouteDir();
@@ -601,36 +605,38 @@ public class MainService extends Service {
 			for (XmlRequest.document.placemark.MulGeo.LineString l : p.RouteCoordinates.RouteSections) {
                 MapRouteData.RouteDir.RoutePart tempPart = temp.getDir(dir).new RoutePart();
 
-                boolean inLat = true;
+                boolean inLng = true;
                 String lat = null;
                 String lng = null;
-                for (int i = 0; i < l.Coordinates.length(); i ++) {
-                    char curChar = l.Coordinates.charAt(i);
+				String co = l.Coordinates.trim();
+                for (int i = 0; i < co.length(); i ++) {
+                    char curChar = co.charAt(i);
 
                     if (curChar == ' ') {
-                        if (lng != null) {
+                        if (lat != null) {
                             tempPart.coords.add(new LatLng(Double.valueOf(lat), Double.valueOf(lng)));
                             lng = null;
                             lat = null;
-                            inLat = true;
+	                        inLng = true;
                         } else
-                            break; //string is fucked, save what we cann
+                            break;
                             //TODO improve error handeling.
                     } else if (curChar == ',')
-                        inLat = false;
-                    else {
-                        if (inLat) {
-                            if (lat == null)
-                                lat = new String();
-                            lat += curChar;
+	                    inLng = false;
+                    else if (curChar != ' ') {
+                        if (inLng) {
+	                        if (lng == null)
+		                        lng = new String();
+	                        lng += curChar;
                         } else {
-                            if (lng == null)
-                                lng = new String();
-                            lng += curChar;
+	                        if (lat == null)
+		                        lat = new String();
+	                        lat += curChar;
                         }
                     }
                 }
-
+				//this gets the last set in the list
+				tempPart.coords.add(new LatLng(Double.valueOf(lat), Double.valueOf(lng)));
 				temp.getDir(dir).parts.add(tempPart);
 			}
 
@@ -638,8 +644,16 @@ public class MainService extends Service {
 		}
 
         changedMapRoutes = true;
+		Util.print("done loading");
 	}
 
+	private class wrapperMap {
+		ArrayList<MapRouteData> list = new ArrayList<MapRouteData>();
+	}
+
+	private class wrapperSearch {
+		ArrayList<Route> list  = new ArrayList<Route>();
+	}
 
 	public class MapRouteData {
 		public int Route;

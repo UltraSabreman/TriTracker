@@ -48,6 +48,7 @@ public class MapActivity extends Activity  {
                         if (!test.isConnected()) return;
 						test.setSearchLayerEnabled(true);
                         test.setRouteLayerEnabled(true);
+						test.setTrackingLayerEnabled(true);
 						test.showStops(null);
 						delay.stopTimer();
 					} catch (ConnectException e) {}

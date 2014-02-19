@@ -76,7 +76,12 @@ public class BussLineOverviewActivity extends Activity {
 				try {
 					delay.stopTimer();
 					test.setTrackingLayerEnabled(true);
+					test.setRouteLayerEnabled(true);
+					Util.print("sdsdf");
+					test.RouteLayerDraw(String.valueOf(curBuss.Route));
 					test.TrackingLayerDraw(curStop, curBuss.Route, curBuss.times.get(curArival).BlockID);
+					Util.print("---");
+
 				} catch (ConnectException e) {}
 			}
 		});

@@ -75,6 +75,10 @@ public class Map implements GooglePlayServicesClient.ConnectionCallbacks, Google
 		searchLayer.searchForStops(s);
 	}
 
+	public void RouteLayerDraw(String routes) {
+		routeLayer.DrawRoute(routes);
+	}
+
 	public void TrackingLayerDraw(Stop s, int route, int blockid) {
 		setCameraPos(new LatLng(s.Latitude, s.Longitude), zoomLevel);
 

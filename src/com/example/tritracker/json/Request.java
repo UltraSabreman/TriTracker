@@ -2,7 +2,6 @@ package com.example.tritracker.json;
 
 import com.google.gson.Gson;
 import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.DomDriver;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -36,8 +35,6 @@ public class Request<T> extends Thread {
 		HttpConnectionParams.setConnectionTimeout(httpParams, 30000);
 		HttpClient httpclient = new DefaultHttpClient(httpParams);
 		HttpResponse response;
-
-
 		try {
 			response = httpclient.execute(new HttpGet(url));
 			StatusLine statusLine = response.getStatusLine();
@@ -60,6 +57,7 @@ public class Request<T> extends Thread {
 		} catch (IOException e) {
 			error = 4;
 		}
+
 
 		if (callback != null) {
 			T result = null;
