@@ -40,17 +40,21 @@ public class MapActivity extends Activity  {
 
 		final LatLng targetPos = (extras != null ? new LatLng(extras.getDouble("lat"), extras.getDouble("lng")) : null);
 
+		Util.createSpinner(this);
 		final Timer delay = new Timer(0.1);
 			delay.addCallBack("", new Timer.onUpdate() {
 				@Override
 				public void run() {
 					try {
-                        if (!test.isConnected()) return;
+                        if (!test.isConnected() || theService.updatingMapRoutes) return;
+						delay.stopTimer();
 						test.setSearchLayerEnabled(true);
                         test.setRouteLayerEnabled(true);
 						test.setTrackingLayerEnabled(true);
+						test.RouteLayerDraw("4");
+						test.TrackingLayerDraw("4");
 						test.showStops(null);
-						delay.stopTimer();
+						Util.hideSpinner();
 					} catch (ConnectException e) {}
 				}
 			});

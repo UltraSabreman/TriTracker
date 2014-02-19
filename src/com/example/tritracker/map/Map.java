@@ -79,12 +79,19 @@ public class Map implements GooglePlayServicesClient.ConnectionCallbacks, Google
 		routeLayer.DrawRoute(routes);
 	}
 
-	public void TrackingLayerDraw(Stop s, int route, int blockid) {
+
+
+	public void TrackingLayerTransition(Stop s, int route, int blockid) {
 		setCameraPos(new LatLng(s.Latitude, s.Longitude), zoomLevel);
 
 		showStops(s);
 		trackingLayer.DoTransition(s, route, blockid);
 	}
+
+	public void TrackingLayerDraw(String filter) {
+		trackingLayer.Draw(filter);
+	}
+
 
 	public void TrackingLayerSwitchBuss(int blockid) {
 		if (trackingLayer != null)

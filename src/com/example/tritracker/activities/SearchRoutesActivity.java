@@ -72,9 +72,9 @@ public class SearchRoutesActivity extends Activity {
 				@Override
 				public void run() {
 					if (!theService.updatingSearchRoutes) {
+						test.stopTimer();
 						initRoutes();
 						Util.hideSpinner();
-						SearchRoutesActivity.this.test.stopTimer();
 					}
 				}
 			});

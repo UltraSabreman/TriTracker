@@ -25,6 +25,7 @@ import com.example.tritracker.json.XmlRequest;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+import com.thoughtworks.xstream.XStream;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -459,34 +460,6 @@ public class MainService extends Service {
             if (changedSearchRoutes)
                 dumpSearchRoutes.start();
 
-            Thread dumpMapRoutes  = new Thread() {
-                synchronized public void run() {
-	                changedMapRoutes = false;
-                    BufferedReader r = null;
-
-                    try {
-	                    OutputStreamWriter ow = new OutputStreamWriter(c.openFileOutput("mapRoutes.json", Context.MODE_PRIVATE));
-	                    wrapperMap w = new wrapperMap();
-                            w.list = mapRoutes;
-
-	                    Util.print("dump");
-
-                        String data = new Gson().toJson(w);
-
-	                    Util.print("dump text");
-	                    ow.write(data);
-                        ow.close();
-	                    Util.print("dump done");
-                    } catch (FileNotFoundException e) {//todo make this better and merge with above
-                        e.printStackTrace();
-                    } catch (IOException e) {
-	                    e.printStackTrace();
-                    }
-                }
-            };
-            if (changedMapRoutes)
-                dumpMapRoutes.start();
-
 			String path = c.getString(R.string.data_path);
 			FileOutputStream outputStream = c.openFileOutput(path, Context.MODE_PRIVATE);
 
@@ -535,13 +508,17 @@ public class MainService extends Service {
                     try {
                         r = new BufferedReader(new InputStreamReader(c.openFileInput("mapRoutes.json")));
                         if (r == null) return;
-	                    wrapperMap temp = new Gson().fromJson(r, wrapperMap.class);
-	                    if (temp == null)
-		                    Util.print("dfgdfgd");
-	                    else
-	                        Util.print("--------");
-                        if (temp != null)
-                            mapRoutes = temp.list;
+
+	                    XStream testStream = new XStream();
+	                    testStream.setClassLoader(XmlRequest.class.getClassLoader());
+	                    testStream.processAnnotations(XmlRequest.class);
+
+	                    XmlRequest temp = (XmlRequest) testStream.fromXML(r);
+
+                        if (temp != null) {
+                            parseRouteData(temp, null);
+	                        Util.print("all good");
+                        }
 
                         } catch (NullPointerException e) {
                         e.printStackTrace();
@@ -574,14 +551,14 @@ public class MainService extends Service {
 				new Request.JSONcallback<XmlRequest>() {
 					public void run(XmlRequest r, String s, int error) {
 						parseRouteData(r, s);
-						updatingMapRoutes = false;
                         doUpdate(false);
+						updatingMapRoutes = false;
 					}
 				},
 				"http://developer.trimet.org/gis/data/tm_routes.kml").start();
 	}
 
-	private void parseRouteData(XmlRequest r, String s) {
+	private void parseRouteData(XmlRequest r, String XMLString) {
 		if (r == null)
 			return;
 
@@ -643,8 +620,20 @@ public class MainService extends Service {
 			mapRoutes.add(temp);
 		}
 
-        changedMapRoutes = true;
-		Util.print("done loading");
+		if (XMLString != null) {
+			try {
+				OutputStreamWriter ow = new OutputStreamWriter(getApplicationContext().openFileOutput("mapRoutes.json", Context.MODE_PRIVATE));
+
+				ow.write(XMLString);
+				ow.close();
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+
+		Util.print("Done loading");
 	}
 
 	private class wrapperMap {

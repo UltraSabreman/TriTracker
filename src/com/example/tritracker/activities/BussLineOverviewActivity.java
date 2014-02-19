@@ -72,15 +72,13 @@ public class BussLineOverviewActivity extends Activity {
 		delay.addCallBack("", new Timer.onUpdate(){
 			@Override
 			public void run() {
-				if (!test.isConnected()) return;
+				if (!test.isConnected() || theService.updatingMapRoutes) return;
 				try {
 					delay.stopTimer();
 					test.setTrackingLayerEnabled(true);
 					test.setRouteLayerEnabled(true);
-					Util.print("sdsdf");
 					test.RouteLayerDraw(String.valueOf(curBuss.Route));
-					test.TrackingLayerDraw(curStop, curBuss.Route, curBuss.times.get(curArival).BlockID);
-					Util.print("---");
+					test.TrackingLayerTransition(curStop, curBuss.Route, curBuss.times.get(curArival).BlockID);
 
 				} catch (ConnectException e) {}
 			}
