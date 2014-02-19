@@ -478,6 +478,8 @@ public class MainService extends Service {
 
 	synchronized private void readData() {
 		try {
+			updatingMapRoutes = true;
+			updatingSearchRoutes = true;
 			final Context c = getApplicationContext();
 
             Thread getSearchRoutes  = new Thread() {
@@ -496,6 +498,8 @@ public class MainService extends Service {
 	                    e.printStackTrace();
                     }  catch (Exception e) {
                         e.printStackTrace();
+                    } finally {
+	                    updatingSearchRoutes = false;
                     }
                 }
             };
@@ -517,13 +521,14 @@ public class MainService extends Service {
 
                         if (temp != null) {
                             parseRouteData(temp, null);
-	                        Util.print("all good");
                         }
 
                         } catch (NullPointerException e) {
                         e.printStackTrace();
                     } catch (Exception e) {
                         e.printStackTrace();
+                    } finally {
+	                    updatingMapRoutes = false;
                     }
                 }
             };

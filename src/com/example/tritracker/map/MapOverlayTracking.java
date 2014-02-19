@@ -12,6 +12,7 @@ import android.graphics.Rect;
 import com.example.tritracker.R;
 import com.example.tritracker.Stop;
 import com.example.tritracker.Timer;
+import com.example.tritracker.Util;
 import com.example.tritracker.activities.MainService;
 import com.example.tritracker.json.BussesJSONResult;
 import com.example.tritracker.json.Request;
@@ -70,15 +71,19 @@ public class MapOverlayTracking {
 		curStop = s;
 
 		Draw(String.valueOf(route));
-		Timer delay = new Timer(0.1);
+
+		final Timer delay = new Timer(3);
 			delay.addCallBack("", new Timer.onUpdate() {
 				@Override
 				public void run() {
 					if (drawing) return;
+					Util.print("timer tick");
+					delay.stopTimer();
 					moveToCurBuss();
 				}
 			});
 
+		delay.restartTimer();
 	}
 
 	private boolean moveToCurBuss() {
@@ -114,9 +119,10 @@ public class MapOverlayTracking {
 	}
 
 	private void parseBusses(BussesJSONResult r) {
-		if (r == null) return;
+		if (r == null || r.resultSet == null || r.resultSet.vehicle == null) return;
 
 		Random rand = new Random();
+
 		for (BussesJSONResult.ResultSet.Vehicle v : r.resultSet.vehicle) {
 			LatLng pos = new LatLng(v.latitude, v.longitude);
 			String id;

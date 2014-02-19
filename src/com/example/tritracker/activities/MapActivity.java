@@ -39,6 +39,11 @@ public class MapActivity extends Activity  {
 		final Bundle extras = getIntent().getExtras();
 
 		final LatLng targetPos = (extras != null ? new LatLng(extras.getDouble("lat"), extras.getDouble("lng")) : null);
+		final int stopId = (extras != null ? extras.getInt("stopid") : -1);
+
+		if (targetPos != null)
+			Util.print("Lat: " + targetPos.latitude + " | Lng: " + targetPos.longitude);
+		Util.print(" | id: " + stopId);
 
 		Util.createSpinner(this);
 		final Timer delay = new Timer(0.1);
@@ -51,6 +56,10 @@ public class MapActivity extends Activity  {
 						test.setSearchLayerEnabled(true);
                         test.setRouteLayerEnabled(true);
 						test.setTrackingLayerEnabled(true);
+
+						if (stopId != -1)
+							test.showStops(theService.getStop(stopId));
+
 						test.RouteLayerDraw("4");
 						test.TrackingLayerDraw("4");
 						test.showStops(null);

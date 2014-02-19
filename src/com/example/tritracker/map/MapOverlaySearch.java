@@ -37,6 +37,7 @@ public class MapOverlaySearch {
 	private LatLng oldPos = null;
 
 	public MapOverlaySearch(Map parentMap, Context c, Activity a) {
+		//TODO make this NOT instantly zoom in where you cliked.
 		this.parentMap = parentMap;
 		context = c;
 		activity = a;
@@ -106,6 +107,17 @@ public class MapOverlaySearch {
 			public void onMarkerDragStart(Marker arg0) {}
 		});
 
+		map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+			@Override
+			public boolean onMarkerClick(Marker marker) {
+				if (stops.contains(marker)) {
+					marker.showInfoWindow();
+					return false;
+				}
+				return true;
+			}
+		});
+
 		map.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
 			@Override
 			public void onInfoWindowClick(Marker mark) {
@@ -153,7 +165,7 @@ public class MapOverlaySearch {
 		else
 			thePos = searchMarker.getPosition();
 
-		parentMap.setCameraPos(thePos, parentMap.zoomLevel);
+		parentMap.gotoLocation(thePos, parentMap.zoomLevel);
 
 		if (!active)
 			Util.createSpinner(activity);
@@ -212,9 +224,9 @@ public class MapOverlaySearch {
 				));
 			}
 
-			if (stop != null) {
+			/*if (stop != null) {
 				stops.get(0).showInfoWindow();
-			}
+			}*/
 		}
 	}
 

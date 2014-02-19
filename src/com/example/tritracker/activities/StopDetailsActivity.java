@@ -286,6 +286,7 @@ public class StopDetailsActivity extends Activity {
 				Intent temp = new Intent(getApplicationContext(), MapActivity.class);
 				temp.putExtra("lat", curStop.Latitude);
 				temp.putExtra("lng", curStop.Longitude);
+				temp.putExtra("stopid", curStop.StopID);
 				startActivity(temp);
 				return true;
 		}
