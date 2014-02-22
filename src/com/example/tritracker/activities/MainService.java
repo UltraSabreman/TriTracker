@@ -530,7 +530,23 @@ public class MainService extends Service {
 	                    testStream.setClassLoader(XmlRequest.class.getClassLoader());
 	                    testStream.processAnnotations(XmlRequest.class);
 
-	                    XmlRequest temp = (XmlRequest) testStream.fromXML(r);
+	                    long start = System.currentTimeMillis();
+	                    Util.print("Start Read");
+
+	                    StringBuilder str = new StringBuilder();
+	                    for (String s = null; (s = r.readLine()) != null;)
+		                    str.append(s);
+	                    Util.print("End Read: " + (System.currentTimeMillis() - start) / 1000);
+
+	                    start = System.currentTimeMillis();
+	                    Util.print("Start tostring");
+	                    String xml = str.toString();
+	                    Util.print("End tostring: " + (System.currentTimeMillis() - start) / 1000);
+
+	                    start = System.currentTimeMillis();
+	                    Util.print("Start Convert");
+	                    XmlRequest temp = (XmlRequest) testStream.fromXML(xml);
+	                    Util.print("End Convert: " + (System.currentTimeMillis() - start) / 1000);
 
                         if (temp != null) {
                             parseRouteData(temp, null);
@@ -542,6 +558,7 @@ public class MainService extends Service {
                         e.printStackTrace();
                     } finally {
 	                    updatingMapRoutes = false;
+	                    Util.print("--Stop Read--");
                     }
                 }
             };
@@ -578,6 +595,9 @@ public class MainService extends Service {
 
 
 	private void parseRouteData(XmlRequest r, String XMLString) {
+		long start = System.currentTimeMillis();
+		Util.print("Start Parse");
+
 		if (r == null)
 			return;
 
@@ -602,15 +622,15 @@ public class MainService extends Service {
                 MapRouteData.RouteDir.RoutePart tempPart = temp.getDir(dir).new RoutePart();
 
                 boolean inLng = true;
-                String lat = null;
-                String lng = null;
+                StringBuilder lat = null;
+				StringBuilder lng = null;
 				String co = l.Coordinates.trim();
                 for (int i = 0; i < co.length(); i ++) {
                     char curChar = co.charAt(i);
 
                     if (curChar == ' ') {
                         if (lat != null) {
-                            tempPart.coords.add(new LatLng(Double.valueOf(lat), Double.valueOf(lng)));
+                            tempPart.coords.add(new LatLng(Double.valueOf(lat.toString()), Double.valueOf(lng.toString())));
                             lng = null;
                             lat = null;
 	                        inLng = true;
@@ -622,17 +642,17 @@ public class MainService extends Service {
                     else if (curChar != ' ') {
                         if (inLng) {
 	                        if (lng == null)
-		                        lng = new String();
-	                        lng += curChar;
+		                        lng = new StringBuilder();
+	                        lng.append(curChar);
                         } else {
 	                        if (lat == null)
-		                        lat = new String();
-	                        lat += curChar;
+		                        lat = new StringBuilder();
+	                        lat.append(curChar);
                         }
                     }
                 }
 				//this gets the last set in the list
-				tempPart.coords.add(new LatLng(Double.valueOf(lat), Double.valueOf(lng)));
+				tempPart.coords.add(new LatLng(Double.valueOf(lat.toString()), Double.valueOf(lng.toString())));
 				temp.getDir(dir).parts.add(tempPart);
 			}
 
@@ -640,6 +660,8 @@ public class MainService extends Service {
 			    mapRoutes.add(temp);
             }
 		}
+
+		Util.print("End parse: " + (System.currentTimeMillis() - start) / 1000);
 
 		if (XMLString != null) {
 			try {
