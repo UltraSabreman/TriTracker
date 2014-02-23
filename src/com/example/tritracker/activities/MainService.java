@@ -428,34 +428,9 @@ public class MainService extends Service {
 	}
 
 	synchronized private void dumpData() {
+		final Context c = getApplicationContext();
+
 		try {
-			final Context c = getApplicationContext();
-
-            Thread dumpSearchRoutes  = new Thread() {
-                synchronized public void run() {
-	                changedSearchRoutes = false;
-                    BufferedReader r = null;
-
-                    try {
-                        OutputStreamWriter ow = new OutputStreamWriter(c.openFileOutput("searchRoutes.json", Context.MODE_PRIVATE));
-	                    wrapperSearch w = new wrapperSearch();
-                            w.list = searchRoutes;
-                        String data;
-                        synchronized (w) {
-                            data = new Gson().toJson(w);
-                        }
-	                    ow.write(data);
-	                    ow.close();
-                    } catch (FileNotFoundException e) {
-	                    e.printStackTrace();
-                    } catch (IOException e) {
-	                    e.printStackTrace();
-                    }
-                }
-            };
-            if (changedSearchRoutes)
-                dumpSearchRoutes.start();
-
 			String path = c.getString(R.string.data_path);
 			FileOutputStream outputStream = c.openFileOutput(path, Context.MODE_PRIVATE);
 
@@ -473,78 +448,100 @@ public class MainService extends Service {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+
+		Thread dumpSearchRoutes  = new Thread() {
+			synchronized public void run() {
+				changedSearchRoutes = false;
+				BufferedReader r = null;
+
+				try {
+					OutputStreamWriter ow = new OutputStreamWriter(c.openFileOutput("searchRoutes.json", Context.MODE_PRIVATE));
+					wrapperSearch w = new wrapperSearch();
+					w.list = searchRoutes;
+					String data;
+					synchronized (w) {
+						data = new Gson().toJson(w);
+					}
+					ow.write(data);
+					ow.close();
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		};
+		if (changedSearchRoutes)
+			dumpSearchRoutes.start();
 	}
 
 	synchronized private void readData() {
+		final Context c = getApplicationContext();
+		updatingMapRoutes = true;
+		updatingSearchRoutes = true;
+
 		try {
-			updatingMapRoutes = true;
-			updatingSearchRoutes = true;
-			final Context c = getApplicationContext();
-
-            Thread getSearchRoutes  = new Thread() {
-                synchronized public void run() {
-                    BufferedReader r = null;
-
-                    try {
-                        r = new BufferedReader(new InputStreamReader(c.openFileInput("searchRoutes.json")));
-                        if (r == null) return;
-
-	                    wrapperSearch temp = new Gson().fromJson(r, wrapperSearch.class);
-
-                        if (temp != null)
-                            synchronized (searchRoutes) {
-    	                        searchRoutes = temp.list;
-                            }
-                    } catch (NullPointerException e) {
-	                    e.printStackTrace();
-                    }  catch (Exception e) {
-                        e.printStackTrace();
-                    } finally {
-	                    updatingSearchRoutes = false;
-                    }
-                }
-            };
-            getSearchRoutes.start();
-
-            Thread getMapRoutes  = new Thread() {
-                synchronized public void run() {
-                    BufferedReader r = null;
-
-                    try {
-                        r = new BufferedReader(new InputStreamReader(c.openFileInput("mapRoutes.json")));
-                        if (r == null) return;
-
-	                    XStream testStream = new XStream();
-	                    testStream.setClassLoader(XmlRequest.class.getClassLoader());
-	                    testStream.processAnnotations(XmlRequest.class);
-
-	                    StringBuilder str = new StringBuilder();
-	                    for (String s = null; (s = r.readLine()) != null;)
-		                    str.append(s);
-
-                        parseRouteData((XmlRequest) testStream.fromXML(str.toString()), null);
-
-                    } catch (NullPointerException e) {
-                        e.printStackTrace();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            };
-            getMapRoutes.start();
-
-
-			BufferedReader r = new BufferedReader(new InputStreamReader(c.openFileInput(c.getString(R.string.data_path))));
+   			BufferedReader r = new BufferedReader(new InputStreamReader(c.openFileInput(c.getString(R.string.data_path))));
 			stopData = new Gson().fromJson(r, DataStore.class);
 			r.close();
-
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			if (stopData == null)
 				stopData = new DataStore();
 		}
+
+		Thread getSearchRoutes  = new Thread() {
+			synchronized public void run() {
+				BufferedReader r = null;
+
+				try {
+					r = new BufferedReader(new InputStreamReader(c.openFileInput("searchRoutes.json")));
+					if (r == null) return;
+
+					wrapperSearch temp = new Gson().fromJson(r, wrapperSearch.class);
+
+					if (temp != null)
+						synchronized (searchRoutes) {
+							searchRoutes = temp.list;
+						}
+				} catch (NullPointerException e) {
+					e.printStackTrace();
+				}  catch (Exception e) {
+					e.printStackTrace();
+				} finally {
+					updatingSearchRoutes = false;
+				}
+			}
+		};
+		getSearchRoutes.start();
+
+		Thread getMapRoutes  = new Thread() {
+			synchronized public void run() {
+				BufferedReader r = null;
+
+				try {
+					r = new BufferedReader(new InputStreamReader(c.openFileInput("mapRoutes.json")));
+					if (r == null) return;
+
+					XStream testStream = new XStream();
+					testStream.setClassLoader(XmlRequest.class.getClassLoader());
+					testStream.processAnnotations(XmlRequest.class);
+
+					StringBuilder str = new StringBuilder();
+					for (String s = null; (s = r.readLine()) != null;)
+						str.append(s);
+
+					parseRouteData((XmlRequest) testStream.fromXML(str.toString()), null);
+
+				} catch (NullPointerException e) {
+					e.printStackTrace();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		};
+		getMapRoutes.start();
 
 
 	}

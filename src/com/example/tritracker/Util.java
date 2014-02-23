@@ -5,11 +5,15 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Environment;
 import android.widget.Toast;
 
 import com.example.tritracker.activities.SpinnerPopupActivity;
 import com.example.tritracker.json.ForgroundRequestManager.checkStops;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -29,6 +33,28 @@ public class Util {
 	public static enum TimeType {Second, Minute, Hour, Day}
 
 	;
+
+	public static void fileLog(boolean on) {
+		if (on) {
+			Thread.currentThread().setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+				@Override
+				public void uncaughtException(Thread thread, Throwable ex) {
+
+					PrintWriter pw;
+					try {
+						pw = new PrintWriter(
+								new FileWriter(Environment.getExternalStorageDirectory()+"/error.log", true));
+						ex.printStackTrace(pw);
+						pw.flush();
+						pw.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			});
+		} else
+			Thread.currentThread().setUncaughtExceptionHandler(null);
+	}
 
 	public static char[] oldChars = new char[5];
 	public static String strip(String s)
