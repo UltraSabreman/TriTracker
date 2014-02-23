@@ -67,7 +67,6 @@ public class Request<T> extends Thread {
 				testStream.setClassLoader(XmlRequest.class.getClassLoader());
 				testStream.processAnnotations(XmlRequest.class);
 
-
 				if (responseString != null)
 					result = (T) testStream.fromXML(responseString);
 			} else

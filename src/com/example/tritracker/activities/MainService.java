@@ -13,7 +13,6 @@ import com.example.tritracker.R;
 import com.example.tritracker.Stop;
 import com.example.tritracker.Timer;
 import com.example.tritracker.Timer.onUpdate;
-import com.example.tritracker.Util;
 import com.example.tritracker.Util.ListType;
 import com.example.tritracker.json.AllRoutesJSONResult;
 import com.example.tritracker.json.AllRoutesJSONResult.ResultSet.Route;
@@ -22,7 +21,6 @@ import com.example.tritracker.json.DetourJSONResult;
 import com.example.tritracker.json.DetourJSONResult.ResultSet;
 import com.example.tritracker.json.Request;
 import com.example.tritracker.json.XmlRequest;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.thoughtworks.xstream.XStream;
@@ -48,8 +46,8 @@ public class MainService extends Service {
 	private Timer refreshTime = null;
 	private DataStore stopData;
 
-	private ArrayList<MapRouteData> mapRoutes = new ArrayList<MapRouteData>();
-    public ArrayList<Route> searchRoutes = new ArrayList<Route>();
+	private XmlRequest mapRoutes;
+	private ArrayList<Route> searchRoutes = new ArrayList<Route>();
 
 	private Map<String, onUpdate> refreshList = new HashMap<String, onUpdate>();
 	private final IBinder mBinder = new LocalBinder();
@@ -136,20 +134,10 @@ public class MainService extends Service {
 	}
 
 
-    public ArrayList<MapRouteData> getMapRoutes(String routes) {
-	    if (routes == null || routes.isEmpty()) return mapRoutes;
-
-	    String [] list = routes.split(",");
-	    ArrayList<MapRouteData> ret = new ArrayList<MapRouteData>();
-	    for (String s: list) {
-		    int curRoute = Integer.valueOf(s);
-	        for (MapRouteData r : mapRoutes)
-	            if (r.Route == curRoute) {
-		            ret.add(r);
-	            }
-	    }
-        return ret;
+    public XmlRequest getMapRoutes() {
+	    return mapRoutes;
     }
+
 	public void addReminder(NotificationHandler not) {
 		if (!reminders.contains(not)) {
 			reminders.add(not);
@@ -350,7 +338,7 @@ public class MainService extends Service {
 		new Request<DetourJSONResult>(DetourJSONResult.class,
 				new Request.JSONcallback<DetourJSONResult>() {
 					public void run(DetourJSONResult r, String s,  int error) {
-						if (error != 0) return;
+						if (error != 0 || r == null) return;
                         synchronized (stopData.Alerts) {
 						    MainService.this.stopData.Alerts.clear();
 
@@ -530,40 +518,20 @@ public class MainService extends Service {
 	                    testStream.setClassLoader(XmlRequest.class.getClassLoader());
 	                    testStream.processAnnotations(XmlRequest.class);
 
-	                    long start = System.currentTimeMillis();
-	                    Util.print("Start Read");
-
 	                    StringBuilder str = new StringBuilder();
 	                    for (String s = null; (s = r.readLine()) != null;)
 		                    str.append(s);
-	                    Util.print("End Read: " + (System.currentTimeMillis() - start) / 1000);
 
-	                    start = System.currentTimeMillis();
-	                    Util.print("Start tostring");
-	                    String xml = str.toString();
-	                    Util.print("End tostring: " + (System.currentTimeMillis() - start) / 1000);
+                        parseRouteData((XmlRequest) testStream.fromXML(str.toString()), null);
 
-	                    start = System.currentTimeMillis();
-	                    Util.print("Start Convert");
-	                    XmlRequest temp = (XmlRequest) testStream.fromXML(xml);
-	                    Util.print("End Convert: " + (System.currentTimeMillis() - start) / 1000);
-
-                        if (temp != null) {
-                            parseRouteData(temp, null);
-                        }
-
-                        } catch (NullPointerException e) {
+                    } catch (NullPointerException e) {
                         e.printStackTrace();
                     } catch (Exception e) {
                         e.printStackTrace();
-                    } finally {
-	                    updatingMapRoutes = false;
-	                    Util.print("--Stop Read--");
                     }
                 }
             };
             getMapRoutes.start();
-
 
 
 			BufferedReader r = new BufferedReader(new InputStreamReader(c.openFileInput(c.getString(R.string.data_path))));
@@ -594,122 +562,28 @@ public class MainService extends Service {
 	}
 
 
-	private void parseRouteData(XmlRequest r, String XMLString) {
-		long start = System.currentTimeMillis();
-		Util.print("Start Parse");
-
+	private void parseRouteData(XmlRequest r, String xml) {
 		if (r == null)
 			return;
 
-		for (XmlRequest.document.placemark p : r.Document.BusRoutes) {
-			MapRouteData temp = new MapRouteData();
-                temp.Route = Integer.valueOf(p.getDataByName("route_number").Value.trim());
-                temp.Description = p.getDataByName("route_description").Value.trim();
-                temp.Type = p.getDataByName("type").Value.trim();
+		mapRoutes = r;
 
-            int dir = Integer.valueOf(p.getDataByName("direction").Value.trim());
-            String dirDesc = p.getDataByName("direction_description").Value.trim();
+		try {
+			OutputStreamWriter ow = new OutputStreamWriter(getApplicationContext().openFileOutput("mapRoutes.json", Context.MODE_PRIVATE));
 
-            if (temp.getDir(dir) == null) {
-                MapRouteData.RouteDir tr = temp.new RouteDir();
-                    tr.Direction = dir;
-                    tr.DirectionDesc = dirDesc;
-
-                temp.Directions.add(tr);
-            }
-
-			for (XmlRequest.document.placemark.MulGeo.LineString l : p.RouteCoordinates.RouteSections) {
-                MapRouteData.RouteDir.RoutePart tempPart = temp.getDir(dir).new RoutePart();
-
-                boolean inLng = true;
-                StringBuilder lat = null;
-				StringBuilder lng = null;
-				String co = l.Coordinates.trim();
-                for (int i = 0; i < co.length(); i ++) {
-                    char curChar = co.charAt(i);
-
-                    if (curChar == ' ') {
-                        if (lat != null) {
-                            tempPart.coords.add(new LatLng(Double.valueOf(lat.toString()), Double.valueOf(lng.toString())));
-                            lng = null;
-                            lat = null;
-	                        inLng = true;
-                        } else
-                            break;
-                            //TODO improve error handeling.
-                    } else if (curChar == ',')
-	                    inLng = false;
-                    else if (curChar != ' ') {
-                        if (inLng) {
-	                        if (lng == null)
-		                        lng = new StringBuilder();
-	                        lng.append(curChar);
-                        } else {
-	                        if (lat == null)
-		                        lat = new StringBuilder();
-	                        lat.append(curChar);
-                        }
-                    }
-                }
-				//this gets the last set in the list
-				tempPart.coords.add(new LatLng(Double.valueOf(lat.toString()), Double.valueOf(lng.toString())));
-				temp.getDir(dir).parts.add(tempPart);
-			}
-
-            synchronized (mapRoutes) {
-			    mapRoutes.add(temp);
-            }
+			ow.write(xml);
+			ow.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			updatingMapRoutes = false;
 		}
-
-		Util.print("End parse: " + (System.currentTimeMillis() - start) / 1000);
-
-		if (XMLString != null) {
-			try {
-				OutputStreamWriter ow = new OutputStreamWriter(getApplicationContext().openFileOutput("mapRoutes.json", Context.MODE_PRIVATE));
-
-				ow.write(XMLString);
-				ow.close();
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-
-		Util.print("Done loading");
-	}
-
-	private class wrapperMap {
-		ArrayList<MapRouteData> list = new ArrayList<MapRouteData>();
 	}
 
 	private class wrapperSearch {
 		ArrayList<Route> list  = new ArrayList<Route>();
-	}
-
-	public class MapRouteData {
-		public int Route;
-		public String Description;
-		public String Type;
-
-        public ArrayList<RouteDir> Directions = new ArrayList<RouteDir>();
-        public RouteDir getDir(int i) {
-            for (RouteDir r : Directions)
-                if (r.Direction == i)
-                    return r;
-            return null;
-        }
-
-        public class RouteDir {
-            public int Direction;
-            public String DirectionDesc;
-            public ArrayList<RoutePart> parts = new ArrayList<RoutePart>();
-
-
-            public class RoutePart {
-                public ArrayList<LatLng> coords = new ArrayList<LatLng>();
-            }
-        }
 	}
 
 	private class DataStore {

@@ -30,6 +30,26 @@ public class Util {
 
 	;
 
+	public static char[] oldChars = new char[5];
+	public static String strip(String s)
+	{
+		final int inputLen = s.length();
+		if ( oldChars.length < inputLen )
+		{
+			oldChars = new char[inputLen];
+		}
+		s.getChars(0, inputLen, oldChars, 0);
+
+		char[] newChars = new char[s.length()];
+		int newLen = 0;
+		for (int j = 0; j < inputLen; j++) {
+			char ch = oldChars[j];
+			if (ch > ' ')
+				newChars[newLen++] = ch;
+		}
+		return new String(newChars, 0, newLen);
+	}
+
 
 	public static void print(String s) {
 		System.out.println(s);
