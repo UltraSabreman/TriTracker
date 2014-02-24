@@ -565,18 +565,19 @@ public class MainService extends Service {
 
 		mapRoutes = r;
 
-		try {
-			OutputStreamWriter ow = new OutputStreamWriter(getApplicationContext().openFileOutput("mapRoutes.json", Context.MODE_PRIVATE));
+		if (xml != null) {
+			try {
+				OutputStreamWriter ow = new OutputStreamWriter(getApplicationContext().openFileOutput("mapRoutes.json", Context.MODE_PRIVATE));
 
-			ow.write(xml);
-			ow.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			updatingMapRoutes = false;
+				ow.write(xml);
+				ow.close();
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
+		updatingMapRoutes = false;
 	}
 
 	private class wrapperSearch {

@@ -35,6 +35,7 @@ public class MapOverlaySearch {
 	private Circle searchCircle = null;
 
 	private LatLng oldPos = null;
+	private LatLng searchPos = null;
 
 	public MapOverlaySearch(Map parentMap, Context c, Activity a) {
 		//TODO make this NOT instantly zoom in where you cliked.
@@ -56,17 +57,18 @@ public class MapOverlaySearch {
 
 		stops.clear();
 		searchCircle.remove();
+		searchCircle = null;
 		searchMarker.remove();
+		searchMarker = null;
 	}
 
 	public void DrawLayer(final LatLng targetPos) {
-		LatLng searchPos = null;
-		if (targetPos == null)
+		if (targetPos == null && searchPos == null)
 			searchPos = parentMap.getMyPos();
-		else
+		else if (targetPos != null)
 			searchPos = targetPos;
 
-		oldPos = targetPos;
+		oldPos = searchPos;
 
 		GoogleMap map = parentMap.getMap();
 
@@ -95,7 +97,8 @@ public class MapOverlaySearch {
 		map.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
 			@Override
 			public void onMarkerDragEnd(Marker marker) {
-				searchForStops(null);
+				searchPos = marker.getPosition();
+				searchForStops(null, false);
 			}
 
 			@Override
@@ -133,12 +136,12 @@ public class MapOverlaySearch {
 				if (!searchMarker.isVisible())
 					searchMarker.setVisible(true);
 
-				LatLng pos = parentMap.getMyPos();
+				searchPos = parentMap.getMyPos();
 
-				searchMarker.setPosition(pos);
-				searchCircle.setCenter(pos);
+				searchMarker.setPosition(searchPos);
+				searchCircle.setCenter(searchPos);
 
-				searchForStops(null);
+				searchForStops(null, false);
 
 				return false;
 			}
@@ -147,23 +150,50 @@ public class MapOverlaySearch {
 		map.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
 			@Override
 			public void onMapClick(LatLng pos) {
-				searchMarker.setVisible(true);
-				searchMarker.setPosition(pos);
-				searchCircle.setCenter(pos);
-				searchForStops(null);
+				searchPos = pos;
+				if (searchMarker != null) {
+					searchMarker.setVisible(true);
+					searchMarker.setPosition(pos);
+				}
+				if (searchCircle != null) {
+					searchCircle.setVisible(true);
+					searchCircle.setCenter(pos);
+				}
+				if (searchCircle != null && searchMarker != null)
+					searchForStops(null, false);
+
 			}
 		});
 
 		parentMap.setCameraPos(searchPos, parentMap.zoomLevel);
 	}
 
-	public void searchForStops(final Stop s) {
+	public void setPosition(LatLng pos) {
+		searchPos = pos;
+	}
+
+	public LatLng getPos() {
+		return searchPos;
+	}
+
+	public void searchFromPos(LatLng pos, boolean details) {
+		setPosition(pos);
+		searchForStops(null, details);
+	}
+
+	public void searchForStops(final Stop s, final boolean details) {
 		LatLng thePos;
 		final boolean active = (s != null);
-		if (active)
+		if (active) {
 			thePos = new LatLng(s.Latitude, s.Longitude);
-		else
-			thePos = searchMarker.getPosition();
+			searchCircle.setVisible(false);
+			searchMarker.setVisible(false);
+		} else {
+			thePos = searchPos;
+			searchMarker.setVisible(true);
+			searchCircle.setVisible(true);
+
+		}
 
 		parentMap.gotoLocation(thePos, parentMap.zoomLevel);
 
@@ -176,7 +206,7 @@ public class MapOverlaySearch {
 						activity.runOnUiThread(new Runnable() {
 							@Override
 							public void run() {
-								proccesLocations(s, r, error);
+								proccesLocations(s, r, error, details);
 								if (!active)
 									Util.hideSpinner();
 							}
@@ -192,7 +222,7 @@ public class MapOverlaySearch {
 
 	}
 
-	public void proccesLocations(Stop stop, MapJSONResult r, int error) {
+	public void proccesLocations(Stop stop, MapJSONResult r, int error, boolean details) {
 		if (r == null)
 			return;
 
@@ -224,9 +254,9 @@ public class MapOverlaySearch {
 				));
 			}
 
-			/*if (stop != null) {
+			if (details) {
 				stops.get(0).showInfoWindow();
-			}*/
+			}
 		}
 	}
 

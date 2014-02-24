@@ -9,22 +9,21 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.NumberPicker;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.tritracker.Buss;
-import com.example.tritracker.map.Map;
 import com.example.tritracker.NotificationHandler;
 import com.example.tritracker.R;
 import com.example.tritracker.Stop;
 import com.example.tritracker.Timer;
 import com.example.tritracker.Util;
 import com.example.tritracker.arrayadaptors.BussOverviewSpinnerAdaptor;
+import com.example.tritracker.map.Map;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.UiSettings;
-
-import java.net.ConnectException;
 
 public class BussLineOverviewActivity extends Activity {
 	MainService theService = null;
@@ -60,27 +59,44 @@ public class BussLineOverviewActivity extends Activity {
 		Button remind = (Button) findViewById(R.id.ReminderButton);
 
 		MapFragment mapFrag = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
+
 		UiSettings set = mapFrag.getMap().getUiSettings();
 			set.setZoomControlsEnabled(false);
 			set.setCompassEnabled(false);
 			set.setMyLocationButtonEnabled(false);
 			set.setAllGesturesEnabled(false);
 
+		final RelativeLayout click = (RelativeLayout) findViewById(R.id.mapClicker);
 
 		test = new Map(mapFrag, getApplicationContext(), this);
 		final Timer delay = new Timer(0.1);
+
+		//TODO make this prettier and more obvious
+		click.setBackgroundColor(getResources().getColor(android.R.color.black));
 		delay.addCallBack("", new Timer.onUpdate(){
 			@Override
 			public void run() {
 				if (!test.isConnected() || theService.updatingMapRoutes) return;
-				try {
-					delay.stopTimer();
-					test.setTrackingLayerEnabled(true);
-					test.setRouteLayerEnabled(true);
-					test.RouteLayerDraw(String.valueOf(curBuss.Route));
-					test.TrackingLayerTransition(curStop, curBuss.Route, curBuss.times.get(curArival).BlockID);
+				delay.stopTimer();
+				test.setTrackingLayerEnabled(true);
+				test.setRouteLayerEnabled(true);
+				test.RouteLayerDraw(String.valueOf(curBuss.Route));
+				test.TrackingLayerTransition(curStop, curBuss.Route, curBuss.times.get(curArival).BlockID, false);
 
-				} catch (ConnectException e) {}
+				click.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View view) {
+						Intent temp = new Intent(getApplicationContext(), MapActivity.class);
+						temp.putExtra("stopid", curStop.StopID);
+						temp.putExtra("lat", curStop.Latitude);
+						temp.putExtra("lang", curStop.Longitude);
+						temp.putExtra("route", String.valueOf(curBuss.Route));
+						temp.putExtra("block", curBuss.times.get(curArival).BlockID);
+						startActivity(temp);
+					}
+				});
+
+				click.setBackgroundColor(getResources().getColor(android.R.color.transparent));
 			}
 		});
 		delay.restartTimer();
@@ -88,12 +104,6 @@ public class BussLineOverviewActivity extends Activity {
 		adaptor = new BussOverviewSpinnerAdaptor(this, curStop, curBuss, curBuss.times);
 		spin.setAdapter(adaptor);
 		adaptor.notifyDataSetChanged();
-
-		if (theService.doesBussHaveAlerts(curBuss))
-			alert.setEnabled(true);
-		else
-			alert.setEnabled(false);
-
 
 		alert.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -103,6 +113,11 @@ public class BussLineOverviewActivity extends Activity {
 				startActivity(temp);
 			}
 		});
+
+		if (theService.doesBussHaveAlerts(curBuss))
+			alert.setEnabled(true);
+		else
+			alert.setEnabled(false);
 
 		remind.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -117,9 +132,6 @@ public class BussLineOverviewActivity extends Activity {
 				curArival = pos;
 
 				update();
-
-				if (test.isConnected())
-					test.TrackingLayerSwitchBuss(curBuss.times.get(curArival).BlockID);
 			}
 
 			@Override
@@ -136,14 +148,28 @@ public class BussLineOverviewActivity extends Activity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (selection > curBuss.times.size())
-                    selection = 0;
+                if (curArival > curBuss.times.size())
+	                curArival = 0;
 
                 adaptor.notifyDataSetChanged();
-                ((Spinner) findViewById(R.id.spinner)).requestLayout();
+	            Spinner spin = (Spinner) findViewById(R.id.spinner);
+	            spin.postInvalidate();
+	            //spin.requestLayout();
             }
         });
-		//test.update(curBuss.BlockID);
+
+		if (curBuss.times != null && curBuss.times.size() != 0) {
+			final Timer delay = new Timer(0.1);
+			delay.addCallBack("", new Timer.onUpdate() {
+				@Override
+				public void run() {
+					if (!test.isConnected() || theService.updatingMapRoutes) return;
+					delay.stopTimer();
+					test.TrackingLayerSwitchBuss(curBuss.times.get(curArival).BlockID);
+				}
+			});
+			delay.restartTimer();
+		}
 	}
 
 	@Override
@@ -155,10 +181,9 @@ public class BussLineOverviewActivity extends Activity {
 
 
 	public void buildDialouge() {
-		final NotificationHandler rem = theService.getReminder(curBuss.times.get(selection));
+		final NotificationHandler rem = theService.getReminder(curBuss.times.get(curArival));
 
 		final boolean adding = (rem == null);
-
 
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
@@ -167,13 +192,13 @@ public class BussLineOverviewActivity extends Activity {
 
 		final NumberPicker b = (NumberPicker) ourView.findViewById(R.id.reminderTime);
 
-		b.setMaxValue(Math.min(Util.getBussMinutes(adding ? curBuss.times.get(selection) : rem.getBussTime()), 60));
+		b.setMaxValue(Math.min(Util.getBussMinutes(adding ? curBuss.times.get(curArival) : rem.getBussTime()), 60));
 		b.setMinValue(1);
 
 		theService.sub("wheel update", new Timer.onUpdate() {
 			@Override
 			public void run() {
-				b.setMaxValue(Math.min(Util.getBussMinutes(adding ? curBuss.times.get(selection) : rem.getBussTime()), 60));
+				b.setMaxValue(Math.min(Util.getBussMinutes(adding ? curBuss.times.get(curArival) : rem.getBussTime()), 60));
 			}
 		});
 
@@ -187,7 +212,7 @@ public class BussLineOverviewActivity extends Activity {
 
 		builder.setPositiveButton(adding ? "Ok" : "Finish", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int id) {
-				if (rem != null && rem.IsSet && adding) {
+				if (rem != null && rem.IsSet && !adding) {
 					rem.editNotification(b.getValue());
 					Util.showToast("Reminder Updated", Toast.LENGTH_SHORT);
 				} else {

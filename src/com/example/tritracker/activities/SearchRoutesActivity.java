@@ -85,7 +85,7 @@ public class SearchRoutesActivity extends Activity {
 
 
 	private void initStops(Route.Dir d) {
-		if (d == null) return;
+		if (d == null || d.stop == null) return;
 
 		stops.clear();
 		for (Route.Dir.Stop s : d.stop)
@@ -220,6 +220,7 @@ public class SearchRoutesActivity extends Activity {
 				@Override
 				public void afterTextChanged(Editable editable) {
 					searchRoutes(editable.toString());
+					new Sorter<Route>(Route.class).sortList(dRoutes, ListType.Routes);
 				}
 			};
 			edit.addTextChangedListener(rw);

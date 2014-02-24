@@ -78,7 +78,8 @@
 		<activity
 			android:name="com.example.tritracker.activities.MapActivity"
 			android:label="@string/title_activity_map"
-			android:windowSoftInputMode="stateHidden" >
+			android:windowSoftInputMode="stateHidden"
+            android:screenOrientation="portrait">
 		</activity>
 		<activity
 			android:name="com.example.tritracker.activities.SpinnerPopupActivity"

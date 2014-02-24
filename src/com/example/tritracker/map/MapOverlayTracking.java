@@ -12,7 +12,6 @@ import android.graphics.Rect;
 import com.example.tritracker.R;
 import com.example.tritracker.Stop;
 import com.example.tritracker.Timer;
-import com.example.tritracker.Util;
 import com.example.tritracker.activities.MainService;
 import com.example.tritracker.json.BussesJSONResult;
 import com.example.tritracker.json.Request;
@@ -48,14 +47,14 @@ public class MapOverlayTracking {
 	}
 
 	public void update() {
-		Draw(bussRouteFilter);
+		Draw(bussRouteFilter, false);
 	}
 
 	public void switchBuss(int blockid) {
 		curBlock = blockid;
-		if (moveToCurBuss()) return;
-		//if the buss that we wanted to look at moved, we'll update them and try again.
-		Draw(null);
+		//if (moveToCurBuss()) return;
+		Draw(null, true);
+		moveToCurBuss();
 	}
 
 	public void clearAll() {
@@ -70,14 +69,13 @@ public class MapOverlayTracking {
 		curBlock = block;
 		curStop = s;
 
-		Draw(String.valueOf(route));
+		Draw(String.valueOf(route), false);
 
 		final Timer delay = new Timer(3);
 			delay.addCallBack("", new Timer.onUpdate() {
 				@Override
 				public void run() {
 					if (drawing) return;
-					Util.print("timer tick");
 					delay.stopTimer();
 					moveToCurBuss();
 				}
@@ -96,7 +94,7 @@ public class MapOverlayTracking {
 		return false;
 	}
 
-	public void Draw(final String InBussRouteFilter) {
+	public void Draw(final String InBussRouteFilter, final boolean move) {
 		if (InBussRouteFilter != null)
 			bussRouteFilter = InBussRouteFilter;
 
@@ -109,6 +107,8 @@ public class MapOverlayTracking {
 							@Override
 							public void run() {
 								parseBusses(r);
+								if (move)
+									moveToCurBuss();
 								drawing = false;
 							}
 						});

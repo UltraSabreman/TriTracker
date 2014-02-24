@@ -127,6 +127,7 @@ public class StopDetailsActivity extends Activity {
 				onUpdate();
 			}
 		});
+		onUpdate();
 	}
 
 	void initList() {

@@ -58,6 +58,11 @@
                     android:layout_margin="1dp"
                     android:layout_centerInParent="true"
                     android:name="com.google.android.gms.maps.MapFragment"/>
+                <RelativeLayout
+                    android:id="@+id/mapClicker"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/transparent"/>
             </RelativeLayout>
     </RelativeLayout>
 </RelativeLayout>

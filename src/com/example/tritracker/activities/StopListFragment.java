@@ -79,12 +79,13 @@ public class StopListFragment extends Fragment implements UndoListener {
 	public boolean onContextItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.menu_action_sort_list:
-				final ArrayList<Stop> tempStops = isFavorites ? theService.getFavorties() : theService.getHistory();
-				new Sorter<Stop>(Stop.class).sortUI(getActivity(), isFavorites ? ListType.Favorites : ListType.History, tempStops,
+				stopList = isFavorites ? theService.getFavorties() : theService.getHistory();
+				new Sorter<Stop>(Stop.class).sortUI(getActivity(), isFavorites ? ListType.Favorites : ListType.History, stopList,
 						new Timer.onUpdate() {
 							public void run() {
 								update(true);
-								theService.doUpdate(false);
+								adaptor.notifyDataSetChanged();
+								//theService.doUpdate(false);
 							}
 						});
 				return true;
@@ -102,7 +103,7 @@ public class StopListFragment extends Fragment implements UndoListener {
 								s.inHistory = false;
 
 						update(true);
-						theService.doUpdate(false);
+						//theService.doUpdate(false);
 					}
 				});
 
@@ -118,8 +119,7 @@ public class StopListFragment extends Fragment implements UndoListener {
 			default:
 
 		}
-		theService.doUpdate(false);
-		adaptor.notifyDataSetChanged();
+
 		return super.onContextItemSelected(item);
 	}
 
@@ -276,6 +276,8 @@ public class StopListFragment extends Fragment implements UndoListener {
 			stopList.clear();
 			stopList = isFavorites ? theService.getFavorties() : theService.getHistory();
 		}
+
+		new Sorter<Stop>(Stop.class).sort(isFavorites ? ListType.Favorites : ListType.History, stopList, null);
 
 		if (getActivity() != null)
 			getActivity().runOnUiThread(new Runnable() {

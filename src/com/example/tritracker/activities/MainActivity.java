@@ -60,10 +60,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
 		super.onStart();
 		bindService(new Intent(this, MainService.class), mConnection, Context.BIND_AUTO_CREATE);
 
-        /*if (favFrag != null)
-        	favFrag.update();
-        if (histFrag != null)
-        	histFrag.update();*/
 	}
 
 	@Override
@@ -91,11 +87,18 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
 
 			theService.sub("Main", new Timer.onUpdate() {
 				public void run() {
-
+					runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							if (favFrag != null)
+								favFrag.update(false);
+							if (histFrag != null)
+								histFrag.update(false);
+						}
+					});
 				}
 			});
-
-			theService.doUpdate(true);
+			//theService.doUpdate(false);
 		}
 
 		@Override

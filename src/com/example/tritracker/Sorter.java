@@ -34,20 +34,19 @@ public class Sorter<T> {
 		AlertDialog.Builder builder = new AlertDialog.Builder(a);
 
 		builder.setTitle("Sort By");
-		String[] list = new String[]{"Stop name", "Stop ID", "Last Accesed"};
+		CharSequence[] list = new CharSequence[]{"Stop name", "Stop ID", "Last Accesed"};
 		if (type == Buss.class)
-			list = new String[]{"Route Name", "Route Number", "Arrival Time"};
+			list = new CharSequence[]{"Route Name", "Route Number", "Arrival Time"};
 		if (type == Route.class)
-			list = new String[]{"Route Name", "Route Number"};
+			list = new CharSequence[]{"Route Name", "Route Number"};
 
 		sortOrder = theService.getSort(listtype);
-		builder.setSingleChoiceItems(list, theService.getSort(listtype),
-				new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						sortOrder = which;
-					}
-				});
+		builder.setSingleChoiceItems(list ,sortOrder, new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialogInterface, int i) {
+				sortOrder = i;
+			}
+		});
 
 		builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int id) {

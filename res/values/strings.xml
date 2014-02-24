@@ -25,6 +25,7 @@
 	<string name="action_map">Find Nearby Stops</string>
 	<string name="action_routes">Search For a Stop</string>
 	<string name="action_find_stop">Show This Stop on the map</string>
+	<string name="what_to_show"></string>
 	<string name="content">A Picture</string>
 	<string name="search">Search for a Route</string>
 	<string name="no_arrivals">No arrival information available.</string>

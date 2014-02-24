@@ -19,8 +19,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import java.net.ConnectException;
-
 public class Map implements GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnectionFailedListener {
 	private MainService theService = null;
 	private GoogleMap map = null;
@@ -69,11 +67,22 @@ public class Map implements GooglePlayServicesClient.ConnectionCallbacks, Google
 		}
 	}
 
-	public void showStops(Stop s) {
+	public void setSearchPos(LatLng pos) {
+		if (searchLayer != null)
+			searchLayer.setPosition(pos);
+	}
+
+	public LatLng getSearchPos() {
+		if (searchLayer != null)
+			return searchLayer.getPos();
+		return null;
+	}
+
+	public void showStop(Stop s, boolean details) {
 		if (searchLayer == null)
 			searchLayer = new MapOverlaySearch(this, cont, act);
 
-		searchLayer.searchForStops(s);
+		searchLayer.searchForStops(s, details);
 	}
 
 	public void RouteLayerDraw(String routes) {
@@ -82,15 +91,15 @@ public class Map implements GooglePlayServicesClient.ConnectionCallbacks, Google
 
 
 
-	public void TrackingLayerTransition(Stop s, int route, int blockid) {
+	public void TrackingLayerTransition(Stop s, int route, int blockid, boolean showInfo) {
 		setCameraPos(new LatLng(s.Latitude, s.Longitude), zoomLevel);
 
-		showStops(s);
+		showStop(s, showInfo);
 		trackingLayer.DoTransition(s, route, blockid);
 	}
 
 	public void TrackingLayerDraw(String filter) {
-		trackingLayer.Draw(filter);
+		trackingLayer.Draw(filter, false);
 	}
 
 
@@ -99,8 +108,7 @@ public class Map implements GooglePlayServicesClient.ConnectionCallbacks, Google
 			trackingLayer.switchBuss(blockid);
 	}
 
-	public void setSearchLayerEnabled(boolean should) throws ConnectException {
-		if (!connected) throw new ConnectException("Not connected to play services. Please wait.");
+	public void setSearchLayerEnabled(boolean should){
 		if (should && searchLayer == null)
 			searchLayer = new MapOverlaySearch(this, cont, act);
 		else if(!should && searchLayer != null) {
@@ -109,8 +117,7 @@ public class Map implements GooglePlayServicesClient.ConnectionCallbacks, Google
 		}
 	}
 
-	public void setTrackingLayerEnabled(boolean should) throws ConnectException {
-		if (!connected) throw new ConnectException("Not connected to play services. Please wait.");
+	public void setTrackingLayerEnabled(boolean should){
 		if (should && trackingLayer == null)
 			trackingLayer = new MapOverlayTracking(this, cont, act);
 		else if(!should && trackingLayer != null) {
@@ -119,12 +126,26 @@ public class Map implements GooglePlayServicesClient.ConnectionCallbacks, Google
 		}
 	}
 
-    public void setRouteLayerEnabled(boolean should) throws ConnectException {
-        if (!connected) throw new ConnectException("Not connected to play services. Please wait.");
+	public void clearTrackingLayer() {
+		if (trackingLayer != null)
+			trackingLayer.clearAll();
+	}
+
+	public void clearRouteLayer() {
+		if (routeLayer != null)
+			routeLayer.clearAll();
+	}
+
+	public void clearSearchLayer() {
+		if (searchLayer != null)
+			searchLayer.clearAll();
+	}
+
+    public void setRouteLayerEnabled(boolean should){
         if (should && routeLayer == null)
             routeLayer = new MapOverlayRoutes(this, cont, act);
         else if(!should && trackingLayer != null) {
-            //routeLayer.clearAll();
+            routeLayer.clearAll();
             routeLayer = null;
         }
     }
@@ -137,7 +158,6 @@ public class Map implements GooglePlayServicesClient.ConnectionCallbacks, Google
 	public void gotoLocation(LatLng pos, int zoom) {
 		map.animateCamera(CameraUpdateFactory.newLatLngZoom(pos, zoom));
 	}
-
 
 	public void update() {
 		if (searchLayer != null)

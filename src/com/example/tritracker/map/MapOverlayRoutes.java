@@ -10,6 +10,8 @@ import android.graphics.Paint;
 import com.example.tritracker.activities.MainService;
 import com.example.tritracker.json.XmlRequest;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.lang.reflect.Field;
@@ -25,7 +27,11 @@ public class MapOverlayRoutes {
     private Activity activity = null;
 	private ArrayList<MapRouteData> mapRoutes = new ArrayList<MapRouteData>();
 
-    public MapOverlayRoutes(Map parentMap, Context c, Activity a) {
+	ArrayList<Polyline> routes = new ArrayList<Polyline>();
+	ArrayList<Marker> stops = new ArrayList<Marker>();
+
+
+	public MapOverlayRoutes(Map parentMap, Context c, Activity a) {
         this.parentMap = parentMap;
         context = c;
         activity = a;
@@ -33,26 +39,93 @@ public class MapOverlayRoutes {
 
     }
 
-    public Bitmap drawStopCircle(int col) {
-        Bitmap result = Bitmap.createBitmap(25, 25, Bitmap.Config.ARGB_8888);
+    public void DrawRoute(String strRoutes) {
+	    List<String> routeList = Arrays.asList(strRoutes.split(","));
+	    makeRoutes(routeList);
 
-        Canvas canvas = new Canvas(result);
-        Paint paint = new Paint();
+	    for (MapRouteData r : mapRoutes) {
+	        if (r == null) return;
 
-        paint.setColor(Color.BLACK);
-        paint.setStyle(Paint.Style.FILL);
-        paint.setAntiAlias(true);
+	        Random rand = new Random();
+	        rand.setSeed(r.Route);
 
-        canvas.drawCircle(result.getWidth() / 2, result.getHeight() / 2, 12.5f, paint);
+	        int colr = rand.nextInt(255) + 1;
+	        int colg = rand.nextInt(255) + 1;
+	        int colb = rand.nextInt(255) + 1;
 
-        paint.setColor(col);
-        canvas.drawCircle(result.getWidth() / 2, result.getHeight() / 2, 12, paint);
+	        int color = 0xFF000000;
+	        color = color | (colr << (4 * 4));
+	        color = color | (colg << (4 * 2));
+	        color = color | (colb);
 
-        return result;
+
+	        for (MapRouteData.RouteDir d: r.Directions)
+	            for (MapRouteData.RouteDir.RoutePart p : d.parts) {
+		            PolylineOptions rectOptions = new PolylineOptions();
+		            rectOptions.color(color);
+		            rectOptions.geodesic(true);
+
+	                for (LatLng l : p.coords) {
+	                    rectOptions.add(l);
+	                }
+
+		            routes.add(parentMap.getMap().addPolyline(rectOptions));
+	            }
+
+		    /*ArrayList<AllRoutesJSONResult.ResultSet.Route> t = theService.getRoutes();
+		    for (AllRoutesJSONResult.ResultSet.Route route : t) {
+			    if (route.route != r.Route) continue;
+			    for (AllRoutesJSONResult.ResultSet.Route.Dir d : route.dir)
+				    for (AllRoutesJSONResult.ResultSet.Route.Dir.Stop s : d.stop)
+						stops.add(parentMap.addMarker(new MarkerOptions()
+                            .icon(BitmapDescriptorFactory.fromBitmap(drawStopCircle(color)))
+                            .position(new LatLng(s.lat, s.lng))
+                            .flat(true)));
+		    }*/
+	    }
+
     }
 
-	public void makeRoutes(String s) {
-		List<String> routes = Arrays.asList(s.split(","));
+	public void clearAll() {
+		for (Marker m: stops)
+			m.remove();
+		stops.clear();
+
+		for (Polyline p: routes)
+			p.remove();
+		routes.clear();
+	}
+
+	private Bitmap drawStopCircle(int col) {
+		Bitmap result = Bitmap.createBitmap(25, 25, Bitmap.Config.ARGB_8888);
+
+		Canvas canvas = new Canvas(result);
+		Paint paint = new Paint();
+
+		paint.setColor(Color.BLACK);
+		paint.setStyle(Paint.Style.FILL);
+		paint.setAntiAlias(true);
+
+		canvas.drawCircle(result.getWidth() / 2, result.getHeight() / 2, 12.5f, paint);
+
+		paint.setColor(col);
+		canvas.drawCircle(result.getWidth() / 2, result.getHeight() / 2, 12, paint);
+
+		return result;
+	}
+	private boolean keepRoute(int route) {
+		boolean flag = false;
+		for (MapRouteData r: mapRoutes)
+			if (r.Route == route) {
+				r.keep = true;
+				flag = true;
+			}
+		return flag;
+	}
+
+
+	private void makeRoutes(List<String> routes) {
+		mapRoutes.clear();
 		try {
 			XmlRequest r = theService.getMapRoutes();
 			final Field field = String.class.getDeclaredField("value");
@@ -63,9 +136,9 @@ public class MapOverlayRoutes {
 				if (!routes.contains(Route)) continue;
 
 				MapRouteData temp = new MapRouteData();
-					temp.Route = Integer.valueOf(Route);
-					temp.Description = p.RouteInfo.InfoList.get(2).Value.trim();
-					temp.Type = p.RouteInfo.InfoList.get(6).Value.trim();
+				temp.Route = Integer.valueOf(Route);
+				temp.Description = p.RouteInfo.InfoList.get(2).Value.trim();
+				temp.Type = p.RouteInfo.InfoList.get(6).Value.trim();
 
 				int dir = Integer.valueOf(p.RouteInfo.InfoList.get(1).Value.trim());
 				String dirDesc = p.RouteInfo.InfoList.get(4).Value.trim();
@@ -127,54 +200,18 @@ public class MapOverlayRoutes {
 		}catch (IllegalAccessException e) {
 			e.printStackTrace();
 		}
+
+		/*for (Iterator<MapRouteData> r = mapRoutes.iterator(); r.hasNext();)
+			if (!r.next().keep)
+				r.remove();*/
 	}
 
-
-
-    public void DrawRoute(String strRoutes) {
-	    makeRoutes(strRoutes);
-	    for (MapRouteData r : mapRoutes) {
-	        if (r == null) return;
-
-	        Random rand = new Random();
-	        rand.setSeed(r.Route);
-
-	        int colr = rand.nextInt(255) + 1;
-	        int colg = rand.nextInt(255) + 1;
-	        int colb = rand.nextInt(255) + 1;
-
-	        int color = 0xFF000000;
-	        color = color | (colr << (4 * 4));
-	        color = color | (colg << (4 * 2));
-	        color = color | (colb);
-
-
-	        for (MapRouteData.RouteDir d: r.Directions)
-	            for (MapRouteData.RouteDir.RoutePart p : d.parts) {
-		            PolylineOptions rectOptions = new PolylineOptions();
-		            rectOptions.color(color);
-		            rectOptions.geodesic(true);
-
-	                for (LatLng l : p.coords) {
-	                    /*parentMap.addMarker(new MarkerOptions()
-	                            .icon(BitmapDescriptorFactory.fromBitmap(drawStopCircle(color)))//.icon(icon)//BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
-	                            .position(l)
-	                            .flat(true));*/
-
-	                    rectOptions.add(l);
-	                }
-
-		            parentMap.getMap().addPolyline(rectOptions);
-	            }
-
-
-	    }
-    }
 
 	public class MapRouteData {
 		public int Route;
 		public String Description;
 		public String Type;
+		public boolean keep = false;
 
 		public ArrayList<RouteDir> Directions = new ArrayList<RouteDir>();
 		public RouteDir getDir(int i) {
