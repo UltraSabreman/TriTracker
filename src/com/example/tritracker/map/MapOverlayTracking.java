@@ -10,6 +10,7 @@ import android.graphics.Path;
 import android.graphics.Rect;
 
 import com.example.tritracker.R;
+import com.example.tritracker.RouteNamer;
 import com.example.tritracker.Stop;
 import com.example.tritracker.Timer;
 import com.example.tritracker.activities.MainService;
@@ -121,11 +122,8 @@ public class MapOverlayTracking {
 	private void parseBusses(BussesJSONResult r) {
 		if (r == null || r.resultSet == null || r.resultSet.vehicle == null) return;
 
-		Random rand = new Random();
-
 		for (BussesJSONResult.ResultSet.Vehicle v : r.resultSet.vehicle) {
 			LatLng pos = new LatLng(v.latitude, v.longitude);
-			String id;
 
 			BusMarker bus = null;
 			for (BusMarker m: buses)
@@ -135,26 +133,8 @@ public class MapOverlayTracking {
 				}
 
 			if (bus == null) {
-				if (v.signMessage != null) {
-					int end = v.signMessage.indexOf(" ");
-					if (end == -1)
-						id = String.valueOf(v.routeNumber);
-					else
-						id = v.signMessage.substring(0, end);
-				} else
-					id = String.valueOf(v.routeNumber);
-
-				rand.setSeed(v.routeNumber);
-
-				int colr = rand.nextInt(255) + 1;
-				int colg = rand.nextInt(255) + 1;
-				int colb = rand.nextInt(255) + 1;
-
-				int color = 0xFF000000;
-				color = color | (colr << (4 * 4));
-				color = color | (colg << (4 * 2));
-				color = color | (colb);
-
+				String id = RouteNamer.getShortName(v.routeNumber);
+                int color = RouteNamer.getColor(v.routeNumber);
 
 				BusMarker tempBuss = new BusMarker();
 					tempBuss.maker = parentMap.getMap().addMarker(new MarkerOptions()

@@ -13,6 +13,8 @@ public class MarkerInfoWindowArrayAdaptor implements InfoWindowAdapter {
 	private LayoutInflater inflater = null;
 	private Context context;
 
+    //TODO make this actualy work
+
 	public MarkerInfoWindowArrayAdaptor(LayoutInflater inflater, Context context) {
 		this.inflater = inflater;
 		this.context = context;

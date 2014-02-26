@@ -56,10 +56,14 @@ public class MapOverlaySearch {
 			m.remove();
 
 		stops.clear();
-		searchCircle.remove();
-		searchCircle = null;
-		searchMarker.remove();
-		searchMarker = null;
+        if (searchCircle != null) {
+		    searchCircle.remove();
+		    searchCircle = null;
+        }
+        if (searchMarker != null) {
+		    searchMarker.remove();
+		    searchMarker = null;
+        }
 	}
 
 	public void DrawLayer(final LatLng targetPos) {
@@ -249,7 +253,7 @@ public class MapOverlaySearch {
 				stops.add(parentMap.getMap().addMarker(new MarkerOptions()
 						.icon(icon)
 						.title(s.Name)
-						.snippet(s.StopID + "|" + Util.getListOfLines(s, true))
+						.snippet(s.StopID + "|" + Util.getListOfLines(s))
 						.position(new LatLng(s.Latitude, s.Longitude))
 				));
 			}

@@ -10,6 +10,7 @@ import com.example.tritracker.Alert;
 import com.example.tritracker.Buss;
 import com.example.tritracker.NotificationHandler;
 import com.example.tritracker.R;
+import com.example.tritracker.RouteNamer;
 import com.example.tritracker.Stop;
 import com.example.tritracker.Timer;
 import com.example.tritracker.Timer.onUpdate;
@@ -80,6 +81,7 @@ public class MainService extends Service {
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		theService = this;
 		if (refreshTime == null) {
+            RouteNamer.init();
 			if (!started) {
 				readData();
 				started = true;
@@ -436,7 +438,7 @@ public class MainService extends Service {
 
             String data;
             synchronized (stopData) {
-			     data = new Gson().toJson(stopData);
+			    data = new Gson().toJson(stopData);
             }
 
 			outputStream.write(data.getBytes());

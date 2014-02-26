@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.example.tritracker.Alert;
 import com.example.tritracker.R;
+import com.example.tritracker.RouteNamer;
 
 import java.util.ArrayList;
 
@@ -44,13 +45,11 @@ public class AlertListArrayAdaptor extends ArrayAdapter<Alert> {
 			TextView lines = (TextView) v.findViewById(R.id.AlertLines);
 			TextView disc = (TextView) v.findViewById(R.id.AlertDiscritpion);
 
-			String al = "";
+            StringBuilder str = new StringBuilder();
 			for (Integer i : curAlert.AffectedLines)
-				al += String.valueOf(i) + ", ";
+                str.append(RouteNamer.getMedName(i)).append(" ");
 
-			if (al.length() > 2)
-				al = al.substring(0, al.length() - 2);
-			lines.setText(" " + al);
+			lines.setText(" " + str.toString().trim());
 
 			disc.setText(curAlert.Discription);
 		}

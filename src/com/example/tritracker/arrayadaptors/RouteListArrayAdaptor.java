@@ -9,6 +9,8 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.example.tritracker.R;
+import com.example.tritracker.RouteNamer;
+import com.example.tritracker.Util;
 import com.example.tritracker.activities.MainService;
 import com.example.tritracker.json.AllRoutesJSONResult.ResultSet.Route;
 
@@ -44,37 +46,11 @@ public class RouteListArrayAdaptor extends ArrayAdapter<Route> {
 			LineNumber.setTextColor(Color.BLACK);
 			TextView LineName = (TextView) v.findViewById(R.id.LineName);
 
-			String route = "";
-			String sign = "";
-			if (curRoute.desc.contains(String.valueOf(curRoute.route))) {
-				route = String.valueOf(curRoute.route);
-				sign = curRoute.desc.replace(route + "-", "");
-			} else if (curRoute.desc.contains("WES")) {
-				route = "WES";
-				sign = curRoute.desc.replace(route + " ", "");
-			} else if (curRoute.desc.contains("Streetcar")) {
-				route = "PSC";
-				sign = curRoute.desc;
-			} else if (curRoute.desc.contains("Tram")) {
-				route = "TRM";
-				sign = curRoute.desc;
-			} else if (curRoute.desc.contains("Trolley")) {
-				route = "TRL";
-				sign = curRoute.desc;
-			} else {
-				route = "MAX";
-				sign = curRoute.desc.replace(route + " ", "");
-				if (curRoute.desc.contains("Green"))
-					LineNumber.setTextColor(context.getResources().getColor(R.color.MaxGreen)); //green
-				else if (curRoute.desc.contains("Red"))
-					LineNumber.setTextColor(context.getResources().getColor(R.color.MaxRed));
-				else if (curRoute.desc.contains("Blue"))
-					LineNumber.setTextColor(context.getResources().getColor(R.color.MaxBlue));
-				else if (curRoute.desc.contains("Yellow"))
-					LineNumber.setTextColor(context.getResources().getColor(R.color.MaxYellow));
-			}
+            LineNumber.setText(RouteNamer.getShortName(curRoute.route));
+			String sign = Util.removeRoutePrefix(curRoute.desc, curRoute.route);
 
-			LineNumber.setText(route);
+            if (curRoute.desc.contains("MAX"))
+                LineNumber.setTextColor(RouteNamer.getColor(curRoute.route));
 
 			if (!Character.isUpperCase(sign.charAt(0)))
 				sign = sign.substring(0, 1).toUpperCase(Locale.US) + sign.substring(1);

@@ -1,6 +1,7 @@
 package com.example.tritracker;
 
 import android.os.Handler;
+import android.os.Looper;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -16,6 +17,7 @@ public class Timer {
 	private Runnable timerRunnable = null;
 	private Map<String, onUpdate> updateList = new HashMap<String, onUpdate>();
 	private boolean kill = false;
+    private volatile Looper myLooper;
 
 	public Timer(double d) {
 		this.interval = d;
@@ -38,8 +40,13 @@ public class Timer {
 	}
 
 	public void restartTimer() {
+       // if (myLooper != null)
+        //    myLooper.quit();
 		if (timerRunnable != null)
 			timerHandler.removeCallbacks(timerRunnable);
+
+        //if (myLooper == null)
+        //    Looper.prepare();
 
 		timerRunnable = new Runnable() {
 			@Override
@@ -70,11 +77,16 @@ public class Timer {
 			}
 		};
 
+       // myLooper = Looper.myLooper();
+       // Looper.loop();
+
 		if (interval > 0)
 			timerHandler.postDelayed(timerRunnable, (int) (interval * 1000));
 	}
 
 	public void stopTimer() {
+      //  if (myLooper != null)
+       //     myLooper.quit();
 		if (timerRunnable != null)
 			timerHandler.removeCallbacks(timerRunnable);
 		kill = true;

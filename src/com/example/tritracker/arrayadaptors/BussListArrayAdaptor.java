@@ -14,6 +14,7 @@ import android.widget.ViewFlipper;
 import com.example.tritracker.Buss;
 import com.example.tritracker.NotificationHandler;
 import com.example.tritracker.R;
+import com.example.tritracker.RouteNamer;
 import com.example.tritracker.Stop;
 import com.example.tritracker.Util;
 import com.example.tritracker.activities.MainService;
@@ -78,40 +79,19 @@ public class BussListArrayAdaptor extends ArrayAdapter<Buss> {
 
 			TextView LineNumber = (TextView) v.findViewById(R.id.LineNumber);
 			TextView LineName = (TextView) v.findViewById(R.id.LineName);
+            LineNumber.setText(RouteNamer.getShortName(curBuss.Route));
 
 			//Set the route name
-			String route = "";
 			String name = curBuss.SignLong;
 
-			if (name.contains(String.valueOf(curBuss.Route))) {
-				route = String.valueOf(curBuss.Route);
-			} else if (name.contains("WES")) {
-				route = "WES";
-			} else if (name.contains("Streetcar")) {
-				route = "PSC";
-			} else if (name.contains("Tram")) {
-				route = "TRM";
-			} else if (name.contains("Trolley")) {
-				route = "TRL";
-			} else {
-				route = "MAX";
-				if (name.contains("Green"))
-					LineNumber.setTextColor(context.getResources().getColor(R.color.MaxGreen)); //green
-				else if (name.contains("Red"))
-					LineNumber.setTextColor(context.getResources().getColor(R.color.MaxRed));
-				else if (name.contains("Blue"))
-					LineNumber.setTextColor(context.getResources().getColor(R.color.MaxBlue));
-				else if (name.contains("Yellow"))
-					LineNumber.setTextColor(context.getResources().getColor(R.color.MaxYellow));
-			}
-
-			LineNumber.setText(route);
+            if (RouteNamer.hasColor(curBuss.Route))
+                LineNumber.setTextColor(RouteNamer.getColor(curBuss.Route));
 
 			String sign = "";
 			if (context.getResources().getConfiguration().orientation == 2) // ORIENTATION_LANDSCAPE
-				sign = curBuss.SignLong.replace(route + " ", "");
+				sign = Util.removeRoutePrefix(curBuss.SignLong, curBuss.Route);
 			else
-				sign = curBuss.SignShort.replace(route + " ", "");
+				sign = Util.removeRoutePrefix(curBuss.SignShort, curBuss.Route);
 
 			if (!Character.isUpperCase(sign.charAt(0)))
 				sign = sign.substring(0, 1).toUpperCase(Locale.US) + sign.substring(1);

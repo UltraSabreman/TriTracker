@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.example.tritracker.Buss;
 import com.example.tritracker.NotificationHandler;
 import com.example.tritracker.R;
+import com.example.tritracker.RouteNamer;
 import com.example.tritracker.Stop;
 import com.example.tritracker.Util;
 import com.example.tritracker.activities.MainService;
@@ -79,36 +80,17 @@ public class BussOverviewSpinnerAdaptor extends ArrayAdapter<Buss.TimeBox> {
 			TextView LineName = (TextView) v.findViewById(R.id.LineName);
 
 			//Set the route name
-			String route = "";
-			String name = curBuss.SignLong;
+            LineNumber.setText(RouteNamer.getShortName(curBuss.Route));
 
-			if (name.contains(String.valueOf(curBuss.Route))) {
-				route = String.valueOf(curBuss.Route);
-			} else if (name.contains("WES")) {
-				route = "WES";
-			} else if (name.contains("Streetcar")) {
-				route = "PSC";
-			} else if (name.contains("Tram")) {
-				route = "TRM";
-			} else if (name.contains("Trolley")) {
-				route = "TRL";
-			} else {
-				route = "MAX";
-				if (name.contains("Green"))
-					LineNumber.setTextColor(context.getResources().getColor(R.color.MaxGreen)); //green
-				else if (name.contains("Red"))
-					LineNumber.setTextColor(context.getResources().getColor(R.color.MaxRed));
-				else if (name.contains("Blue"))
-					LineNumber.setTextColor(context.getResources().getColor(R.color.MaxBlue));
-				else if (name.contains("Yellow"))
-					LineNumber.setTextColor(context.getResources().getColor(R.color.MaxYellow));
-			}
+            //Set the route name
+            String name = curBuss.SignLong;
 
-			LineNumber.setText(route);
+            if (RouteNamer.hasColor(curBuss.Route))
+                LineNumber.setTextColor(RouteNamer.getColor(curBuss.Route));
 
-			String sign = curBuss.SignShort.replace(route + " ", "");
+            String sign = Util.removeRoutePrefix(curBuss.SignShort, curBuss.Route);
 
-			if (!Character.isUpperCase(sign.charAt(0)))
+            if (!Character.isUpperCase(sign.charAt(0)))
 				sign = sign.substring(0, 1).toUpperCase(Locale.US) + sign.substring(1);
 
 			LineName.setText(sign);

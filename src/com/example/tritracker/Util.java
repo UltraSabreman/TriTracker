@@ -127,35 +127,28 @@ public class Util {
 		return (int) (mill / 1000);
 	}
 
+    public static String removeRoutePrefix(String s, int route) {
+        int max = s.indexOf("MAX");
+        int wes = s.indexOf("WES");
+        int rt = s.indexOf(String.valueOf(route));
+        if (max != -1 || wes != -1 || rt != -1)
+            return s.substring(s.indexOf(" ") + 1);
+        return s;
+    }
 
-	public static String getListOfLines(Stop s, boolean test) {
+
+	public static String getListOfLines(Stop s) {
 		// this lists the routes, and adds commas between them.
 		if (s == null) return null;
 		if (s.Busses != null && s.Busses.size() != 0) {
-			if (test) {
-				String str = "";
-				for (Buss b : s.Busses) {
-					String[] words = b.SignLong.split(" ");
-					String tempRoute = words[0];
-					if (tempRoute.compareTo("MAX") == 0)
-						tempRoute = (words[1].isEmpty() ? words[2] : words[1])
-								+ "-Line";
-					if (!str.contains(tempRoute))
-						str += tempRoute + " ";
-				}
+            StringBuilder str = new StringBuilder();
+            for (Buss b : s.Busses) {
+                String ss = RouteNamer.getMedName(b.Route);
+                if (!str.toString().contains(ss))
+                    str.append(ss).append(" ");
+            }
 
-				return str.replaceAll("( [0-9a-zA-Z])", ",$1");
-			} else {
-				String str = "";
-				for (Buss b : s.Busses) {
-					String tempRoute = String.valueOf(b.Route);
-					if (!str.contains(tempRoute)) {
-						str += (tempRoute + ",");
-					}
-				}
-
-				return str.substring(0, str.length() - 1);
-			}
+            return str.toString().replaceAll("( [0-9a-zA-Z])", ",$1");
 		}
 		return "";
 	}

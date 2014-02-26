@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 
+import com.example.tritracker.RouteNamer;
 import com.example.tritracker.activities.MainService;
 import com.example.tritracker.json.XmlRequest;
 import com.google.android.gms.maps.model.LatLng;
@@ -46,18 +47,7 @@ public class MapOverlayRoutes {
 	    for (MapRouteData r : mapRoutes) {
 	        if (r == null) return;
 
-	        Random rand = new Random();
-	        rand.setSeed(r.Route);
-
-	        int colr = rand.nextInt(255) + 1;
-	        int colg = rand.nextInt(255) + 1;
-	        int colb = rand.nextInt(255) + 1;
-
-	        int color = 0xFF000000;
-	        color = color | (colr << (4 * 4));
-	        color = color | (colg << (4 * 2));
-	        color = color | (colb);
-
+	        int color = RouteNamer.getColor(r.Route);
 
 	        for (MapRouteData.RouteDir d: r.Directions)
 	            for (MapRouteData.RouteDir.RoutePart p : d.parts) {
