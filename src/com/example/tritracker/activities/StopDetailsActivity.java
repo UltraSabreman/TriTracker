@@ -37,6 +37,7 @@ public class StopDetailsActivity extends Activity {
 
 	private Stop curStop;
 	private BussListArrayAdaptor adaptor;
+    private ArrayList<Buss> test = new ArrayList<Buss>();
 
 	private MainService theService;
 
@@ -103,6 +104,7 @@ public class StopDetailsActivity extends Activity {
 
 	public void onUpdate() {
 		curStop = theService.getStop(curStop);
+        test = curStop.Busses;
 		this.runOnUiThread(new Runnable() {
 			public void run() {
 				if (adaptor != null) {
@@ -131,14 +133,15 @@ public class StopDetailsActivity extends Activity {
 	}
 
 	void initList() {
-		if (curStop.Busses == null || curStop.Busses.size() == 0) {
+        test = curStop.Busses;
+		if (test == null || test.size() == 0) {
 			TextView arrival = (TextView) findViewById(R.id.NoArrivals);
 			arrival.setVisibility(View.VISIBLE);
 		} else {
 			final Activity act = this;
 			final ListView listView = (ListView) findViewById(R.id.UIBussList);
 			final RelativeLayout layout = (RelativeLayout) findViewById(R.id.longClickCatcher);
-			adaptor = new BussListArrayAdaptor(this, curStop.Busses);
+			adaptor = new BussListArrayAdaptor(this, test);
 			adaptor.updateStop(curStop);
 
 			listView.setAdapter(adaptor);

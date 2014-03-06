@@ -17,6 +17,7 @@ import com.example.tritracker.RouteNamer;
 import com.example.tritracker.Stop;
 import com.example.tritracker.Timer;
 import com.example.tritracker.Timer.onUpdate;
+import com.example.tritracker.Util;
 import com.example.tritracker.Util.ListType;
 import com.example.tritracker.json.AllRoutesJSONResult;
 import com.example.tritracker.json.AllRoutesJSONResult.ResultSet.Route;
@@ -99,7 +100,7 @@ public class MainService extends Service {
 					}
 			);
 			refreshTime.restartTimer();
-			doUpdate(true);
+			//doUpdate(true);
 			//updateMapRoutes();
 			//updateSearchRoutes();
 
@@ -496,6 +497,7 @@ public class MainService extends Service {
 		try {
    			BufferedReader r = new BufferedReader(new InputStreamReader(c.openFileInput(c.getString(R.string.data_path))));
 			stopData = new Gson().fromJson(r, DataStore.class);
+            //Util.print(stopData.StopList.get(0).Lines);
 			r.close();
 		} catch (Exception e) {
 			e.printStackTrace();

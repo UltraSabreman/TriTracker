@@ -116,18 +116,18 @@ public class BussListArrayAdaptor extends ArrayAdapter<Buss> {
         synchronized (curBuss.times) {
             for (Buss.TimeBox t : curBuss.times) {
                 String s = formatter.format(t.ScheduledTime);
+                TextView filpperSc = new TextView(context);
+                filpperSc.setTextSize(12);
+                filpperSc.setTextColor(context.getResources().getColor(android.R.color.darker_gray));
+                filpperSc.setEllipsize(TextUtils.TruncateAt.MARQUEE);
+                filpperSc.setMarqueeRepeatLimit(-1);
+                filpperSc.setSingleLine(true);
+                filpperSc.setText("Scheduled at: " + s);
+                filpperSc.setSelected(true);
+                SFlipper.addView(filpperSc);
+
+
                 TextView tTextView = new TextView(context);
-                tTextView.setTextSize(12);
-                tTextView.setTextColor(context.getResources().getColor(android.R.color.darker_gray));
-                tTextView.setEllipsize(TextUtils.TruncateAt.MARQUEE);
-                tTextView.setMarqueeRepeatLimit(-1);
-                tTextView.setSingleLine(true);
-                tTextView.setText("Scheduled at: " + s);
-                tTextView.setSelected(true);
-                SFlipper.addView(tTextView);
-
-
-                tTextView = new TextView(context);
                 tTextView.setTextSize(16);
                 tTextView.setEllipsize(TextUtils.TruncateAt.MARQUEE);
                 tTextView.setSingleLine(true);
@@ -167,11 +167,11 @@ public class BussListArrayAdaptor extends ArrayAdapter<Buss> {
 
                 index++;
             }
-        }
             if (curBuss.times.size() > 1) {
                 SFlipper.startFlipping();
                 TFlipper.startFlipping();
             }
+        }
 
         return v;
 	}

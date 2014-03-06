@@ -185,8 +185,8 @@ public class Util {
             str.append(s).append(", ");
 
         String f = str.toString();
-        f = f.replaceAll(", &", " ");
-        print("Lines: " + f);
+        if (f.length() >= 2)
+            f = f.substring(0, f.length() -2);
         return f;
         /*
 		if (s.Busses != null && s.Busses.size() != 0) {
