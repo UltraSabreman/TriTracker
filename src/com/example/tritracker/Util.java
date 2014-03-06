@@ -8,14 +8,17 @@ import android.content.Intent;
 import android.os.Environment;
 import android.widget.Toast;
 
+import com.example.tritracker.activities.MainService;
 import com.example.tritracker.activities.SpinnerPopupActivity;
 import com.example.tritracker.json.ForgroundRequestManager.checkStops;
+import com.example.tritracker.json.AllRoutesJSONResult.ResultSet.Route;
 
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Stack;
@@ -153,11 +156,41 @@ public class Util {
     }
 
 
-	public static String getListOfLines(Stop s) {
+	public static String getListOfLines(Stop is) {
 		// this lists the routes, and adds commas between them.
-		if (s == null) return null;
+		if (is == null) return null;
+        StringBuilder str = new StringBuilder();
+        ArrayList<String> res = new ArrayList<String>();
+        ArrayList<Route> routes = MainService.getService().getRoutes();
+
+        for (Route r: routes) {
+            String name = RouteNamer.getMedName(r.route);
+            if (res.contains(name)) continue;
+            boolean done = false;
+            if (r.dir == null) continue;
+            for (Route.Dir d: r.dir) {
+                if (d.stop == null) continue;
+                for (Route.Dir.Stop s: d.stop)
+                    if (s.locid == is.StopID) {
+                        res.add(name);
+                        done = true;
+                        break;
+                    }
+                if (done)
+                    break;
+            }
+        }
+
+        for (String s: res)
+            str.append(s).append(", ");
+
+        String f = str.toString();
+        f = f.replaceAll(", &", " ");
+        print("Lines: " + f);
+        return f;
+        /*
 		if (s.Busses != null && s.Busses.size() != 0) {
-            StringBuilder str = new StringBuilder();
+
             for (Buss b : s.Busses) {
                 String ss = RouteNamer.getMedName(b.Route);
                 if (!str.toString().contains(ss))
@@ -166,7 +199,7 @@ public class Util {
 
             return str.toString().replaceAll("( [0-9a-zA-Z])", ",$1");
 		}
-		return "";
+		return "";*/
 	}
 
 	public static void initToast(Context ic) {

@@ -273,7 +273,7 @@ public class MapOverlaySearch {
 				stops.add(parentMap.getMap().addMarker(new MarkerOptions()
 						.icon(icon)
 						.title(s.Name)
-						.snippet(s.StopID + "|" + Util.getListOfLines(s))
+						.snippet(s.StopID + "|" + s.Lines)
 						.position(new LatLng(s.Latitude, s.Longitude))
 				));
 			}

@@ -15,6 +15,7 @@ public class Stop {
 	public int StopID = -1;
 	public String Direction = "Up Up and Away!";
 	public Date LastAccesed = null;
+    public String Lines = "";
 
 	public boolean inHistory = false;
 	public boolean inFavorites = false;
@@ -30,6 +31,7 @@ public class Stop {
 		Direction = l.dir;
 		Latitude = l.lat;
 		Longitude = l.lng;
+        Lines = Util.getListOfLines(this);
 	}
 
 	public Stop(MapJSONResult.ResultSet.Location l) {
@@ -38,6 +40,7 @@ public class Stop {
 		Direction = l.dir;
 		Latitude = l.lat;
 		Longitude = l.lng;
+        Lines = Util.getListOfLines(this);
 		/*if (l.route != null) {
 			for (Route r : l.route) {
 				if (r.type.compareTo("R") == 0){
@@ -55,7 +58,8 @@ public class Stop {
 		Latitude = s.lat;
 		Longitude = s.lng;
 		Direction = des;
-	}
+        Lines = Util.getListOfLines(this);
+    }
 
 	public Stop(int id) {
 		StopID = id;
@@ -65,6 +69,7 @@ public class Stop {
 		Name = new String(s.Name);
 		StopID = s.StopID;
 		Direction = new String(s.Direction);
+        Lines = s.Lines;
 		//inFavorites = s.inFavorites;
 		//inHistory = s.inHistory;
 		if (shouldUpdateDate && s.LastAccesed != null)
