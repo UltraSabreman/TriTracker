@@ -122,16 +122,16 @@ public class MapOverlayRoutes {
 			field.setAccessible(true);
 
 			for (XmlRequest.document.placemark p : r.Document.BusRoutes) {
-				String Route = p.RouteInfo.InfoList.get(0).Value.trim();
+				String Route = p.RouteInfo.InfoList.get(0).Value;
 				if (!routes.contains(Route)) continue;
 
 				MapRouteData temp = new MapRouteData();
 				temp.Route = Integer.valueOf(Route);
-				temp.Description = p.RouteInfo.InfoList.get(2).Value.trim();
-				temp.Type = p.RouteInfo.InfoList.get(6).Value.trim();
+				temp.Description = p.RouteInfo.InfoList.get(2).Value;
+				temp.Type = p.RouteInfo.InfoList.get(6).Value;
 
-				int dir = Integer.valueOf(p.RouteInfo.InfoList.get(1).Value.trim());
-				String dirDesc = p.RouteInfo.InfoList.get(4).Value.trim();
+				int dir = Integer.valueOf(p.RouteInfo.InfoList.get(1).Value);
+				String dirDesc = p.RouteInfo.InfoList.get(4).Value;
 
 				if (temp.getDir(dir) == null) {
 					MapRouteData.RouteDir tr = temp.new RouteDir();
@@ -148,7 +148,7 @@ public class MapOverlayRoutes {
 					StringBuilder lat = null;
 					StringBuilder lng = null;
 
-					final char[] chars = (char[]) field.get(l.Coordinates.replaceAll("^\\s+ | \\s+&", ""));
+					final char[] chars = (char[]) field.get(l.Coordinates);
 					final int len = chars.length;
 					for (int i = 0; i < len; i++) {
 						char curChar = chars[i];

@@ -32,8 +32,11 @@ public class RouteNamer {
         //StreetCar
         shortNames.put(193, "SC");
         medNames.put(193, "NS-Line");
+        colors.put(193, 0xFF66CC00);
         shortNames.put(194, "SC");
         medNames.put(194, "CL-Line");
+        colors.put(194, 0xFF00CCCC);
+
 
         //Tram
         shortNames.put(208, "AT");

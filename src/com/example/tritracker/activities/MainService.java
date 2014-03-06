@@ -308,7 +308,7 @@ public class MainService extends Service {
 		return false;
 	}
 
-	private void updateSearchRoutes() {
+	public void updateSearchRoutes() {
         updatingSearchRoutes = true;
 		new Request<AllRoutesJSONResult>(AllRoutesJSONResult.class,
 				new Request.JSONcallback<AllRoutesJSONResult>() {
@@ -547,7 +547,7 @@ public class MainService extends Service {
 
 
 	}
-	private void updateMapRoutes() {
+	public void updateMapRoutes() {
         updatingMapRoutes = true;
 		new Request<XmlRequest>(XmlRequest.class,
 				new Request.JSONcallback<XmlRequest>() {

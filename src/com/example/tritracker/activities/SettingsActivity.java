@@ -14,7 +14,10 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
 import com.example.tritracker.R;
+import com.example.tritracker.Stop;
+import com.example.tritracker.Timer;
 import com.example.tritracker.Util;
+import com.example.tritracker.json.ForgroundRequestManager;
 
 public class SettingsActivity extends Activity {
 
@@ -65,6 +68,20 @@ public class SettingsActivity extends Activity {
 			}
 		});
 	}
+
+    public void refresh(View view) {
+        Util.messageDiag(
+                this,
+                new ForgroundRequestManager.checkStops() {
+                    public void doStops() {
+                        theService.updateSearchRoutes();
+                        theService.updateMapRoutes();
+                    }
+                },
+                "Refresh App Data?",
+                "Do you want to update all app data (this can take a bit of time)?"
+        );
+    }
 
 	public void helpRefresh(View view) {
 		Util.messageDiag(
