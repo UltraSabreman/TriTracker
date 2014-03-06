@@ -1,6 +1,5 @@
 package com.example.tritracker.json;
 
-import com.example.tritracker.Util;
 import com.google.gson.Gson;
 import com.thoughtworks.xstream.XStream;
 
@@ -60,6 +59,7 @@ public class Request<T> extends Thread {
 		}
 
 
+		String test = responseString;
 		if (callback != null) {
 			T result = null;
 
@@ -68,18 +68,17 @@ public class Request<T> extends Thread {
 				testStream.setClassLoader(XmlRequest.class.getClassLoader());
 				testStream.processAnnotations(XmlRequest.class);
 
-				if (responseString != null) {
-                    String test = responseString.replaceAll("<value>\\s+(\\w+)\\s+</value>", "<value>$1</value>");
-                    test = test.replaceAll("<coordinates>\\s+(\\w+)\\s+</coordinates>", "<coordinates>$1</coordinates>");
-                    Util.print(test);
+				if (test != null) {
+					test = test.replaceAll("<value>\\s+(\\w+)\\s+</value>", "<value>$1</value>");
+                    test = test.replaceAll("<coordinates>\\s+((-|\\.|,| |\\d)+)\\s+</coordinates>", "<coordinates>$1</coordinates>");
 					result = (T) testStream.fromXML(test);
                 }
 
 			} else
-				if (responseString != null)
-					result = new Gson().fromJson(responseString, type);
+				if (test != null)
+					result = new Gson().fromJson(test, type);
 
-			callback.run(result, responseString, error);
+			callback.run(result, test, error);
 		}
 	}
 

@@ -23,7 +23,7 @@
 		android:layout_height="20dp"
 		android:onClick="helpRefresh"
 		android:layout_alignParentRight="true"
-		android:layout_alignBottom="@+d/Label1"
+		android:layout_alignBottom="@+id/Label1"
 		android:src="@drawable/ic_action_help2"
 		android:contentDescription="@string/content" />
 
@@ -66,12 +66,30 @@
 		android:inputType="number"
 		android:imeOptions="actionDone"/>
 
+    <CheckBox
+        android:id="@+id/saveMapInfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/Radius"
+        android:textSize="20sp"
+        android:text="Save Map Settings"/>
+
+    <ImageView
+        android:id="@+id/help3"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:onClick="helpMapSave"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@id/saveMapInfo"
+        android:src="@drawable/ic_action_help2"
+        android:contentDescription="@string/content" />
+
     <Button
         android:id="@+id/RefreshButton"
         android:onClick="refresh"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:text="Refresh Route Data"/>
+        android:text="Update Route Database"/>
 
 </RelativeLayout>

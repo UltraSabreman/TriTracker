@@ -6,6 +6,7 @@ import android.content.Intent;
 
 import com.example.tritracker.R;
 import com.example.tritracker.Stop;
+import com.example.tritracker.Timer;
 import com.example.tritracker.Util;
 import com.example.tritracker.activities.MainService;
 import com.example.tritracker.activities.StopDetailsActivity;
@@ -37,14 +38,18 @@ public class MapOverlaySearch {
 	private LatLng oldPos = null;
 	private LatLng searchPos = null;
 
+	private boolean loading = false;
+
 	public MapOverlaySearch(Map parentMap, Context c, Activity a) {
 		//TODO make this NOT instantly zoom in where you cliked.
+		loading = true;
 		this.parentMap = parentMap;
 		context = c;
 		activity = a;
 		theService = MainService.getService();
 
 		DrawLayer(null);
+		loading = false;
 	}
 
 	public void update() {
@@ -52,18 +57,29 @@ public class MapOverlaySearch {
 	}
 
 	public void clearAll() {
-		for (Marker m : stops)
-			m.remove();
+		final Timer delay = new Timer(0.1);
+		delay.addCallBack("", new Timer.onUpdate() {
+			@Override
+			public void run() {
+				if (loading) return;
+				delay.stopTimer();
 
-		stops.clear();
-        if (searchCircle != null) {
-		    searchCircle.remove();
-		    searchCircle = null;
-        }
-        if (searchMarker != null) {
-		    searchMarker.remove();
-		    searchMarker = null;
-        }
+				for (Marker m : stops)
+					m.remove();
+
+				stops.clear();
+				if (searchCircle != null) {
+					searchCircle.remove();
+					searchCircle = null;
+				}
+				if (searchMarker != null) {
+					searchMarker.remove();
+					searchMarker = null;
+				}
+			}
+		});
+
+		delay.restartTimer();
 	}
 
 	public void DrawLayer(final LatLng targetPos) {
@@ -137,6 +153,8 @@ public class MapOverlaySearch {
 		map.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
 			@Override
 			public boolean onMyLocationButtonClick() {
+				if (searchMarker == null) return false;
+
 				if (!searchMarker.isVisible())
 					searchMarker.setVisible(true);
 
@@ -194,8 +212,10 @@ public class MapOverlaySearch {
 			searchMarker.setVisible(false);
 		} else {
 			thePos = searchPos;
-			searchMarker.setVisible(true);
-			searchCircle.setVisible(true);
+			if (searchMarker != null) {
+				searchMarker.setVisible(true);
+				searchCircle.setVisible(true);
+			}
 
 		}
 

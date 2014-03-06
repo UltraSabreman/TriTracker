@@ -131,8 +131,24 @@ public class Util {
         int max = s.indexOf("MAX");
         int wes = s.indexOf("WES");
         int rt = s.indexOf(String.valueOf(route));
-        if (max != -1 || wes != -1 || rt != -1)
-            return s.substring(s.indexOf(" ") + 1);
+	    int pos = -1;
+	    int size = 0;
+        if (max != -1 ) {
+	        pos = max;
+	        size = 3;
+        }
+	    if (wes != -1) {
+	        pos = wes;
+		    size = 3;
+	    }
+	    if (rt != -1){
+		    pos = rt;
+		    size = String.valueOf(route).length();
+	    }
+
+	    if (pos != -1)
+            return s.substring(pos + size + 1);
+
         return s;
     }
 

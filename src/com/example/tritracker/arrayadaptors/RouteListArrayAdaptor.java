@@ -49,7 +49,7 @@ public class RouteListArrayAdaptor extends ArrayAdapter<Route> {
             LineNumber.setText(RouteNamer.getShortName(curRoute.route));
 			String sign = Util.removeRoutePrefix(curRoute.desc, curRoute.route);
 
-            if (curRoute.desc.contains("MAX"))
+            if ((curRoute.desc.contains("MAX") || curRoute.desc.contains("WES") || curRoute.desc.contains("Streetcar") ) && !curRoute.desc.contains("Shuttle"))
                 LineNumber.setTextColor(RouteNamer.getColor(curRoute.route));
 
 			if (!Character.isUpperCase(sign.charAt(0)))

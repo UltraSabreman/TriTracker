@@ -1,10 +1,13 @@
 package com.example.tritracker.activities;
 
+import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.os.Binder;
 import android.os.IBinder;
+import android.support.v4.app.NotificationCompat;
 
 import com.example.tritracker.Alert;
 import com.example.tritracker.Buss;
@@ -191,6 +194,14 @@ public class MainService extends Service {
 	public void setMapRadius(double r) {
 		stopData.Radius = r;
 	}
+
+	public void setMapSave(boolean b) { stopData.SaveMap = b; }
+	public boolean getMapSave() { return stopData.SaveMap; }
+
+	public boolean [] getMapSettings() { return stopData.mapSettings; }
+	public void setMapSettings(boolean [] ar) { stopData.mapSettings = ar; }
+	public String getMapFilter() {return stopData.mapFilter; }
+	public void setMapFilter(String s) { stopData.mapFilter = s; }
 
 	public void setDelay(int i) {
 		stopData.RefreshDelay = i;
@@ -547,12 +558,32 @@ public class MainService extends Service {
 
 
 	}
+
+	private NotificationManager updateNot(String title, String text) {
+		final NotificationManager mNotifyManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		final NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
+		mBuilder.setContentTitle(title)
+				.setContentText(text)
+				.setSmallIcon(R.drawable.ic_action_refresh)
+				.setLargeIcon(BitmapFactory.decodeResource(getResources(),R.drawable.ic_buss_white));
+
+		mBuilder.setProgress(0, 0, true);
+		mBuilder.setOngoing(true);
+		mBuilder.setAutoCancel(true);
+		mNotifyManager.notify(0, mBuilder.build());
+
+		return mNotifyManager;
+	}
+
 	public void updateMapRoutes() {
         updatingMapRoutes = true;
+		final NotificationManager t = updateNot("Database Update", "TriTracker database update in progress");
+
 		new Request<XmlRequest>(XmlRequest.class,
 				new Request.JSONcallback<XmlRequest>() {
 					public void run(XmlRequest r, String s, int error) {
 						parseRouteData(r, s);
+						t.cancelAll();
                         doUpdate(false);
 						updatingMapRoutes = false;
 					}
@@ -591,8 +622,12 @@ public class MainService extends Service {
 		public int HistOrder = 0;
 		public int StopOrder = 0;
 		public int RefreshDelay = 30;
-		public double Radius = 900;// 1/2 mile in meters.
+		public double Radius = 804;// 1/2 mile in meters.
 		public int menu = 0;
+
+		public boolean SaveMap = true;
+		public boolean [] mapSettings = new boolean[]{false, false, true};
+		public String mapFilter = "";
 
 		public ArrayList<Stop> StopList = new ArrayList<Stop>();
 		public ArrayList<Alert> Alerts = new ArrayList<Alert>();

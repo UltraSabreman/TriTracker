@@ -9,13 +9,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
 import com.example.tritracker.R;
-import com.example.tritracker.Stop;
-import com.example.tritracker.Timer;
 import com.example.tritracker.Util;
 import com.example.tritracker.json.ForgroundRequestManager;
 
@@ -67,6 +67,16 @@ public class SettingsActivity extends Activity {
 				return false;
 			}
 		});
+
+		CheckBox box = (CheckBox) findViewById(R.id.saveMapInfo);
+
+		box.setChecked(theService.getMapSave());
+		box.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+				theService.setMapSave(b);
+			}
+		});
 	}
 
     public void refresh(View view) {
@@ -78,8 +88,9 @@ public class SettingsActivity extends Activity {
                         theService.updateMapRoutes();
                     }
                 },
-                "Refresh App Data?",
-                "Do you want to update all app data (this can take a bit of time)?"
+                "Update Route Database?",
+                "This will download new route information from TriMet. The file is ~10mb in size, so this process could take a while." +
+		        "\n\nDo you wish to continue?"
         );
     }
 
@@ -88,7 +99,17 @@ public class SettingsActivity extends Activity {
 				this,
 				null,
 				"Auto-refresh delay",
-				"The delay (in seconds) at witch the app will refresh all stops. The higher the number, the less data-hungry it will be. Set to 0 to dissable.");
+				"The delay (in seconds) at which the app will refresh all necessary information. The higher the number, the less data and battery hungry" +
+				" the app will be.");
+	}
+
+	public void helpMapSave(View view) {
+		Util.messageDiag(
+				this,
+				null,
+				"Save Map Settings",
+				"This will allow the app to save your map configuration (aka: which routes and buses you're displaying). When drawing many routes, this will result in a slower" +
+				" initial map load.");
 	}
 
 	public void helpRadius(View view) {
@@ -96,7 +117,7 @@ public class SettingsActivity extends Activity {
 				this,
 				null,
 				"Map Search Radius",
-				"When searching for nearby stops, the map will use this value to determine how far to look. 2048 feet is equal to a half a mile.");
+				"When searching for nearby stops, the map will use this value to determine how far to look.\\nn2048 feet is equal to a half a mile.");
 	}
 
 	@Override
@@ -104,6 +125,12 @@ public class SettingsActivity extends Activity {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		//getMenuInflater().inflate(R.menu.settings_action_bar, menu);
 		return true;
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		theService.doUpdate(false);
 	}
 
 	private void goBack() {

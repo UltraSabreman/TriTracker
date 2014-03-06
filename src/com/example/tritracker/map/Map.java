@@ -50,7 +50,7 @@ public class Map implements GooglePlayServicesClient.ConnectionCallbacks, Google
 			map.setInfoWindowAdapter(new MarkerInfoWindowArrayAdaptor(a.getLayoutInflater(), c));
 
 			locationClient = new LocationClient(cont, this, this);
-			//map.setMyLocationEnabled(true);
+			map.setMyLocationEnabled(true);
 			locationClient.connect();
 
 			theService.sub("map tick", new Timer.onUpdate() {

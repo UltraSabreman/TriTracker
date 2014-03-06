@@ -52,6 +52,13 @@ public class MapActivity extends Activity  {
 		final String route = (extras != null ? extras.getString("route") : null);
 		final int block = (extras != null ? extras.getInt("block") : -1);
 
+		if (theService.getMapSave()) {
+			oldRoutes = theService.getMapFilter();
+			if (oldPicks == null)
+				oldPicks = new boolean[] {false, false, false};
+			oldPicks = theService.getMapSettings();
+		}
+
 		Util.createSpinner(this);
 		final Timer delay = new Timer(0.1);
 			delay.addCallBack("", new Timer.onUpdate() {
@@ -63,15 +70,33 @@ public class MapActivity extends Activity  {
 					theMap.setRouteLayerEnabled(true);
 					theMap.setTrackingLayerEnabled(true);
 
+					if (oldPicks != null) {
+						if (!oldPicks[0])
+							theMap.clearTrackingLayer();
+						else
+							theMap.TrackingLayerDraw(oldRoutes);
+
+						if (!oldPicks[1])
+							theMap.clearRouteLayer();
+						else
+							theMap.RouteLayerDraw(oldRoutes);
+					}
+
 					if (stopId != -1)
 						theMap.showStop(theService.getStop(stopId), true);
-					else
-						theMap.showStop(null, false);
+					else {
+						if (oldPicks != null && !oldPicks[2])
+							theMap.clearSearchLayer();
+						else
+							theMap.showStop(null, false);
+					}
 
 
 					if (route != null) {
 						theMap.RouteLayerDraw(route);
 						theMap.TrackingLayerDraw(route);
+						oldPicks = new boolean[]{true, true, true};
+						oldRoutes = String.valueOf(route);
 					}
 
 					if (block != -1 && route != null)
@@ -96,6 +121,17 @@ public class MapActivity extends Activity  {
 		Intent parentActivityIntent = new Intent(this, Util.parents.pop());
 		parentActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
 		NavUtils.navigateUpTo(this, parentActivityIntent);
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+
+		if (theService.getMapSave()) {
+			theService.setMapFilter(oldRoutes);
+			if (oldPicks != null)
+				theService.setMapSettings(oldPicks);
+		}
 	}
 
 	@Override
@@ -211,11 +247,16 @@ public class MapActivity extends Activity  {
 			}
 		});
 
-		builder.setNeutralButton("Rest", new DialogInterface.OnClickListener() {
+		builder.setNeutralButton("Clear All", new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialogInterface, int dfdf) {
 				for (int i = 0; i < selected.length; i++)
 					selected[i] = false;
+
+				oldRoutes = "";
+
+				theMap.clearTrackingLayer();
+				theMap.clearRouteLayer();
 			}
 		});
 

@@ -19,7 +19,6 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 
 public class MapOverlayRoutes {
     private MainService theService = null;
@@ -112,7 +111,6 @@ public class MapOverlayRoutes {
 			}
 		return flag;
 	}
-
 
 	private void makeRoutes(List<String> routes) {
 		mapRoutes.clear();

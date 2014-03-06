@@ -71,7 +71,6 @@ public class BussLineOverviewActivity extends Activity {
 		test = new Map(mapFrag, getApplicationContext(), this);
 		final Timer delay = new Timer(0.1);
 
-		//TODO make this prettier and more obvious
 		click.setBackgroundColor(getResources().getColor(android.R.color.black));
 		delay.addCallBack("", new Timer.onUpdate(){
 			@Override
@@ -154,7 +153,7 @@ public class BussLineOverviewActivity extends Activity {
                 adaptor.notifyDataSetChanged();
 	            Spinner spin = (Spinner) findViewById(R.id.spinner);
 	            spin.postInvalidate();
-	            //spin.requestLayout();
+	            spin.requestLayout();
             }
         });
 

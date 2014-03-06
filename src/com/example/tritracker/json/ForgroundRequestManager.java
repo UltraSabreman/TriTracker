@@ -58,6 +58,7 @@ public class ForgroundRequestManager extends Thread {
 		if (s == null) return;
 
 		if (error > 0) {
+			Util.hideSpinner();
 			hanldeHTTPErrors(error, s.StopID);
 		} else if (error == -1) {
 			AlertDialog.Builder builder = new AlertDialog.Builder(activity);

@@ -126,18 +126,17 @@ public class StopListFragment extends Fragment implements UndoListener {
 
 	@Override
 	public void onStart() {
-		theService.sub(isFavorites ? "Favorites" : "History", new Timer.onUpdate() {
-			public void run() {
-				update(true);
-			}
-		});
-		update(false);
 		super.onStart();
 	}
 
 	@Override
 	public void onResume() {
-		update(false);
+		theService.sub(isFavorites ? "Favorites" : "History", new Timer.onUpdate() {
+			public void run() {
+				update(true);
+			}
+		});
+		update(true);
 		super.onResume();
 	}
 
