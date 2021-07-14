@@ -1,3 +1,6 @@
+**WARNING**: This code base is depreciated and will not function.
+----
+
 TriTracker
 ==========
 
